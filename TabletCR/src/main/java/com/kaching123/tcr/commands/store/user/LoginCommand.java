@@ -23,6 +23,7 @@ import com.kaching123.tcr.model.EmployeeStatus;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
+import com.kaching123.tcr.service.LocalSyncHelper;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.SyncCommand.OfflineException;
 import com.kaching123.tcr.service.SyncCommand.SyncException;
@@ -73,117 +74,124 @@ public class LoginCommand extends GroundyTask {
     @Override
     protected TaskResult doInBackground() {
         Logger.d("LoginCommand.doInBackground");
-        TcrApplication app = ((TcrApplication) getContext().getApplicationContext());
-        String userName = getStringArg(ARG_USER);
-        String password = getStringArg(ARG_PASSWORD);
-        Mode mode = (Mode) getArgs().getSerializable(ARG_MODE);
+        LocalSyncHelper.disableLocalSync();
 
-        boolean isTrainingMode = TcrApplication.get().isTrainingMode();
-        String registerSerial = app.getRegisterSerial();
-        boolean isOffline = !Util.isNetworkAvailable(getContext());
+        try {
+            TcrApplication app = ((TcrApplication) getContext().getApplicationContext());
+            String userName = getStringArg(ARG_USER);
+            String password = getStringArg(ARG_PASSWORD);
+            Mode mode = (Mode) getArgs().getSerializable(ARG_MODE);
 
-        String lastUserName = getLastUserName() == null ? userName : getLastUserName();
-        String lastUserPassword = getLastUserPassword() == null ? password : getLastUserPassword();
-        boolean isEmployeeSuccessUpload = true;
-        if (lastUserName != null) {
-            uploadTaskV2Adapter = new UploadTaskV2(loginLocal(lastUserName, lastUserPassword));
-            try {
-                isEmployeeSuccessUpload = doEmployeeUpload();
-            } catch (SyncCommand.SyncLockedException e) {
-                e.printStackTrace();
-            }
-        }
+            boolean isTrainingMode = TcrApplication.get().isTrainingMode();
+            String registerSerial = app.getRegisterSerial();
+            boolean isOffline = !Util.isNetworkAvailable(getContext());
 
-        if (mode == Mode.LOGIN && !isTrainingMode && !isOffline) {
-            Logger.d("Performing remote login... login: %s, serial: %s", userName, registerSerial);
-            RemoteLoginResult remoteLoginResult = webLogin(registerSerial, userName, password);
-            if (remoteLoginResult != null) {
-                if (remoteLoginResult.registerNumber == null) {
-                    Logger.d("Remote login FAILED! register check failed");
-                    return failed().add(EXTRA_ERROR, Error.REGISTER_CHECK_FAILED);
-                }
-                else if(remoteLoginResult.registerNumber != RegisterStatus.ACTIVE)
-                {
-                    Logger.d("Remote login FAILED! register pending failed");
-                    return failed().add(EXTRA_ERROR, Error.REGISTER_PENDING);
-                }
-                EmployeeModel employeeModel = remoteLoginResult.employeeModel;
-                if (employeeModel == null) {
-                    Logger.d("Remote login FAILED! employee is null");
-                    return failed().add(EXTRA_ERROR, Error.LOGIN_FAILED);
-                }
-
-                if (employeeModel.status != EmployeeStatus.ACTIVE) {
-                    Logger.d("Remote login FAILED! employee not active");
-                    return failed().add(EXTRA_ERROR, Error.EMPLOYEE_NOT_ACTIVE);
-                }
-
-                boolean cleaned = checkDb(employeeModel);
-
-                if (employeeModel.login != null && !isOffline)
-                    setLastUserName(employeeModel.login);
-                if (employeeModel.password != null && !isOffline)
-                    setLastUserPassword(employeeModel.password);
-
-                Error syncError = null;
+            String lastUserName = getLastUserName() == null ? userName : getLastUserName();
+            String lastUserPassword = getLastUserPassword() == null ? password : getLastUserPassword();
+            boolean isEmployeeSuccessUpload = true;
+            if (lastUserName != null) {
+                uploadTaskV2Adapter = new UploadTaskV2(loginLocal(lastUserName, lastUserPassword));
                 try {
-                    syncError = syncData(employeeModel);
-                } catch (OfflineException e) {
+                    isEmployeeSuccessUpload = doEmployeeUpload();
+                } catch (SyncCommand.SyncLockedException e) {
                     e.printStackTrace();
                 }
+            }
 
-                if (syncError != null && syncError != Error.OFFLINE) {
-                    SendLogCommand.start(getContext());
+            if (mode == Mode.LOGIN && !isTrainingMode && !isOffline) {
+                Logger.d("Performing remote login... login: %s, serial: %s", userName, registerSerial);
+                RemoteLoginResult remoteLoginResult = webLogin(registerSerial, userName, password);
+                if (remoteLoginResult != null) {
+                    if (remoteLoginResult.registerNumber == null) {
+                        Logger.d("Remote login FAILED! register check failed");
+                        return failed().add(EXTRA_ERROR, Error.REGISTER_CHECK_FAILED);
+                    } else if (remoteLoginResult.registerNumber != RegisterStatus.ACTIVE) {
+                        Logger.d("Remote login FAILED! register pending failed");
+                        return failed().add(EXTRA_ERROR, Error.REGISTER_PENDING);
+                    }
+                    EmployeeModel employeeModel = remoteLoginResult.employeeModel;
+                    if (employeeModel == null) {
+                        Logger.d("Remote login FAILED! employee is null");
+                        return failed().add(EXTRA_ERROR, Error.LOGIN_FAILED);
+                    }
+
+                    if (employeeModel.status != EmployeeStatus.ACTIVE) {
+                        Logger.d("Remote login FAILED! employee not active");
+                        return failed().add(EXTRA_ERROR, Error.EMPLOYEE_NOT_ACTIVE);
+                    }
+
+                    boolean cleaned = checkDb(employeeModel);
+
+                    if (employeeModel.login != null && !isOffline)
+                        setLastUserName(employeeModel.login);
+                    if (employeeModel.password != null && !isOffline)
+                        setLastUserPassword(employeeModel.password);
+
+                    Error syncError = null;
+                    try {
+                        syncError = syncData(employeeModel);
+                    } catch (OfflineException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (syncError != null && syncError != Error.OFFLINE) {
+                        SendLogCommand.start(getContext());
+                    }
+                    if (cleaned && syncError != null) {
+                        return failed().add(EXTRA_ERROR, syncError);
+                    }
+
                 }
-                if (cleaned && syncError != null) {
-                    return failed().add(EXTRA_ERROR, syncError);
+            }
+
+            Logger.d("Performing local login...");
+            boolean isOfflineModeExpired = mode == Mode.LOGIN && !isTrainingMode && TcrApplication.get().isOfflineModeExpired();
+            EmployeeModel employeeModel = null;
+            if (!isOfflineModeExpired)
+                employeeModel = loginLocal(userName, password);
+
+            if (employeeModel == null) {
+                Logger.d("Local login FAILED! employee is null");
+                if (isOffline) {
+                    return failed().add(EXTRA_ERROR, Error.LOGIN_OFFLINE_FAILED);
                 }
-
+                return failed().add(EXTRA_ERROR, Error.LOGIN_FAILED);
             }
-        }
 
-        Logger.d("Performing local login...");
-        boolean isOfflineModeExpired = mode == Mode.LOGIN && !isTrainingMode && TcrApplication.get().isOfflineModeExpired();
-        EmployeeModel employeeModel = null;
-        if (!isOfflineModeExpired)
-            employeeModel = loginLocal(userName, password);
-
-        if (employeeModel == null) {
-            Logger.d("Local login FAILED! employee is null");
-            if (isOffline) {
-                return failed().add(EXTRA_ERROR, Error.LOGIN_OFFLINE_FAILED);
+            if (employeeModel.status != EmployeeStatus.ACTIVE) {
+                Logger.d("Local login FAILED! employee not active");
+                return failed().add(EXTRA_ERROR, Error.EMPLOYEE_NOT_ACTIVE);
             }
-            return failed().add(EXTRA_ERROR, Error.LOGIN_FAILED);
-        }
 
-        if (employeeModel.status != EmployeeStatus.ACTIVE) {
-            Logger.d("Local login FAILED! employee not active");
-            return failed().add(EXTRA_ERROR, Error.EMPLOYEE_NOT_ACTIVE);
-        }
-
-        if (mode == Mode.LOGIN) {
-            boolean registerChecked = setRegisterId();
-            if (!registerChecked) {
-                Logger.d("Local login FAILED! register check failed");
-                return failed().add(EXTRA_ERROR, Error.REGISTER_CHECK_FAILED);
+            if (mode == Mode.LOGIN) {
+                boolean registerChecked = setRegisterId();
+                if (!registerChecked) {
+                    Logger.d("Local login FAILED! register check failed");
+                    return failed().add(EXTRA_ERROR, Error.REGISTER_CHECK_FAILED);
+                }
             }
+
+            boolean hadInvalidUploadTransaction = false;
+            String lastUncompletedSaleOrderGuid = null;
+            if (mode == Mode.LOGIN && !isTrainingMode) {
+                EndUncompletedTransactionsResult result = new EndUncompletedTransactionsCommand().sync(getContext());
+                if (hadInvalidUploadTransaction = result.hadInvalidUploadTransaction) {
+                    lastUncompletedSaleOrderGuid = tryGetLastUncompletedSaleOrderGuid();
+                    Logger.e("Login: had invalid upload transactions, last uncompleted sale order guid: " + lastUncompletedSaleOrderGuid);
+                }
+            }
+            Logger.d("logincommand: success : " + app.getLastUserName());
+            Logger.d("Login success!");
+
+            return succeeded()
+                    .add(EXTRA_EMPLOYEE, new EmployeePermissionsModel(employeeModel, getEmployeePermissions(employeeModel)))
+                    .add(EXTRA_UPLOAD_TRANSACTION_INVALID, hadInvalidUploadTransaction)
+                    .add(EXTRA_UPLOAD_UNCOMPLETED_SALE_ORDER_GUID, lastUncompletedSaleOrderGuid);
+
+        } finally {
+            LocalSyncHelper.enableLocalSync();
         }
 
-        boolean hadInvalidUploadTransaction = false;
-        String lastUncompletedSaleOrderGuid = null;
-        if (mode == Mode.LOGIN && !isTrainingMode) {
-            EndUncompletedTransactionsResult result = new EndUncompletedTransactionsCommand().sync(getContext());
-            if (hadInvalidUploadTransaction = result.hadInvalidUploadTransaction) {
-                lastUncompletedSaleOrderGuid = tryGetLastUncompletedSaleOrderGuid();
-                Logger.e("Login: had invalid upload transactions, last uncompleted sale order guid: " + lastUncompletedSaleOrderGuid);
-            }
-        }
-        Logger.d("logincommand: success : " + app.getLastUserName());
-        Logger.d("Login success!");
-        return succeeded()
-                .add(EXTRA_EMPLOYEE, new EmployeePermissionsModel(employeeModel, getEmployeePermissions(employeeModel)))
-                .add(EXTRA_UPLOAD_TRANSACTION_INVALID, hadInvalidUploadTransaction)
-                .add(EXTRA_UPLOAD_UNCOMPLETED_SALE_ORDER_GUID, lastUncompletedSaleOrderGuid);
     }
 
     private String tryGetLastUncompletedSaleOrderGuid() {

@@ -130,6 +130,16 @@ public class LocalSyncHelper {
 
     private static SqlHelper sqlHelper;
 
+    private static boolean ignoreLocalSync;
+
+    public static void disableLocalSync(){
+        ignoreLocalSync = true;
+    }
+
+    public static void enableLocalSync(){
+        ignoreLocalSync = false;
+    }
+
 
     private static final List<String> ignoreTables = Arrays.asList(
             ShopStore.UnitTable.TABLE_NAME,
@@ -188,11 +198,12 @@ public class LocalSyncHelper {
         Logger.d(TAG + ": runningGetCommandsWorker: START");
         runningGetCommandsWorker = true;
         while (runningGetCommandsWorker) {
+            Thread.sleep(CHECK_COMMANDS_INTERVAL);
+            if (ignoreLocalSync) continue;
+
             if (queueToRequestCommands.size() > 0 && runningCommandsSerial.size() == 0) {
                 OfflineCommandsService.doDownloadLocal(wifiSocketService, queueToRequestCommands.remove(0));
             }
-
-            Thread.sleep(CHECK_COMMANDS_INTERVAL);
         }
     }
 
@@ -205,6 +216,9 @@ public class LocalSyncHelper {
         Logger.d(TAG + ": runCommandsWorker: START");
         runningCommandsWorker = true;
         while (runningCommandsWorker) {
+            Thread.sleep(RUN_COMMAND_INTERVAL);
+            if (ignoreLocalSync) continue;
+
             if (commandsRequest.size() > 0) {
                 CommandRequest commandRunner = commandsRequest.remove(0);
                 if (commandRunner == null) {
@@ -283,8 +297,6 @@ public class LocalSyncHelper {
                 runningCommandsSerial.remove(commandRunner.request.serial);
                 WifiSocketService.getInstance().sendMsg(commandRunner.socket, new RunCallBack(commandRunner.request.uuid(), TcrApplication.get().getRegisterSerial(), commandWithSuccess).toJson());
             }
-
-            Thread.sleep(RUN_COMMAND_INTERVAL);
         }
     }
 
@@ -638,9 +650,11 @@ public class LocalSyncHelper {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                        while (!Thread.currentThread().isInterrupted()) {
+                    while (!Thread.currentThread().isInterrupted()) {
                         try {
                             Thread.sleep(FORCE_SYNC_INTERVAL);
+                            if (ignoreLocalSync) continue;
+
                             notifyChanges();
 
                         } catch (Exception e) {
