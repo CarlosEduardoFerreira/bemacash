@@ -170,6 +170,7 @@ public class CustomerModel implements IValueModel, Serializable {
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.NOTES)) v.put(CustomerTable.NOTES, notes);
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.CUSTOMER_IDENTIFICATION)) v.put(CustomerTable.CUSTOMER_IDENTIFICATION, customerIdentification);
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.LOYALTY_PLAN_ID)) v.put(CustomerTable.LOYALTY_PLAN_ID, loyaltyPlanId);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.TMP_LOYALTY_POINTS)) v.put(CustomerTable.TMP_LOYALTY_POINTS, _decimal(loyaltyPoints));
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.LOYALTY_BARCODE)) v.put(CustomerTable.LOYALTY_BARCODE, loyaltyBarcode);
         return v;
     }
@@ -199,6 +200,7 @@ public class CustomerModel implements IValueModel, Serializable {
         v.put(CustomerTable.NOTES, notes);
         v.put(CustomerTable.CUSTOMER_IDENTIFICATION, customerIdentification);
         v.put(CustomerTable.LOYALTY_PLAN_ID, loyaltyPlanId);
+        v.put(CustomerTable.TMP_LOYALTY_POINTS, _decimal(loyaltyPoints));
         v.put(CustomerTable.LOYALTY_BARCODE, loyaltyBarcode);
         return v;
     }

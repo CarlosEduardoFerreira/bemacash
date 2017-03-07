@@ -45,6 +45,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     private static final String NOTES = "NOTES";
     private static final String CUSTOMER_IDENTIFICATION = "CUSTOMER_IDENTIFICATION";
     private static final String LOYALTY_PLAN_ID = "LOYALTY_PLAN_ID";
+    private static final String TMP_LOYALTY_POINTS = "TMP_LOYALTY_POINTS";
     private static final String LOYALTY_BARCODE = "LOYALTY_BARCODE";
 
     @Override
@@ -69,6 +70,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
         if (!rs.has(NOTES)) ignoreFields.add(ShopStore.CustomerTable.NOTES);
         if (!rs.has(CUSTOMER_IDENTIFICATION)) ignoreFields.add(ShopStore.CustomerTable.CUSTOMER_IDENTIFICATION);
         if (!rs.has(LOYALTY_PLAN_ID)) ignoreFields.add(ShopStore.CustomerTable.LOYALTY_PLAN_ID);
+        if (!rs.has(TMP_LOYALTY_POINTS)) ignoreFields.add(ShopStore.CustomerTable.TMP_LOYALTY_POINTS);
         if (!rs.has(LOYALTY_BARCODE)) ignoreFields.add(ShopStore.CustomerTable.LOYALTY_BARCODE);
 
         return new CustomerModel(
@@ -91,7 +93,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getString(NOTES),
                 rs.getString(CUSTOMER_IDENTIFICATION),
                 rs.getString(LOYALTY_PLAN_ID),
-                BigDecimal.ZERO,
+                rs.getBigDecimal(TMP_LOYALTY_POINTS),
                 rs.getString(LOYALTY_BARCODE),
                 ignoreFields);
     }
@@ -136,6 +138,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                     .put(NOTES, model.notes)
                     .put(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                     .put(LOYALTY_PLAN_ID, model.loyaltyPlanId)
+                    .put(TMP_LOYALTY_POINTS, model.loyaltyPoints)
                     .put(LOYALTY_BARCODE, model.loyaltyBarcode);
         } catch (JSONException e) {
             Logger.e("JSONException", e);
@@ -166,6 +169,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(NOTES, model.notes)
                 .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                 .add(LOYALTY_PLAN_ID, model.loyaltyPlanId)
+                .add(TMP_LOYALTY_POINTS, model.loyaltyPoints)
                 .add(LOYALTY_BARCODE, model.loyaltyBarcode)
                 .build(JdbcFactory.getApiMethod(model));
     }
@@ -190,6 +194,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(NOTES, model.notes)
                 .add(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                 .add(LOYALTY_PLAN_ID, model.loyaltyPlanId)
+                .add(TMP_LOYALTY_POINTS, model.loyaltyPoints)
                 .add(LOYALTY_BARCODE, model.loyaltyBarcode)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
