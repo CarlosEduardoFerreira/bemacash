@@ -2,11 +2,13 @@ package com.kaching123.tcr.commands.store.saleorder;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.google.common.base.Function;
 import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
@@ -179,6 +181,17 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
 
     public static SaleOrderModel createSaleOrder(Context context, long registerId, String operatorGuid, String shiftGuid, OrderType type) {
 
+        Integer seq = ProviderAction
+                .query(URI_ORDER)
+                .projection("max(" + SaleOrderTable.PRINT_SEQ_NUM + ")")
+                .where(SaleOrderTable.REGISTER_ID + " = ?", registerId).perform(context)
+                .toFluentIterable(new Function<Cursor, Integer>() {
+                    @Override
+                    public Integer apply(Cursor cursor) {
+                        return cursor.getInt(0) + 1;
+                    }
+                }).first().or(1);
+
         SaleOrderModel model = new SaleOrderModel(
                 UUID.randomUUID().toString(),
                 new Date(),
@@ -196,7 +209,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
-                0,
+                seq,
                 registerId,
                 null,
                 type,
