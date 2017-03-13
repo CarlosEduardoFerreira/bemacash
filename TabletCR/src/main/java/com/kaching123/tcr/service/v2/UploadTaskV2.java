@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
@@ -81,6 +82,7 @@ public class UploadTaskV2 {
                         String subJson = c.getString(1);
                         Logger.d("[CMD_TABLE] %d = %s", subId, subJson);
                         //TODO need to verify end
+                        Log.d("BemaCarl6", "UploadTask2.webApiUpload.json|subJson: |" + json +"|"+ subJson + "|");
                         if ((CMD_START_TRANSACTION.equals(json) && CMD_END_TRANSACTION.equals(subJson)) || (CMD_START_EMPLOYEE.equals(json) && CMD_END_EMPLOYEE.equals(subJson))) {
                             endTransactionId = subId;
                             Logger.d("END TRANSACTION");

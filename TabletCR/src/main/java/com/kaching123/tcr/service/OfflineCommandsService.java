@@ -108,6 +108,7 @@ public class OfflineCommandsService extends Service {
      * - Scheduler
      */
     private void doDownload(boolean isManual) {
+        Logger.d("[OfflineService] doDownload: isManual = " + isManual);
         executor.submit(new SyncCommand(this, isManual));
     }
 
@@ -125,7 +126,7 @@ public class OfflineCommandsService extends Service {
     }
 
     private void doEmployeeUpload() {
-        Logger.d("[OfflineService] doUpload: isManual = false");
+        Logger.d("[OfflineService] doEmployeeUpload: isManual = false");
 //        executor.submit(new UploadTask(this, false, true));
         final ContentResolver cr = this.getContentResolver();
         executor.submit(new Runnable() {
@@ -233,7 +234,7 @@ public class OfflineCommandsService extends Service {
     }
 
     public static void startemployeeTableUpload(Context context) {
-        Logger.d("[OfflineService] startUpload");
+        Logger.d("[OfflineService] startemployeeTableUpload");
         Intent intent = getEmployeeUploadIntent(context, false);
         context.startService(intent);
     }

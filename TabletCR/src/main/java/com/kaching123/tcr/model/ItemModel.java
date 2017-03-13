@@ -21,13 +21,15 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import static com.kaching123.tcr.model.ContentValuesUtil._bool;
+import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
+import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 import static com.kaching123.tcr.model.ContentValuesUtil._max;
 import static com.kaching123.tcr.model.ContentValuesUtil._putDiscount;
 import static com.kaching123.tcr.model.ContentValuesUtil._putEnum;
 import static com.kaching123.tcr.model.ContentValuesUtil._putItemRefType;
-import static com.kaching123.tcr.util.ContentValuesUtilBase._enum;
 
 public class ItemModel extends BaseItemModel implements Serializable, IValueModel {
 

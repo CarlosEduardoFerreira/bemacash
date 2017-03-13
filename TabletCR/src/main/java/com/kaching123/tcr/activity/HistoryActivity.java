@@ -281,6 +281,9 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
             @Override
             public void onRefundComplete(SaleOrderModel childOrderModel) {
+
+                orderItemsListFragment.updateItemQty(HistoryActivity.this);
+
                 orderItemsListFragment.updateList();
                 EndTransactionCommand.start(HistoryActivity.this, true);
             }

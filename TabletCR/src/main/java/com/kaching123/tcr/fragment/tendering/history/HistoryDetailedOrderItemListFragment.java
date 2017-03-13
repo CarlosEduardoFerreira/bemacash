@@ -1,5 +1,7 @@
 package com.kaching123.tcr.fragment.tendering.history;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -12,9 +14,11 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
@@ -26,6 +30,8 @@ import com.kaching123.tcr.fragment.wireless.UnitsSearchFragment;
 import com.kaching123.tcr.fragment.wireless.UnitsSearchHistoryFragment;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator.Handler;
+import com.kaching123.tcr.model.ItemMovementModel;
+import com.kaching123.tcr.model.ItemMovementModelFactory;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderViewModel;
@@ -34,6 +40,8 @@ import com.kaching123.tcr.model.converter.HistoryOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.model.payment.HistoryDetailedOrderItemModel;
 import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
 import com.kaching123.tcr.processor.UnitItemCache;
+import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.CalculationUtil;
 
 import org.androidannotations.annotations.AfterViews;
@@ -58,7 +66,7 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
     protected CheckBoxHeader header;
 
     @Bean
-    protected HistoryDetailedOrderItemAdapter adapter;
+    public HistoryDetailedOrderItemAdapter adapter;
 
 
     private Map<String, List<Unit>> scannedUnits = new HashMap<String, List<Unit>>();
@@ -70,6 +78,8 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
     private IRefundAmountListener refundAmountListener;
 
     private boolean firstLoad;
+
+    ArrayList<RefundSaleItemInfo> refundItems;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -183,7 +193,7 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
     public RefundAmount getReturnAmount() {
         BigDecimal pickedValue = BigDecimal.ZERO;
         ArrayList<SaleOrderItemViewModel> orderItems = new ArrayList<SaleOrderItemViewModel>(adapter.getCount());
-        ArrayList<RefundSaleItemInfo> refundItems = new ArrayList<RefundSaleItemInfo>(adapter.getCount());
+        refundItems = new ArrayList<RefundSaleItemInfo>(adapter.getCount());
 
         for (int i = 0; i < adapter.getCount(); i++) {
             HistoryDetailedOrderItemModel historyItem = adapter.getItem(i);
@@ -463,6 +473,61 @@ public class HistoryDetailedOrderItemListFragment extends ListFragment implement
             UnitItemCache.get().add(key, unitsCopy);
         }
     }
+
+
+    private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(ShopStore.SaleItemTable.URI_CONTENT);
+    private static final Uri ITEM_URI = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
+
+    public void updateItemQty(SuperBaseActivity actv) {
+
+        for(RefundSaleItemInfo refundSaleItemInfo : refundItems){
+
+            String saleItemGuid = refundSaleItemInfo.saleItemGuid;
+            BigDecimal itemQty = refundSaleItemInfo.qty;
+
+            Cursor c1 = ProviderAction.query(URI_SALE_ITEMS)
+                    .projection(
+                            ShopStore.SaleItemTable.ITEM_GUID
+                    )
+                    .where(ShopStore.SaleItemTable.SALE_ITEM_GUID + " = ?", saleItemGuid)
+                    .perform(getContext());
+
+            if(c1.moveToNext()) {
+
+                String itemGuid = c1.getString(c1.getColumnIndex(ShopStore.SaleItemTable.ITEM_GUID));
+
+                Cursor c2 = ProviderAction.query(ITEM_URI)
+                        .projection(
+                                ShopStore.ItemTable.UPDATE_QTY_FLAG,
+                                ShopStore.ItemTable.STOCK_TRACKING
+                        )
+                        .where(ShopStore.ItemTable.GUID + " = ?", itemGuid)
+                        .perform(getContext());
+
+                if(c2.moveToNext()) {
+
+                    String itemUpdateQtyFlag = c2.getString(c2.getColumnIndex(ShopStore.ItemTable.UPDATE_QTY_FLAG));
+                    int stockTracking = c2.getInt(c2.getColumnIndex(ShopStore.ItemTable.STOCK_TRACKING));
+
+                    if (stockTracking == 1 && !itemQty.equals(BigDecimal.ZERO)) {
+
+                        ItemMovementModel movementModel = ItemMovementModelFactory.getNewModel(
+                                itemGuid,
+                                itemUpdateQtyFlag,
+                                itemQty,
+                                false,
+                                new Date());
+
+                        ReturnItemMovementCommand returnItemMovementCommand = new ReturnItemMovementCommand();
+                        returnItemMovementCommand.start(getContext(), movementModel, null);
+                        returnItemMovementCommand.startUpload(actv, true);
+                    }
+
+                }
+            }
+        }
+    }
+
 
     public static class RefundAmount {
         public BigDecimal pickedValue;
