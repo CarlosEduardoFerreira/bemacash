@@ -116,7 +116,10 @@ public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
     }
 
     public SingleSqlCommand updateOrderSQL(CategoryModel model, IAppCommandContext appCommandContext) {
-        return updateSQL(model, appCommandContext);
+        return _update(CATEGORY_TABLE_NAME, appCommandContext)
+                .add(ORDER_NUM, model.orderNum)
+                .where(ID, model.guid)
+                .build(JdbcFactory.getApiMethod(CategoryModel.class));
     }
 
     public SingleSqlCommand deleteByDepartment(String departmentGuid, IAppCommandContext appCommandContext) {

@@ -105,7 +105,6 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
     public SingleSqlCommand disableAllSQL(String userGuid, IAppCommandContext appCommandContext) {
         return _update(TABLE_NAME, appCommandContext)
                 .add(ENABLED, false)
-                .add("IS_DRAFT", 0)
                 .where(USER_ID, userGuid)
                 .build(JdbcFactory.getApiMethod(EmployeePermissionModel.class));
     }
