@@ -36,7 +36,7 @@ public final class SqlCommandHelper {
         };
     }
 
-    private static ContentValues getContentValues(BatchSqlCommand batchSql, long createTime, boolean isHots) {
+    public static ContentValues getContentValues(BatchSqlCommand batchSql, long createTime, boolean isHots) {
         ContentValues values = new ContentValues();
         if (isHots) {
             values.put(ShopStore.SqlCommandHostTable.GUID, UUID.randomUUID().toString());

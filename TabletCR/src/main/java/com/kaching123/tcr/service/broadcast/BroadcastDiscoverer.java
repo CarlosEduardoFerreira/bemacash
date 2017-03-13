@@ -95,19 +95,15 @@ public class BroadcastDiscoverer extends Thread {
                 BroadcastInfo info = new BroadcastInfo();
 
                 String ip = getIpAddress();
-                Log.d(TAG, "BroadcastDiscover.run.ip: " + ip);
                 if(ip == null || ip.equals("")) {
                     ip = InetAddress.getLocalHost().getHostAddress();
-                    Log.d(TAG, "BroadcastDiscover.run.getHostAddress.ip: " + ip);
                 }
                 if(ip == null || ip.equals("")){
                     ip = getDeviceIPAddress(true);
-                    Log.d(TAG, "BroadcastDiscover.run.getDeviceIPAddress.ip: " + ip);
                 }
-                //if(ip.equals("10.0.2.15")) ip = "192.168.15.133";
+
                 info.setAddress(ip);
                 info.setPort(sMySocketPort);
-                Log.d(TAG, "BroadcastDiscover.run.sMySocketPort: " + sMySocketPort);
                 info.setVersionCode(mVersionCode);
                 info.setSerial(app.getRegisterSerial());
                 info.setShopId(app.getShopPref().shopId().get());
@@ -140,19 +136,10 @@ public class BroadcastDiscoverer extends Thread {
         String data = new Gson().toJson(broadcastInfo);
 
         String  ip   = broadcastInfo.getAddress();
-        Log.d(TAG, "BroadcastDiscover.sendDiscoveryRequest.ip: " + ip);
         int     lio  = ip.lastIndexOf('.');
-        Log.d(TAG, "BroadcastDiscover.sendDiscoveryRequest.lio: " + lio);
         String  bc   = ip.substring(0,lio) + ".255";
-        Log.d(TAG, "BroadcastDiscover.sendDiscoveryRequest.bc: " + bc);
         InetAddress broadcastAddress = InetAddress.getByName(bc);
-        Log.d(TAG, "BroadcastDiscover.sendDiscoveryRequest.broadcastAddress: " + broadcastAddress);
-        /**/
 
-        //InetAddress broadcastAddress = intToInetAddress(ipStringToInt(ip));
-
-        //InetAddress broadcastAddress = socket.getInetAddress();
-        //InetAddress broadcastAddress = getBroadcastAddress();
         if (broadcastAddress == null) return null;
 
         DatagramPacket packet = new DatagramPacket(data.getBytes(), data.length(), broadcastAddress, DISCOVERY_PORT);
@@ -234,11 +221,6 @@ public class BroadcastDiscoverer extends Thread {
                         String s = new String(packet.getData(), 0, packet.getLength());
 
                         BroadcastInfo info = new Gson().fromJson(s, BroadcastInfo.class);
-
-                        Log.d(TAG, "BroadcastDiscover.listenForResponses.info.getShopId(): " + info.getShopId() + "=" + app.getShopPref().shopId().get());
-                        Log.d(TAG, "BroadcastDiscover.listenForResponses.info.getVersionCode(): " + info.getVersionCode() + "=" + ValueUtil.getApplicationVersion(mContext).code);
-                        Log.d(TAG, "BroadcastDiscover.listenForResponses.info.getSerial(): " + info.getSerial() + "=" + app.getRegisterSerial());
-                        Log.d(TAG, "BroadcastDiscover.listenForResponses.info.getAddress(): " + info.getAddress());
 
                         if(info.getShopId() != 0 && info.getAddress() != null) {
                             if (!info.getSerial().equals(app.getRegisterSerial())

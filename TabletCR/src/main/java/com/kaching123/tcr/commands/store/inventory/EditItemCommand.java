@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
@@ -18,6 +19,7 @@ import com.kaching123.tcr.model.ItemMovementModelFactory;
 import com.kaching123.tcr.model.converter.ItemMatrixFunction;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
+import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemMovementTable;
@@ -35,6 +37,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
+import static com.kaching123.tcr.model.SqlCommandHelper.getContentValues;
 
 /**
  * Created by vkompaniets on 04.12.13.
@@ -121,6 +124,15 @@ public class EditItemCommand extends AsyncCommand {
         if (categoryChanged){
             shiftOrderNums(oldCategoryId);
         }
+
+        /** Upload Item to Return ***********************************************/
+        ContentValues values = getContentValues(sql, System.currentTimeMillis(), false);
+        Log.d("BemaCarl6","EditItemCommand...doCommand.sql: " + sql);
+
+        getContext().getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT), values);
+
+        OfflineCommandsService.startUpload(getContext());
+        /*********************************************** Upload Item to Return **/
 
         return succeeded();
     }

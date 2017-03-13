@@ -3,6 +3,7 @@ package com.kaching123.tcr.commands.store.user;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
 
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.jdbc.JdbcFactory;
