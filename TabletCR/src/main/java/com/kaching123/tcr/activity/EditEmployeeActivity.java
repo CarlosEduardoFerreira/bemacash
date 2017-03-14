@@ -8,9 +8,13 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
@@ -23,6 +27,7 @@ import com.kaching123.tcr.commands.store.user.DeleteEmployeeCommand;
 import com.kaching123.tcr.commands.store.user.EditEmployeeCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
+import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.user.LoginFragment;
@@ -40,6 +45,8 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -62,13 +69,47 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
     public EditEmployeeCallback editEmployeeCallback = new EditEmployeeCallback();
     private static final Uri EMPLOYEE_URI = ShopProvider.getContentUri(ShopStore.EmployeeTable.URI_CONTENT);
 
+    EmployeeModel initEmployeeModel;
+
+    long statusValue;
+    long presedValue;
+    boolean statusChanged = false;
+    boolean presedChanged = false;
+
     @AfterViews
     @Override
     protected void init() {
         super.init();
-        fillFields();
         initUserAndPwd();
         getSupportLoaderManager().initLoader(0, null, new UserPermissionsLoader());
+
+        statusChanged = false;
+        presedChanged = false;
+
+        status.setOnTouchListener(new android.view.View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    Log.d("BemaCarl3","EditEmployeeActivity.init.statusChanged: |"+statusValue+"|"+status.getSelectedItemId()+"|");
+                    statusValue = status.getSelectedItemId();
+                }
+                return false;
+            }
+        });
+
+        preset.setOnTouchListener(new android.view.View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    Log.d("BemaCarl3","EditEmployeeActivity.init.presedChanged: |"+presedValue+"|"+preset.getSelectedItemId()+"|");
+                    presedValue = preset.getSelectedItemId();
+                }
+                return false;
+            }
+        });
+
+        fillFields();
+
     }
 
     private void initUserAndPwd() {
@@ -103,6 +144,8 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         tipsEligible.setChecked(model.tipsEligible);
         commissionsEligible.setChecked(model.commissionEligible);
         showPrice(commissions, model.commission);
+
+        initEmployeeModel = model;
     }
 
     @OptionsItem
@@ -315,11 +358,121 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         }
     }
 
+
     @Override
     public void onBackPressed() {
+        if(employeeHasChanges()) {
+            final FragmentActivity actv = this;
+            AlertDialogFragment.showAlert(
+                this,
+                R.string.dlg_title_back_button,
+                getApplicationContext().getResources().getString(R.string.dlg_text_back_button),
+                R.string.btn_ok,
+                new OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        onBackPressedDialog();
+                        disableForceLogOut();
+                        return false;
+                    }
+                }, new OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        DialogUtil.hide(actv, "errorDialogFragment");
+                        return false;
+                    }
+                }
+            );
+        }else{
+            onBackPressedDialog();
+        }
+    }
+
+    private void onBackPressedDialog(){
         super.onBackPressed();
         disableForceLogOut();
     }
+
+
+
+    private boolean employeeHasChanges(){
+
+        DecimalFormat formatar = new DecimalFormat("###,###,###,###,###.##");
+        formatar.setMinimumFractionDigits(2);
+
+        String hRate1 = formatar.format(initEmployeeModel.hRate);
+        String hRate2 = formatar.format(new BigDecimal(hourlyRate.getText().toString()));
+
+        statusChanged = statusValue != status.getSelectedItemId();
+
+        String commission1 = formatar.format(initEmployeeModel.commission);
+        String commission2 = formatar.format(new BigDecimal(commissions.getText().toString()));
+
+        presedChanged = presedValue != preset.getSelectedItemId();
+
+        if(!initEmployeeModel.firstName.equals(firstName.getText().toString())) {
+            Log.d("BemaCarl3","employeeHasChanges.firstName"); return true;
+        }
+        if(!initEmployeeModel.lastName.equals(lastName.getText().toString())) {
+            Log.d("BemaCarl3","employeeHasChanges.lastName"); return true;
+        }
+        if(!initEmployeeModel.login.equals(login.getText().toString())) {
+            Log.d("BemaCarl3","employeeHasChanges.login"); return true;
+        }
+        if(initEmployeeModel.email != null)
+        if(!initEmployeeModel.email.equals(email.getText().toString())) {
+            Log.d("BemaCarl3","employeeHasChanges.email"); return true;
+        }
+        if(initEmployeeModel.phone != null)
+        if(!initEmployeeModel.phone.equals(phone.getText().toString())) {
+            Log.d("BemaCarl3","employeeHasChanges.phone"); return true;
+        }
+        if(initEmployeeModel.street != null)
+        if(!initEmployeeModel.street.equals(street.getText().toString())) {
+            Log.d("BemaCarl3","employeeHasChanges.street"); return true;
+        }
+        if(initEmployeeModel.complementary != null)
+        if(!initEmployeeModel.complementary.equals(complementary.getText().toString())) {
+            Log.d("BemaCarl3","employeeHasChanges.complementary"); return true;
+        }
+        if(initEmployeeModel.city != null)
+        if(!initEmployeeModel.city.equals(city.getText().toString())) {
+            Log.d("BemaCarl3","employeeHasChanges.city"); return true;
+        }
+        if(initEmployeeModel.state != null)
+        if(!initEmployeeModel.state.equals(state.getText().toString())) {
+            Log.d("BemaCarl3","employeeHasChanges.state"); return true;
+        }
+        if(initEmployeeModel.country != null)
+        if(!initEmployeeModel.country.equals(country.getText().toString())) {
+            Log.d("BemaCarl3","employeeHasChanges.country"); return true;
+        }
+        if(initEmployeeModel.zip != null)
+        if(!initEmployeeModel.zip.equals(zip.getText().toString())) {
+            Log.d("BemaCarl3","employeeHasChanges.zip"); return true;
+        }
+        if(!hRate1.equals(hRate2)) {
+            Log.d("BemaCarl3","employeeHasChanges.hRate"); return true;
+        }
+        if(initEmployeeModel.tipsEligible != tipsEligible.isChecked()) {
+            Log.d("BemaCarl3","employeeHasChanges.tipsEligible"); return true;
+        }
+        if(initEmployeeModel.commissionEligible != commissionsEligible.isChecked()) {
+            Log.d("BemaCarl3","employeeHasChanges.commissionsEligible"); return true;
+        }
+        if(!commission1.equals(commission2)) {
+            Log.d("BemaCarl3","employeeHasChanges.commissions"); return true;
+        }
+        if(statusChanged) {
+            Log.d("BemaCarl3","employeeHasChanges.statusChanged"); return true;
+        }
+        if(presedChanged) {
+            Log.d("BemaCarl3","employeeHasChanges.presedChanged"); return true;
+        }
+
+        return false;
+    }
+
 
     private void disableForceLogOut() {
         setResult(REQUEST_CODE, new Intent().putExtra(DashboardActivity.EXTRA_FORCE_LOGOUT, false));
@@ -359,6 +512,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         public void onLoadFinished(Loader<List<Permission>> mapLoader, List<Permission> permissions) {
             try2SetupPermissions(permissions);
             getSupportLoaderManager().destroyLoader(0);
+            presedValue = preset.getSelectedItemId();
         }
 
         @Override

@@ -1,10 +1,12 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.LoyaltyIncentiveModel;
 import com.kaching123.tcr.model.LoyaltyRewardType;
 import com.kaching123.tcr.model.LoyaltyType;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
@@ -55,12 +57,26 @@ public class LoyaltyIncentiveJdbcConverter extends JdbcConverter<LoyaltyIncentiv
 
     @Override
     public String getLocalGuidColumn() {
-        return null;
+        return ShopStore.LoyaltyIncentiveTable.GUID;
     }
 
     @Override
     public JSONObject getJSONObject(LoyaltyIncentiveModel model) {
-        return null;
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put(ID, model.guid)
+                    .put(NAME, model.name)
+                    .put(TYPE, model.type)
+                    .put(REWARD_TYPE, model.rewardType)
+                    .put(BIRTHDAY_OFFSET, model.birthdayOffset)
+                    .put(POINTS_THRESHOLD, model.pointThreshold)
+                    .put(REWARD_VALUE, model.rewardValue)
+                    .put(REWARD_VALUE_TYPE, model.rewardValueType);
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+        return json;
     }
 
     @Override

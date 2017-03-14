@@ -1,15 +1,20 @@
 package com.kaching123.tcr.commands.store.user;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.loyalty.AddLoyaltyPointsMovementCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.model.CustomerModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
+import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
@@ -19,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
+import static com.kaching123.tcr.model.SqlCommandHelper.getContentValues;
 import static com.kaching123.tcr.store.ShopStore.CustomerTable;
 
 /**
@@ -39,6 +45,8 @@ public abstract class BaseCustomerCommand extends AsyncCommand {
     protected CustomerModel model;
     protected SyncResult pointsMovementResult;
 
+    protected BatchSqlCommand sql;
+
     @Override
     protected TaskResult doCommand() {
 
@@ -56,6 +64,12 @@ public abstract class BaseCustomerCommand extends AsyncCommand {
         pointsMovementResult = addPointsMovement();
 
         doQuery(operations);
+
+        /** Upload *********************************************************/
+        ContentValues values = getContentValues(sql, System.currentTimeMillis(), false);
+        getContext().getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT), values);
+        OfflineCommandsService.startUpload(getContext());
+        /********************************************************* Upload **/
 
         return succeeded();
     }

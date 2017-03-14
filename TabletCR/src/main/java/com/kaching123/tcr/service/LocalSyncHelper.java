@@ -52,6 +52,7 @@ import com.kaching123.tcr.jdbc.converters.ItemsModifierGroupsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsModifiersJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsMovementJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
+import com.kaching123.tcr.jdbc.converters.LoyaltyPointsMovementJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.MunicipalityJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PaymentTransactionJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PrinterAliasJdbcConverter;
@@ -327,15 +328,20 @@ public class LocalSyncHelper {
 
             try {
                 if ("INSERT".equals(operation.action.toUpperCase()) || "REPLACE".equals(operation.action.toUpperCase())) {
+
+                    Log.d("BemaCarl9","LocalSyncHelper.runCommand.INSERTorREPLACE.operation.action: " + operation.action);
+                    Log.d("BemaCarl9","LocalSyncHelper.runCommand.INSERTorREPLACE.operation.table: " + operation.table);
+                    Log.d("BemaCarl9","LocalSyncHelper.runCommand.INSERTorREPLACE.operation.args: " + operation.args);
+
                     Object[] model = getContentValuesAndGuidColumn(operation, true);
 
                     if (model == null || model.length == 0) {
-                        Logger.e(TAG_HEIGHT, new Throwable("Table not found: " + sqlCommand));
+                        Logger.e(TAG_HEIGHT, new Throwable("Table not found: " + operation.table + " - " + "put this on LocalSyncHelper.getModel() method right now!"));
                         return false;
                     }
                     ContentValues contentValues = (ContentValues) model[0];
                     if (contentValues.size() == 0) return true;
-                    Log.d("BemaCarl4","LocalSyncHelper.runCommand.REPLACE.operation.args: " + operation.args);
+
                     if(ShopStore.EmployeePermissionTable.TABLE_NAME.equals(operation.table)){
                         db.insertWithOnConflict(operation.table, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                     }else{
@@ -440,17 +446,11 @@ public class LocalSyncHelper {
             }
             if (JdbcConverter.compareTable(table, ShopStore.EmployeePermissionTable.TABLE_NAME, EmployeePermissionJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.EmployeePermissionTable.TABLE_NAME;
-                Log.d("BemaCarl4","LocalSyncHelper.EmployeePermissionJdbcConverter.operation.args: " + operation.args);
-                Log.d("BemaCarl4","LocalSyncHelper.EmployeePermissionJdbcConverter.json: " + json);
                 model = new EmployeePermissionJdbcConverter().toValues(json);
-                Log.d("BemaCarl4","LocalSyncHelper.EmployeePermissionJdbcConverter.model:.toValues(): " + model.toValues());
             }
             if (JdbcConverter.compareTable(table, ShopStore.EmployeeTable.TABLE_NAME, EmployeeJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.EmployeeTable.TABLE_NAME;
-                Log.d("BemaCarl4","LocalSyncHelper.EmployeeJdbcConverter.operation.args: " + operation.args);
-                Log.d("BemaCarl4","LocalSyncHelper.EmployeeJdbcConverter.json: " + json);
                 model = new EmployeeJdbcConverter().toValues(json);
-                Log.d("BemaCarl4","LocalSyncHelper.EmployeeJdbcConverter.model.toValues(): " + model.toValues());
             }
             if (JdbcConverter.compareTable(table, ShopStore.EmployeeTimesheetTable.TABLE_NAME, EmployeeTimesheetJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.EmployeeTimesheetTable.TABLE_NAME;
@@ -483,6 +483,10 @@ public class LocalSyncHelper {
             if (JdbcConverter.compareTable(table, ShopStore.MunicipalityTable.TABLE_NAME, MunicipalityJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.MunicipalityTable.TABLE_NAME;
                 model = new MunicipalityJdbcConverter().toValues(json);
+            }
+            if (JdbcConverter.compareTable(table, ShopStore.LoyaltyPointsMovementTable.TABLE_NAME, LoyaltyPointsMovementJdbcConverter.TABLE_NAME)) {
+                operation.table = ShopStore.LoyaltyPointsMovementTable.TABLE_NAME;
+                model = new LoyaltyPointsMovementJdbcConverter().toValues(json);
             }
             if (JdbcConverter.compareTable(table, ShopStore.PaymentTransactionTable.TABLE_NAME, PaymentTransactionJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.PaymentTransactionTable.TABLE_NAME;
@@ -536,6 +540,7 @@ public class LocalSyncHelper {
                 operation.table = ShopStore.VariantSubItemTable.TABLE_NAME;
                 model = new VariantSubItemJdbcConverter().toValues(json);
             }
+
         } catch (JSONException e) {
             Logger.e(TAG_HEIGHT, e);
         }

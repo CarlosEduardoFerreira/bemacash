@@ -3,6 +3,8 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.LoyaltyIncentiveTable;
 
 import java.io.Serializable;
@@ -25,7 +27,8 @@ public class LoyaltyIncentiveModel implements IValueModel, Serializable {
     public BigDecimal rewardValue;
     public DiscountType rewardValueType;
 
-    public LoyaltyIncentiveModel(String guid, String name, LoyaltyType type, LoyaltyRewardType rewardType, int birthdayOffset, BigDecimal pointThreshold, BigDecimal rewardValue, DiscountType rewardValueType) {
+    public LoyaltyIncentiveModel(String guid, String name, LoyaltyType type, LoyaltyRewardType rewardType,
+                                 int birthdayOffset, BigDecimal pointThreshold, BigDecimal rewardValue, DiscountType rewardValueType) {
         this.guid = guid;
         this.name = name;
         this.type = type;
@@ -57,6 +60,8 @@ public class LoyaltyIncentiveModel implements IValueModel, Serializable {
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
+        values.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
         values.put(LoyaltyIncentiveTable.GUID, guid);
         values.put(LoyaltyIncentiveTable.NAME, name);
         values.put(LoyaltyIncentiveTable.TYPE, type.ordinal());
@@ -70,6 +75,6 @@ public class LoyaltyIncentiveModel implements IValueModel, Serializable {
 
     @Override
     public String getIdColumn() {
-        return null;
+        return LoyaltyIncentiveTable.GUID;
     }
 }

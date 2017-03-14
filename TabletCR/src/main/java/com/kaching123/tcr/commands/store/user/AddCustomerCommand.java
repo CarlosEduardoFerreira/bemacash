@@ -26,6 +26,9 @@ public class AddCustomerCommand extends BaseCustomerCommand {
         if (pointsMovementResult != null && pointsMovementResult.getLocalDbOperations() != null){
             operations.addAll(pointsMovementResult.getLocalDbOperations());
         }
+
+        sql = batchInsert(model);
+        sql.add(JdbcFactory.getConverter(model).insertSQL(model, getAppCommandContext()));
     }
 
     @Override

@@ -30,6 +30,9 @@ public class EditCustomerCommand extends BaseCustomerCommand {
         if (pointsMovementResult != null && pointsMovementResult.getLocalDbOperations() != null){
             operations.addAll(pointsMovementResult.getLocalDbOperations());
         }
+
+        sql = batchUpdate(model);
+        sql.add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()));
     }
 
     @Override

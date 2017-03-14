@@ -1,8 +1,10 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.LoyaltyPointsMovementModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
@@ -45,12 +47,21 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
 
     @Override
     public String getLocalGuidColumn() {
-        return null;
+        return ShopStore.LoyaltyPointsMovementTable.GUID;
     }
 
     @Override
     public JSONObject getJSONObject(LoyaltyPointsMovementModel model) {
-        return null;
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put(ID, model.guid)
+                    .put(CUSTOMER_ID, model.customerId)
+                    .put(LOYALTY_POINTS, model.loyaltyPoints);
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+        return json;
     }
 
     @Override

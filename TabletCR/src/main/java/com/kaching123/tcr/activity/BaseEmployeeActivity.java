@@ -140,20 +140,8 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
         preset.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                //if (!isFirstSpinnerCall) {
-                //if (!PlanOptions.isCustomPermissionAllowed() &&
-                //        presetDataList.get(i).getItem().getId() == PermissionPreset.CUSTOM.getId()) {
-                //     AlertDialogFragment.showAlert(BaseEmployeeActivity.this,
-                //           R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
-                //   preset.setSelection(spinnerLastPos);
-                //} else {
                 displayPermissions(i);
-                //spinnerLastPos = i;
-                //}
-                //}
-                //isFirstSpinnerCall = false;
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
             }

@@ -2,6 +2,8 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.LoyaltyPlanTable;
 
 import java.io.Serializable;
@@ -27,6 +29,8 @@ public class LoyaltyPlanModel implements IValueModel, Serializable{
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
+        values.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
         values.put(LoyaltyPlanTable.GUID, guid);
         values.put(LoyaltyPlanTable.NAME, name);
         return values;
@@ -34,6 +38,6 @@ public class LoyaltyPlanModel implements IValueModel, Serializable{
 
     @Override
     public String getIdColumn() {
-        return null;
+        return LoyaltyPlanTable.GUID;
     }
 }

@@ -1,7 +1,9 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.model.LoyaltyPlanModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
@@ -38,12 +40,20 @@ public class LoyaltyPlanJdbcConverter extends JdbcConverter<LoyaltyPlanModel> {
 
     @Override
     public String getLocalGuidColumn() {
-        return null;
+        return ShopStore.LoyaltyPlanTable.GUID;
     }
 
     @Override
     public JSONObject getJSONObject(LoyaltyPlanModel model) {
-        return null;
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put(ID, model.guid)
+                    .put(NAME, model.name);
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+        return json;
     }
 
     @Override

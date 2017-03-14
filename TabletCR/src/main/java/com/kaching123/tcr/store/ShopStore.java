@@ -1835,7 +1835,6 @@ public abstract class ShopStore {
         applyForeignKeys(CustomerTable.TABLE_NAME,
                 foreignKey(CustomerTable.LOYALTY_PLAN_ID, LoyaltyPlanTable.TABLE_NAME, LoyaltyPlanTable.GUID)
         );
-        applyTmpFields(CustomerTable.TABLE_NAME, CustomerTable.TMP_LOYALTY_POINTS);
     }
 
     @Table(PrinterAliasTable.TABLE_NAME)
