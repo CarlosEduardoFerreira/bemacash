@@ -387,6 +387,10 @@ public class LocalSyncHelper {
                         }
                     }
 
+                    if(operation.table.equals(ShopStore.SaleOrderTable.TABLE_NAME) && affectedRows != 0) {
+                        LocalBroadcastManager.getInstance(wifiSocketService).sendBroadcast(new Intent(SyncCommand.ACTION_SYNC_GAP));
+                    }
+
                 } else {
                     Logger.e(TAG_HEIGHT, new Throwable("Action not found: " + operation.action));
                     return false;

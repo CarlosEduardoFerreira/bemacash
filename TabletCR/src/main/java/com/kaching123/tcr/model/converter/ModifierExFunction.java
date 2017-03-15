@@ -112,7 +112,7 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                 id,
                 c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.ITEM_GUID)),
                 _modifierType(c, c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.TYPE)),
-                c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.TITLE)),
+                TextUtils.isEmpty(itemGuid) ? c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.TITLE)) : null,
                 _decimal(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.EXTRA_COST)), BigDecimal.ZERO),
                 itemGuid,
                 _decimalQty(c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.ITEM_SUB_QTY))),
