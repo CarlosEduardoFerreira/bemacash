@@ -21,20 +21,15 @@ public class PrinterAliasModel extends AliasModel implements Serializable, IValu
     public String guid;
     public String alias;
 
-    private List<String> mIgnoreFields;
-
-    public PrinterAliasModel(String guid, String alias, List<String> ignoreFields) {
+    public PrinterAliasModel(String guid, String alias) {
         this.guid = guid;
         this.alias = alias;
-
-        this.mIgnoreFields = ignoreFields;
     }
 
     public PrinterAliasModel(Cursor c) {
         this(
                 c.getString(c.getColumnIndex(PrinterAliasTable.GUID)),
-                c.getString(c.getColumnIndex(PrinterAliasTable.ALIAS)),
-                null
+                c.getString(c.getColumnIndex(PrinterAliasTable.ALIAS))
         );
     }
 
@@ -48,8 +43,8 @@ public class PrinterAliasModel extends AliasModel implements Serializable, IValu
         ContentValues cv = new ContentValues();
         cv.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
 
-        if (mIgnoreFields == null || !mIgnoreFields.contains(PrinterAliasTable.GUID)) cv.put(PrinterAliasTable.GUID, guid);
-        if (mIgnoreFields == null || !mIgnoreFields.contains(PrinterAliasTable.ALIAS)) cv.put(PrinterAliasTable.ALIAS, alias);
+        cv.put(PrinterAliasTable.GUID, guid);
+        cv.put(PrinterAliasTable.ALIAS, alias);
         return cv;
     }
 

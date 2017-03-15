@@ -29,14 +29,9 @@ public class PrinterAliasJdbcConverter extends JdbcConverter<PrinterAliasModel> 
 
     @Override
     public PrinterAliasModel toValues(JdbcJSONObject rs) throws JSONException {
-        List<String> ignoreFields = new ArrayList<>();
-        if (!rs.has(ID)) ignoreFields.add(ShopStore.PrinterAliasTable.GUID);
-        if (!rs.has(ALIAS)) ignoreFields.add(ShopStore.PrinterAliasTable.ALIAS);
-
         return new PrinterAliasModel(
                 rs.getString(ID),
-                rs.getString(ALIAS),
-                ignoreFields
+                rs.getString(ALIAS)
         );
     }
 

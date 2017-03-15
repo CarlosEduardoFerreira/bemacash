@@ -43,7 +43,7 @@ public class TaxGroupJdbcConverter extends JdbcConverter<TaxGroupModel> {
                 rs.getString(ID),
                 rs.getString(TITLE),
                 rs.getBigDecimal(TAX),
-                rs.getInt(IS_DEFAULT) == 1,
+                rs.getBoolean(IS_DEFAULT),
                 null);
     }
 

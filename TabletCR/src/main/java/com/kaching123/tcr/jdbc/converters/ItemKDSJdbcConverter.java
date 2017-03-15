@@ -2,10 +2,12 @@ package com.kaching123.tcr.jdbc.converters;
 
 import android.content.ContentValues;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ItemKdsModel;
 import com.kaching123.tcr.model.KDSAliasModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
@@ -52,12 +54,20 @@ public class ItemKDSJdbcConverter extends JdbcConverter<ItemKdsModel> {
 
     @Override
     public String getLocalGuidColumn() {
-        return null;
+        return ShopStore.ItemKDSTable.ID;
     }
 
     @Override
     public JSONObject getJSONObject(ItemKdsModel model) {
-        return null;
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put(ITEM_ID, model.guid)
+                    .put(KDS_ID, model.kdsID);
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+        return json;
     }
 
     @Override
@@ -74,6 +84,11 @@ public class ItemKDSJdbcConverter extends JdbcConverter<ItemKdsModel> {
                 .add(ITEM_ID, model.itemID)
                 .where(KDS_ID, model.kdsID)
                 .build(JdbcFactory.getApiMethod(model));
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 
 }

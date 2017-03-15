@@ -52,6 +52,7 @@ import com.kaching123.tcr.jdbc.converters.ItemsModifierGroupsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsModifiersJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.ItemsMovementJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
+import com.kaching123.tcr.jdbc.converters.KDSAliasJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.LoyaltyPointsMovementJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.MunicipalityJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PaymentTransactionJdbcConverter;
@@ -488,6 +489,10 @@ public class LocalSyncHelper {
                 operation.table = ShopStore.MunicipalityTable.TABLE_NAME;
                 model = new MunicipalityJdbcConverter().toValues(json);
             }
+            if (JdbcConverter.compareTable(table, ShopStore.KDSAliasTable.TABLE_NAME, KDSAliasJdbcConverter.TABLE_NAME)) {
+                operation.table = ShopStore.KDSAliasTable.TABLE_NAME;
+                model = new KDSAliasJdbcConverter().toValues(json);
+            }
             if (JdbcConverter.compareTable(table, ShopStore.LoyaltyPointsMovementTable.TABLE_NAME, LoyaltyPointsMovementJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.LoyaltyPointsMovementTable.TABLE_NAME;
                 model = new LoyaltyPointsMovementJdbcConverter().toValues(json);
@@ -536,6 +541,10 @@ public class LocalSyncHelper {
                 operation.table = ShopStore.UnitTable.TABLE_NAME;
                 model = new UnitsJdbcConverter().toValues(json);
             }
+            if (JdbcConverter.compareTable(table, ShopStore.TaxGroupTable.TABLE_NAME, TaxGroupJdbcConverter.TABLE_NAME)) {
+                operation.table = ShopStore.TaxGroupTable.TABLE_NAME;
+                model = new TaxGroupJdbcConverter().toValues(json);
+            }
             if (JdbcConverter.compareTable(table, ShopStore.VariantItemTable.TABLE_NAME, VariantItemJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.VariantItemTable.TABLE_NAME;
                 model = new VariantItemJdbcConverter().toValues(json);
@@ -544,7 +553,6 @@ public class LocalSyncHelper {
                 operation.table = ShopStore.VariantSubItemTable.TABLE_NAME;
                 model = new VariantSubItemJdbcConverter().toValues(json);
             }
-
         } catch (JSONException e) {
             Logger.e(TAG_HEIGHT, e);
         }

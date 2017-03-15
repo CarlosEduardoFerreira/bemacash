@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.KDSTable;
 
@@ -39,6 +40,8 @@ public class ItemKdsModel implements IValueModel, Parcelable {
     @Override
     public ContentValues toValues() {
         ContentValues values = new ContentValues();
+        values.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
         values.put(ShopStore.ItemKDSTable.ID, guid);
         values.put(ShopStore.ItemKDSTable.ITEM_GUID, itemID);
         values.put(ShopStore.ItemKDSTable.KDS_ALIAS_GUID, kdsID);
@@ -47,7 +50,7 @@ public class ItemKdsModel implements IValueModel, Parcelable {
 
     @Override
     public String getIdColumn() {
-        return null;
+        return ShopStore.ItemKDSTable.ID;
     }
 
     @Override

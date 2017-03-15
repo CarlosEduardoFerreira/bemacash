@@ -1,8 +1,10 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.KDSAliasModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
@@ -42,12 +44,20 @@ public class KDSAliasJdbcConverter extends JdbcConverter<KDSAliasModel> {
 
     @Override
     public String getLocalGuidColumn() {
-        return null;
+        return ShopStore.KDSAliasTable.GUID;
     }
 
     @Override
     public JSONObject getJSONObject(KDSAliasModel model) {
-        return null;
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put(ID, model.guid)
+                    .put(ALIAS, model.alias);
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+        return json;
     }
 
     @Override
@@ -64,6 +74,11 @@ public class KDSAliasJdbcConverter extends JdbcConverter<KDSAliasModel> {
                 .add(ALIAS, model.alias)
                 .where(ID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 
 }

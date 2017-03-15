@@ -327,6 +327,7 @@ public class JdbcFactory {
         API_METHOD2.put(PrinterAliasModel.class, "printer_aliases");
 
         CONVERTERS.put(KDSAliasTable.TABLE_NAME, c = new KDSAliasJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(KDSAliasModel.class, c);
 
         CONVERTERS.put(ShopStore.ItemKDSTable.TABLE_NAME, c = new ItemKDSJdbcConverter());

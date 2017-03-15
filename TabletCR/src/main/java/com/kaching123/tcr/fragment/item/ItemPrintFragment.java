@@ -257,7 +257,7 @@ public class ItemPrintFragment extends ItemBaseFragment {
         @Override
         public void onLoadFinished(Loader<List<PrinterAliasModel>> listLoader, List<PrinterAliasModel> printerAliasModels) {
             ArrayList<PrinterAliasModel> models = new ArrayList<>(printerAliasModels.size() + 1);
-            models.add(new PrinterAliasModel(null, "None", null));
+            models.add(new PrinterAliasModel(null, "None"));
             models.addAll(printerAliasModels);
             kitchenAdapter.changeCursor(models);
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.store.AsyncCommand;
@@ -23,6 +24,8 @@ import com.telly.groundy.annotations.OnSuccess;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
+
+import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 
 /**
  * Created by vkompaniets on 07.07.2016.
@@ -60,7 +63,11 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
 
         if(cursor.moveToNext()) {
             CustomerModel customerModel = new CustomerModel(cursor);
-            customerModel.loyaltyPoints = customerModel.loyaltyPoints.add(points);
+            BigDecimal newPoints = customerModel.loyaltyPoints.add(points);
+            Log.d("BemaCarl1","AddLoyaltyPointsMovementCommand.doCommand.customerModel.loyaltyPoints: " + customerModel.loyaltyPoints);
+            Log.d("BemaCarl1","AddLoyaltyPointsMovementCommand.doCommand.customerModel.points: " + points);
+            Log.d("BemaCarl1","AddLoyaltyPointsMovementCommand.doCommand.customerModel.newPoints: " + newPoints);
+            customerModel.loyaltyPoints = newPoints;
 
             CustomerJdbcConverter customerJdbcConverter = (CustomerJdbcConverter) JdbcFactory.getConverter(ShopStore.CustomerTable.TABLE_NAME);
             sql.add(customerJdbcConverter.updateSQL(customerModel, getAppCommandContext()));

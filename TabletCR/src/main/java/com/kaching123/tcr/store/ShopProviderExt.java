@@ -251,9 +251,11 @@ public class ShopProviderExt extends ShopProvider {
 
     @Override
     public int bulkInsert(Uri uri, ContentValues[] valuesAr) {
+        Log.d("BemaCarl1","ShopProviderExt.bulkInsert");
         int count = super.bulkInsert(uri, valuesAr);
         if (count > 0) {
             String path = getUriPath(uri);
+            Log.d("BemaCarl1","ShopProviderExt.bulkInsert.path: " + path);
             if (SaleItemTable.URI_CONTENT.equals(path)) {
                 Logger.d("RecalculateOrderPrice: bulkInsert SaleItemTable");
                 saleItemHelper.bulkRecalcSaleItemTable(valuesAr);

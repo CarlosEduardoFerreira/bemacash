@@ -2,6 +2,7 @@ package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
 
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.store.ShopStore;
 
 /**
@@ -20,6 +21,8 @@ public class KDSAliasModel extends AliasModel {
     @Override
     public ContentValues toValues() {
         ContentValues cv = new ContentValues();
+        cv.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
+
         cv.put(ShopStore.KDSAliasTable.GUID, guid);
         cv.put(ShopStore.KDSAliasTable.ALIAS, alias);
         return cv;
@@ -27,6 +30,6 @@ public class KDSAliasModel extends AliasModel {
 
     @Override
     public String getIdColumn() {
-        return null;
+        return ShopStore.KDSAliasTable.GUID;
     }
 }
