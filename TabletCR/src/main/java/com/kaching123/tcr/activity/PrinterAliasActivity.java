@@ -74,9 +74,6 @@ public class PrinterAliasActivity extends SuperBaseActivity {
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d("BemaCarl2","PrinterAliasActivity.onItemClick.adapter.getItem(i).toValues(): " + adapter.getItem(i).toValues());
-                Log.d("BemaCarl2","PrinterAliasActivity.onItemClick.adapter.getItem(i).guid: " + adapter.getItem(i).guid);
-                Log.d("BemaCarl2","PrinterAliasActivity.onItemClick.adapter.getItem(i).alias: " + adapter.getItem(i).alias);
                 PrinterAliasModel pam = new PrinterAliasModel(adapter.getItem(i).guid , adapter.getItem(i).alias);
                 AddEditDialog.show(PrinterAliasActivity.this, pam, StartMode.EDIT);
             }

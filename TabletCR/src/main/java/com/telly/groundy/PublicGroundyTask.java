@@ -2,6 +2,7 @@ package com.telly.groundy;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.TcrApplication;

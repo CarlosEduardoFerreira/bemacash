@@ -1,6 +1,7 @@
 package com.kaching123.tcr.commands.loyalty;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.CustomerJdbcConverter;
@@ -15,6 +17,7 @@ import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.LoyaltyPointsMovementModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
+import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.LoyaltyPointsMovementTable;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
+import static com.kaching123.tcr.model.SqlCommandHelper.getContentValues;
 
 /**
  * Created by vkompaniets on 07.07.2016.
@@ -47,7 +51,9 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
         String customerId = getStringArg(ARG_CUSTOMER);
         BigDecimal points = (BigDecimal)getArgs().getSerializable(ARG_POINTS);
 
-        movement = new LoyaltyPointsMovementModel(UUID.randomUUID().toString(), customerId, points);
+        long shopId = TcrApplication.get().getShopId();
+
+        movement = new LoyaltyPointsMovementModel(UUID.randomUUID().toString(), customerId, points, shopId);
 
         operations = new ArrayList<>();
         operations.add(ContentProviderOperation.newInsert(URI_MOVEMENT)
@@ -57,6 +63,13 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
         sql = batchInsert(movement);
         sql.add(JdbcFactory.getConverter(movement).insertSQL(movement, getAppCommandContext()));
 
+        /** Upload *********************************************************/
+        ContentValues values = getContentValues(sql, System.currentTimeMillis(), false);
+        getContext().getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT), values);
+        OfflineCommandsService.startUpload(getContext());
+        /********************************************************* Upload **/
+
+        /*
         Cursor cursor = ProviderAction.query(CUSTOMER_URI)
                 .where(ShopStore.CustomerTable.GUID + " = ?", customerId)
                 .perform(getContext());
@@ -69,10 +82,11 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
             Log.d("BemaCarl1","AddLoyaltyPointsMovementCommand.doCommand.customerModel.newPoints: " + newPoints);
             customerModel.loyaltyPoints = newPoints;
 
-            CustomerJdbcConverter customerJdbcConverter = (CustomerJdbcConverter) JdbcFactory.getConverter(ShopStore.CustomerTable.TABLE_NAME);
-            sql.add(customerJdbcConverter.updateSQL(customerModel, getAppCommandContext()));
+            //CustomerJdbcConverter customerJdbcConverter = (CustomerJdbcConverter) JdbcFactory.getConverter(ShopStore.CustomerTable.TABLE_NAME);
+            //sql.add(customerJdbcConverter.updateSQL(customerModel, getAppCommandContext()));
 
         }
+        /**/
 
         return succeeded();
     }

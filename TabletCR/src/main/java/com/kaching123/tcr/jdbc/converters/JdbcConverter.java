@@ -1,5 +1,7 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import android.util.Log;
+
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;

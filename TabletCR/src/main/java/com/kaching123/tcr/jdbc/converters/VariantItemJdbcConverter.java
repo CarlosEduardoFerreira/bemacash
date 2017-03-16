@@ -1,5 +1,7 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import android.util.Log;
+
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.VariantItemModel;

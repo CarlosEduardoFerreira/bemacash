@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderCommand;

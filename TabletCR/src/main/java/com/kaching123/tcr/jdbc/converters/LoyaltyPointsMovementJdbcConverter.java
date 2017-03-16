@@ -24,14 +24,15 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
     private static final String ID = "ID";
     private static final String CUSTOMER_ID = "CUSTOMER_ID";
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
-    private static final String SALE_ORDER_ID = "SALE_ORDER_ID";
+    private static final String SHOP_ID = "SHOP_ID";
 
     @Override
     public LoyaltyPointsMovementModel toValues(JdbcJSONObject rs) throws JSONException {
         return new LoyaltyPointsMovementModel(
                 rs.getString(ID),
                 rs.getString(CUSTOMER_ID),
-                rs.getBigDecimal(LOYALTY_POINTS)
+                rs.getBigDecimal(LOYALTY_POINTS),
+                rs.getLong(SHOP_ID)
         );
     }
 
@@ -57,7 +58,8 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
             json = new JSONObject()
                     .put(ID, model.guid)
                     .put(CUSTOMER_ID, model.customerId)
-                    .put(LOYALTY_POINTS, model.loyaltyPoints);
+                    .put(LOYALTY_POINTS, model.loyaltyPoints)
+                    .put(SHOP_ID, model.shopId);;
         } catch (JSONException e) {
             Logger.e("JSONException", e);
         }
@@ -70,8 +72,8 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
                 .add(ID, model.guid)
                 .add(CUSTOMER_ID, model.customerId)
                 .add(LOYALTY_POINTS, model.loyaltyPoints)
+                .add(SHOP_ID, model.shopId)
                 .build(JdbcFactory.getApiMethod(model));
-
     }
 
     @Override
@@ -79,6 +81,7 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
         return _update(TABLE_NAME, appCommandContext)
                 .add(CUSTOMER_ID, model.customerId)
                 .add(LOYALTY_POINTS, model.loyaltyPoints)
+                .add(SHOP_ID, model.shopId)
                 .where(ID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }

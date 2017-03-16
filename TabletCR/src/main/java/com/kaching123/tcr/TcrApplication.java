@@ -10,6 +10,7 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 
 import com.facebook.stetho.Stetho;
 import com.google.common.io.CharStreams;
@@ -458,7 +459,8 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public synchronized long getShopId() {
-        return operator == null ? 0 : operator.shopId;
+        long shopId = operator == null ? 0 : operator.shopId;
+        return shopId;
     }
 
     public synchronized String getOperatorGuid() {

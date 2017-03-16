@@ -2484,6 +2484,10 @@ public abstract class ShopStore {
         @Column(type = Type.TEXT)
         String LOYALTY_POINTS = "loyalty_points";
 
+        @NotNull
+        @Column(type = Type.INTEGER)
+        String SHOP_ID = "shop_id";
+
         @Column(type = Type.INTEGER)
         String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }

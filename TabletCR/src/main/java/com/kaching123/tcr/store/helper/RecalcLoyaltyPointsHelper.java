@@ -20,7 +20,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 /**
  * Created by vkompaniets on 01.07.2016.
  */
-public class RecalcLoyaltyPointsHelper extends ProviderHelper {
+public class RecalcLoyaltyPointsHelper extends ProviderHelper  {
 
     private static final Uri URI_CUSTOMER = ShopProvider.contentUri(CustomerTable.URI_CONTENT);
     private static final Uri URI_LOYALTY_MOVEMENT_GROUP_BY = ShopProvider.contentUriGroupBy(LoyaltyPointsMovementTable.URI_CONTENT, LoyaltyPointsMovementTable.CUSTOMER_ID);
@@ -30,17 +30,14 @@ public class RecalcLoyaltyPointsHelper extends ProviderHelper {
     }
 
     public void recalculateCustomerLoyaltyPoints(String customerId){
-        Log.d("BemaCarl1","RecalcLoyaltyPointsHelper.recalculateCustomerLoyaltyPoints");
         Cursor c = ProviderAction.query(URI_LOYALTY_MOVEMENT_GROUP_BY)
                 .projection("SUM(" + LoyaltyPointsMovementTable.LOYALTY_POINTS + ")")
                 .where(LoyaltyPointsMovementTable.CUSTOMER_ID + " = ?", customerId)
                 .perform(getContext());
-        Log.d("BemaCarl1","RecalcLoyaltyPointsHelper.recalculateCustomerLoyaltyPoints.customerId" + customerId);
 
         BigDecimal points = null;
         if (c.moveToFirst()){
             points = _decimal(c, 0, BigDecimal.ZERO);
-            Log.d("BemaCarl1","RecalcLoyaltyPointsHelper.recalculateCustomerLoyaltyPoints.points" + points);
         }
         c.close();
 
@@ -61,12 +58,9 @@ public class RecalcLoyaltyPointsHelper extends ProviderHelper {
                 new String[]{movementId},
                 null, null, null);
 
-        Log.d("BemaCarl1","RecalcLoyaltyPointsHelper.recalculateCustomerLoyaltyPoints2.movementId" + movementId);
-
         String customerId = null;
         if (c.moveToFirst()){
             customerId = c.getString(0);
-            Log.d("BemaCarl1","RecalcLoyaltyPointsHelper.recalculateCustomerLoyaltyPoints2.customerId" + customerId);
         }
         c.close();
 
@@ -79,18 +73,19 @@ public class RecalcLoyaltyPointsHelper extends ProviderHelper {
 
         Log.d("BemaCarl1","RecalcLoyaltyPointsHelper.bulkRecalcCustomerLoyaltyPointsAfterSync");
         Cursor c = ProviderAction.query(URI_LOYALTY_MOVEMENT_GROUP_BY)
-                .projection(LoyaltyPointsMovementTable.CUSTOMER_ID, "SUM(" + LoyaltyPointsMovementTable.LOYALTY_POINTS + ")")
+                .projection(
+                        LoyaltyPointsMovementTable.CUSTOMER_ID,
+                        "SUM(" + LoyaltyPointsMovementTable.LOYALTY_POINTS + ")"
+                )
                 .perform(getContext());
-        Log.d("BemaCarl1","RecalcLoyaltyPointsHelper.LoyaltyPointsMovementTable.LOYALTY_POINTS: " + LoyaltyPointsMovementTable.LOYALTY_POINTS);
 
         while (c.moveToNext()){
             String customerId = c.getString(0);
-            Log.d("BemaCarl1","RecalcLoyaltyPointsHelper.customerId: " + customerId);
-            Log.d("BemaCarl1","RecalcLoyaltyPointsHelper.c.getString(1): " + c.getString(1));
             BigDecimal loyaltyPoints = _decimal(c, 1, BigDecimal.ZERO);
+
             ContentValues cv = new ContentValues(1);
             cv.put(CustomerTable.TMP_LOYALTY_POINTS, _decimal(loyaltyPoints));
-            Log.d("BemaCarl1","RecalcLoyaltyPointsHelper._decimal(loyaltyPoints): " + _decimal(loyaltyPoints));
+
             ContentResolver cr = getContext().getContentResolver();
             cr.update(URI_CUSTOMER, cv, CustomerTable.GUID + " = ?", new String[]{customerId});
         }

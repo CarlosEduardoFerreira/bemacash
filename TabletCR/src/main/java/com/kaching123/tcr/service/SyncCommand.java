@@ -1009,24 +1009,20 @@ public class SyncCommand implements Runnable {
     }
 
     private int syncTableWithChildren2(Context context, SyncApi2 api, String localTable, String guidColumn, String parentIdColumn, EmployeeModel employeeModel, long serverLastUpdateTime, Long minUpdateTime, boolean fillHistoryGep) throws SyncException, SyncLockedException, SyncInterruptedException {
-        Log.d("BemaCarl1","SyncCommand.syncTableWithChildren21.localTable: " + localTable);
         int count = syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
         count += syncSingleTable2(context, api, localTable, guidColumn, employeeModel, true, parentIdColumn, true, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
         return count;
     }
 
     private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime) throws SyncException, SyncLockedException, SyncInterruptedException {
-        Log.d("BemaCarl1","SyncCommand.syncSingleTable22.localTable: " + localTable);
         return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, 0L, false, false, false, false);
     }
 
     private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, Long minUpdateTime, boolean fillHistoryGep) throws SyncException, SyncLockedException, SyncInterruptedException {
-        Log.d("BemaCarl1","SyncCommand.syncSingleTable23.localTable: " + localTable);
         return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, false, false);
     }
 
     private int syncSingleTable2(Context context, SyncApi2 api, String localTable, String guidColumn, EmployeeModel employeeModel, long serverLastUpdateTime, Long minUpdateTime, boolean fillHistoryGep, boolean isSyncGap, boolean isFirstSync) throws SyncException, SyncLockedException, SyncInterruptedException {
-        Log.d("BemaCarl1","SyncCommand.syncSingleTable24.localTable: " + localTable);
         return syncSingleTable2(context, api, localTable, guidColumn, employeeModel, false, null, false, serverLastUpdateTime, minUpdateTime, true, fillHistoryGep, isSyncGap, isFirstSync);
     }
 
@@ -1044,7 +1040,7 @@ public class SyncCommand implements Runnable {
                                  boolean fillHistoryGep,
                                  boolean isSyncGap,
                                  boolean isFirstSync) throws SyncException, SyncLockedException, SyncInterruptedException {
-        Log.d("BemaCarl1","SyncCommand.syncSingleTable25.localTable: " + localTable);
+
         fireEvent(context, localTable);
         TcrApplication app = TcrApplication.get();
 

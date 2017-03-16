@@ -1,5 +1,7 @@
 package com.kaching123.tcr.jdbc;
 
+import android.util.Log;
+
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
@@ -174,8 +176,9 @@ public abstract class JdbcBuilder {
     }
 
     public static JdbcBuilder _insert(String table, IAppCommandContext appCommandContext) {
-        return new InsertBuilder(table)
-                .add(FIELD_SHOP_ID, appCommandContext != null ? appCommandContext.getShopId() : TcrApplication.get().getShopPref().shopId().get());
+        String shopId1 = String.valueOf(appCommandContext != null ? appCommandContext.getShopId(): "");
+        String shopId2 = String.valueOf(TcrApplication.get().getShopPref().shopId().get());
+        return new InsertBuilder(table).add(FIELD_SHOP_ID, appCommandContext != null ? shopId1 : shopId2);
     }
 
     public static JdbcBuilder _insert(long shopId, String table) {

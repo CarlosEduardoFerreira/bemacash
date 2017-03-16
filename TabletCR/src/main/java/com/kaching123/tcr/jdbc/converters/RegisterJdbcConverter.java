@@ -1,5 +1,7 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import android.util.Log;
+
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -115,7 +117,7 @@ public class RegisterJdbcConverter extends JdbcConverter<RegisterModel> {
                 TABLE_NAME,
                 REGISTER_SERIAL,
                 STATUS
-                );
+        );
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.kaching123.tcr.commands.rest.sync.v1;
 
+import android.util.Log;
+
 import com.kaching123.tcr.Logger;
 
 import org.json.JSONArray;

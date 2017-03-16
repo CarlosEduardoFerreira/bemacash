@@ -1,5 +1,7 @@
 package com.kaching123.tcr.service.broadcast;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 /**

@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;

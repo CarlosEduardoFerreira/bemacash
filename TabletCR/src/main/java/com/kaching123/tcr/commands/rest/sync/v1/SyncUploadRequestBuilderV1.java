@@ -1,5 +1,7 @@
 package com.kaching123.tcr.commands.rest.sync.v1;
 
+import android.util.Log;
+
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.util.JdbcJSONObject;
