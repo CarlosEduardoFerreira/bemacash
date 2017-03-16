@@ -3,6 +3,7 @@ package com.kaching123.tcr.fragment.printeralias;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -50,16 +51,25 @@ public class AddEditDialog extends StyledDialogFragment {
         WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
         params.width = getResources().getDimensionPixelOffset(R.dimen.printer_alias_dialog_width);
         params.height = getResources().getDimensionPixelOffset(R.dimen.printer_alias_dialog_height);
-
+        Log.d("BemaCarl2","AddEditDialog.onActivityCreated");
+        if (title != null)
+        Log.d("BemaCarl2","AddEditDialog.onActivityCreated.title.getText(): " + title.getText());
         if (model != null){
+            Log.d("BemaCarl2","AddEditDialog.onActivityCreated.model.toValues(): " + model.toValues());
+            model.guid = model.toValues().getAsString("guid");
+            model.alias = model.toValues().getAsString("alias");
+            Log.d("BemaCarl2","AddEditDialog.onActivityCreated.model.guid: " + model.guid);
+            Log.d("BemaCarl2","AddEditDialog.onActivityCreated.model.alias: " + model.alias);
             title.setText(model.alias);
         }
 
         title.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                Log.d("BemaCarl2","AddEditDialog.onEditorAction.EditorInfo.IME_ACTION_DONE: " + EditorInfo.IME_ACTION_DONE+"|"+i);
                 if(EditorInfo.IME_ACTION_DONE == i){
                     if (doClick()) {
+                        Log.d("BemaCarl2","AddEditDialog.doClick");
                         dismiss();
                     }
                     return true;
@@ -102,13 +112,18 @@ public class AddEditDialog extends StyledDialogFragment {
     private boolean doClick() {
         if (valideForm()){
             String title = this.title.getText().toString().trim();
+            Log.d("BemaCarl2","AddEditDialog.doClick.title: " + title);
+            Log.d("BemaCarl2","AddEditDialog.doClick.(model instanceof PrinterAliasModel): " + (model instanceof PrinterAliasModel));
             if (mode == StartMode.EDIT){
+                Log.d("BemaCarl2","AddEditDialog.doClick.if (mode == StartMode.EDIT){: ");
                 model.alias = title;
+                Log.d("BemaCarl2","AddEditDialog.doClick.model.alias: " + model.alias);
                 if(model instanceof PrinterAliasModel)
-                    EditPrinterAliasCommand.start(getActivity(), (PrinterAliasModel) model);
+                    EditPrinterAliasCommand.start(getActivity(), new PrinterAliasModel(((PrinterAliasModel) model).guid, title));
                 else
-                    EditKDSAliasCommand.start(getActivity(), (KDSAliasModel) model);
+                    EditKDSAliasCommand.start(getActivity(), new KDSAliasModel(((KDSAliasModel) model).guid, title));
             }else{
+                Log.d("BemaCarl2","AddEditDialog.doClick.}else{: ");
                 if(model instanceof PrinterAliasModel)
                     AddPrinterAliasCommand.start(getActivity(), title);
                 else

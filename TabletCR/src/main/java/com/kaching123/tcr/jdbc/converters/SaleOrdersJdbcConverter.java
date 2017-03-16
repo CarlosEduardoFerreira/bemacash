@@ -83,7 +83,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
         if (!rs.has(KDS_SEND_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.KDS_SEND_STATUS);
         if (!rs.has(TRANSACTION_FEE)) ignoreFields.add(ShopStore.SaleOrderTable.TRANSACTION_FEE);
         if (!rs.has(ON_REGISTER)) ignoreFields.add(ShopStore.SaleOrderTable.ON_REGISTER);
-        Log.d("BemaCarl2","SaleOrdersJdbcConverter.toValues.rs.getString(OPERATOR_ID): " + rs.getString(OPERATOR_ID));
+
         return new SaleOrderModel(
                 rs.getString(ID),
                 rs.getDate(CREATE_TIME),

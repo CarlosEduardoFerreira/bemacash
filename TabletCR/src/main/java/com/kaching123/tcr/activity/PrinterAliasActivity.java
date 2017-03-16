@@ -1,11 +1,13 @@
 package com.kaching123.tcr.activity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.printeralias.AddEditDialog;
+import com.kaching123.tcr.model.AliasModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.model.StartMode;
@@ -71,7 +74,11 @@ public class PrinterAliasActivity extends SuperBaseActivity {
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                AddEditDialog.show(PrinterAliasActivity.this, adapter.getItem(i), StartMode.EDIT);
+                Log.d("BemaCarl2","PrinterAliasActivity.onItemClick.adapter.getItem(i).toValues(): " + adapter.getItem(i).toValues());
+                Log.d("BemaCarl2","PrinterAliasActivity.onItemClick.adapter.getItem(i).guid: " + adapter.getItem(i).guid);
+                Log.d("BemaCarl2","PrinterAliasActivity.onItemClick.adapter.getItem(i).alias: " + adapter.getItem(i).alias);
+                PrinterAliasModel pam = new PrinterAliasModel(adapter.getItem(i).guid , adapter.getItem(i).alias);
+                AddEditDialog.show(PrinterAliasActivity.this, pam, StartMode.EDIT);
             }
         });
         getSupportLoaderManager().restartLoader(0, null, new PrinterAliasLoader());
@@ -79,7 +86,7 @@ public class PrinterAliasActivity extends SuperBaseActivity {
 
     @OptionsItem
     protected void actionAddSelected(){
-        AddEditDialog.show(this, new PrinterAliasModel("",""), StartMode.ADD);
+        AddEditDialog.show(this, new PrinterAliasModel(), StartMode.ADD);
     }
 
     private class Adapter extends ObjectsCursorAdapter<PrinterAliasModel> implements DragSortListView.RemoveListener {

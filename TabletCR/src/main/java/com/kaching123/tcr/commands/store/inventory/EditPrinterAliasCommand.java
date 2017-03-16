@@ -3,7 +3,6 @@ package com.kaching123.tcr.commands.store.inventory;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.PrinterAliasModel;
@@ -25,7 +24,6 @@ public class EditPrinterAliasCommand extends AsyncCommand{
 
     @Override
     protected TaskResult doCommand() {
-        Logger.d("EditPrinterAliasCommand doCommand");
         model = (PrinterAliasModel) getArgs().getSerializable(ARG_MODEL);
 
         return succeeded();

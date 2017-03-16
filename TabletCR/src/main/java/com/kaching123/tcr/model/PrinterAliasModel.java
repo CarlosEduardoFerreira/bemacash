@@ -21,6 +21,10 @@ public class PrinterAliasModel extends AliasModel implements Serializable, IValu
     public String guid;
     public String alias;
 
+    public PrinterAliasModel() {
+        super();
+    }
+
     public PrinterAliasModel(String guid, String alias) {
         this.guid = guid;
         this.alias = alias;
