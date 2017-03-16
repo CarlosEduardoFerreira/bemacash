@@ -90,6 +90,7 @@ public class RefundCashFragmentDialog extends StyledDialogFragment implements ID
     private ArrayList<PaymentTransactionModel> refundChildTransactions = new ArrayList<PaymentTransactionModel>();
     private IRefundProgressListener listener;
     private BigDecimal amount;
+    private BigDecimal savedTotalAvailable = BigDecimal.ZERO;
     private int max;
     private int current = 0;
 
@@ -176,6 +177,7 @@ public class RefundCashFragmentDialog extends StyledDialogFragment implements ID
             @Override
             public boolean onClick() {
                 if (listener != null) {
+                    recalcLeftAmountRounding();
                     listener.onComplete(amount, refundChildTransactions, returnOrder);
                 }
                 return false;
@@ -223,6 +225,9 @@ public class RefundCashFragmentDialog extends StyledDialogFragment implements ID
     public RefundCashFragmentDialog setTransactions(List<PaymentTransactionModel> transactions) {
         max = transactions.size();
         cashTransactions.addAll(transactions);
+        for (PaymentTransactionModel transaction : transactions) {
+            savedTotalAvailable = savedTotalAvailable.add(transaction.availableAmount);
+        }
         return this;
     }
 
@@ -256,7 +261,19 @@ public class RefundCashFragmentDialog extends StyledDialogFragment implements ID
 
     @Override
     public void onPopupCancelled() {
+        recalcLeftAmountRounding();
         listener.onComplete(amount, refundChildTransactions, returnOrder);
+    }
+
+    private void recalcLeftAmountRounding(){
+        BigDecimal totalRefund = BigDecimal.ZERO;
+        for (PaymentTransactionModel refundChildTransaction : refundChildTransactions) {
+            totalRefund = totalRefund.add(refundChildTransaction.amount.abs());
+        }
+        BigDecimal tmpAmount = savedTotalAvailable.subtract(totalRefund).abs();
+        if (amount.abs().compareTo(BigDecimal.valueOf(0.01)) == 0 && tmpAmount.compareTo(BigDecimal.ZERO) == 0){
+            amount = BigDecimal.ZERO;
+        }
     }
 
     @Override

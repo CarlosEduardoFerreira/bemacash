@@ -78,6 +78,7 @@ public class RefundOtherFragmentDialog extends StyledDialogFragment {
     private ArrayList<PaymentTransactionModel> refundChildTransactions = new ArrayList<PaymentTransactionModel>();
     private IRefundProgressListener listener;
     private BigDecimal amount;
+    private BigDecimal savedTotalAvailable = BigDecimal.ZERO;
     private int max;
     private int current;
 
@@ -181,11 +182,23 @@ public class RefundOtherFragmentDialog extends StyledDialogFragment {
             @Override
             public boolean onClick() {
                 if (listener != null) {
+                    recalcLeftAmountRounding();
                     listener.onComplete(amount, refundChildTransactions, returnOrder);
                 }
                 return false;
             }
         };
+    }
+
+    private void recalcLeftAmountRounding(){
+        BigDecimal totalRefund = BigDecimal.ZERO;
+        for (PaymentTransactionModel refundChildTransaction : refundChildTransactions) {
+            totalRefund = totalRefund.add(refundChildTransaction.amount.abs());
+        }
+        BigDecimal tmpAmount = savedTotalAvailable.subtract(totalRefund).abs();
+        if (amount.abs().compareTo(BigDecimal.valueOf(0.01)) == 0 && tmpAmount.compareTo(BigDecimal.ZERO) == 0){
+            amount = BigDecimal.ZERO;
+        }
     }
 
     private void enableButton(boolean enabled) {
@@ -226,6 +239,9 @@ public class RefundOtherFragmentDialog extends StyledDialogFragment {
     public RefundOtherFragmentDialog setTransactions(List<PaymentTransactionModel> transactions) {
         max = transactions.size();
         this.transactions.addAll(transactions);
+        for (PaymentTransactionModel transaction : transactions) {
+            savedTotalAvailable = savedTotalAvailable.add(transaction.availableAmount);
+        }
         return this;
     }
 

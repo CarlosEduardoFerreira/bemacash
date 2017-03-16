@@ -18,6 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class RefundBaseFragmentDialog extends StyledDialogFragment {
 
     protected BigDecimal refundAmount;
+    protected BigDecimal savedTotalAvailable = BigDecimal.ZERO;
 
     protected int initTransactionsCount;
     protected int currentStep = 0;
@@ -35,6 +36,9 @@ public abstract class RefundBaseFragmentDialog extends StyledDialogFragment {
     protected RefundBaseFragmentDialog setTransactions(List<PaymentTransactionModel> transactions) {
         initTransactionsCount = transactions.size();
         this.transactions.addAll(transactions);
+        for (PaymentTransactionModel transaction : transactions) {
+            savedTotalAvailable = savedTotalAvailable.add(transaction.availableAmount);
+        }
         return this;
     }
 
@@ -54,7 +58,19 @@ public abstract class RefundBaseFragmentDialog extends StyledDialogFragment {
         enablePositiveButtons(false);
     }
 
+    private void recalcLeftAmountRounding(){
+        BigDecimal totalRefund = BigDecimal.ZERO;
+        for (PaymentTransactionModel refundChildTransaction : refundChildTransactions) {
+            totalRefund = totalRefund.add(refundChildTransaction.amount.abs());
+        }
+        BigDecimal tmpAmount = savedTotalAvailable.subtract(totalRefund).abs();
+        if (refundAmount.abs().compareTo(BigDecimal.valueOf(0.01)) == 0 && tmpAmount.compareTo(BigDecimal.ZERO) == 0){
+            refundAmount = BigDecimal.ZERO;
+        }
+    }
+
     protected void completeRefund(){
+        recalcLeftAmountRounding();
         refundListener.onComplete(refundAmount, refundChildTransactions, returnOrder);
     }
 
