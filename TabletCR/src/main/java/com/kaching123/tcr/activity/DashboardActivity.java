@@ -588,7 +588,19 @@ public class DashboardActivity extends SuperBaseActivity {
 //            }, Permission.SALES_RETURN);
 //            return;
 //        }
-        HistoryActivity.start(DashboardActivity.this);
+        if (!getApp().hasPermission(Permission.SALES_HISTORY)) {
+            PermissionFragment.showCancelable(this, new BaseTempLoginListener(this) {
+                @Override
+                public void onLoginComplete() {
+                    super.onLoginComplete();
+                    HistoryActivity.start(DashboardActivity.this);
+                }
+            }, Permission.ADMIN);
+            return;
+        } else {
+            HistoryActivity.start(DashboardActivity.this);
+        }
+
     }
 
 //    @OptionsItem
@@ -756,7 +768,18 @@ public class DashboardActivity extends SuperBaseActivity {
                         public boolean onClick() {
 //                            startShiftAction();
                             WaitDialogFragment.hide(DashboardActivity.this);
-                            HistoryActivity.start(DashboardActivity.this, true);
+                            if (!getApp().hasPermission(Permission.SALES_HISTORY)) {
+                                PermissionFragment.showCancelable(DashboardActivity.this, new BaseTempLoginListener(DashboardActivity.this) {
+                                    @Override
+                                    public void onLoginComplete() {
+                                        super.onLoginComplete();
+                                        HistoryActivity.start(DashboardActivity.this, true);
+                                    }
+                                }, Permission.ADMIN);
+                                return true;
+                            } else {
+                                HistoryActivity.start(DashboardActivity.this, true);
+                            }
                             return true;
                         }
                     }, null);

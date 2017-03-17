@@ -929,6 +929,7 @@
     <string name="item_multi_tax_group">%1$s Total</string>
     <string name="permission_sales_transaction">Sales Transaction</string>
     <string name="permission_sales_discount">Sales Discount</string>
+    <string name="permission_sales_history">Sales Hisrtory</string>
     <string name="permission_void_items">Void Items</string>
     <string name="permission_void_sales">Void After Tender</string>
     <string name="permission_sales_return">Sales Return</string>
@@ -2214,7 +2215,7 @@
     <string name="item_activity_sales_permitted_title">Attention</string>
     <string name="item_activity_sales_permitted_near_end" formatted = "false">After this sale, you will break %s percent of yearly transction amount. Are you sure you want to proceed?</string>
     <string name="warning_new_msg">Error TransactionUtil setNewValues</string>
-    <string name="nav_back_order_is_on_hold_msg">To navigate back, you must put this order on hold</string>
+    <string name="nav_back_order_is_on_hold_msg">To navigate back, order must be put on hold, voided, or paid</string>
     <!-- local sync ends -->
 
 

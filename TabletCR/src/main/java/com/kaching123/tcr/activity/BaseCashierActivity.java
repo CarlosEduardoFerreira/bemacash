@@ -1613,7 +1613,18 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 msr.releaseNow();
             }
         }
-        HistoryActivity.start(BaseCashierActivity.this);
+        if (!getApp().hasPermission(Permission.SALES_HISTORY)) {
+            PermissionFragment.showCancelable(this, new BaseTempLoginListener(this) {
+                @Override
+                public void onLoginComplete() {
+                    super.onLoginComplete();
+                    HistoryActivity.start(BaseCashierActivity.this);
+                }
+            }, Permission.ADMIN);
+            return;
+        } else {
+            HistoryActivity.start(this);
+        }
     }
 
     protected MsrDataFragment getMsr() {

@@ -15,6 +15,7 @@ public enum Permission implements LabaledEnum {
     SALES_TRANSACTION(1, R.string.permission_sales_transaction, Group.SALES_MODULE),
     SALES_TAX(20, R.string.permission_sales_tax, Group.SALES_MODULE),
     SALES_DISCOUNTS(2, R.string.permission_sales_discount, Group.SALES_MODULE),
+    SALES_HISTORY(103, R.string.permission_sales_history, Group.SALES_MODULE),
     SALES_RETURN(4, R.string.permission_sales_return, Group.SALES_MODULE),
     WARRANTY_EXPIRATION_OVERRIDE(23, R.string.permission_warranty_expiration_override, Group.SALES_MODULE),
     ON_HOLD_GLOBAL(102, R.string.permission_on_hold_global, Group.SALES_MODULE),
