@@ -196,8 +196,8 @@ public class TaxGroupsActivity extends SuperBaseActivity {
                 }, adapter);
     }
 
-    private void deleteTaxGroup(TaxGroupModel item) {
-        DeleteTaxGroupCommand.start(TaxGroupsActivity.this, item.guid, deleteTaxGroupCallback);
+    private void deleteTaxGroup(TaxGroupModel model) {
+        DeleteTaxGroupCommand.start(TaxGroupsActivity.this, model, deleteTaxGroupCallback);
     }
 
     private class TaxGroupsLoader implements LoaderCallbacks<List<TaxGroupModel>> {

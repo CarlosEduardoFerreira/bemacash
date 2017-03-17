@@ -1,7 +1,10 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import android.util.Log;
+
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.store.ShopStore;
@@ -17,6 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kaching123.tcr.jdbc.JdbcBuilder.FIELD_IS_DELETED;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 
@@ -44,7 +48,7 @@ public class TaxGroupJdbcConverter extends JdbcConverter<TaxGroupModel> {
                 rs.getString(TITLE),
                 rs.getBigDecimal(TAX),
                 rs.getBoolean(IS_DEFAULT),
-                null);
+                ignoreFields);
     }
 
     @Override
@@ -72,7 +76,6 @@ public class TaxGroupJdbcConverter extends JdbcConverter<TaxGroupModel> {
                     .put(TITLE, model.title)
                     .put(TAX, model.tax)
                     .put(IS_DEFAULT, model.isDefault);
-
         } catch (JSONException e) {
             Logger.e("JSONException", e);
         }
@@ -96,6 +99,20 @@ public class TaxGroupJdbcConverter extends JdbcConverter<TaxGroupModel> {
                 .add(TITLE, model.title)
                 .add(TAX, model.tax)
                 .add(IS_DEFAULT, model.isDefault)
+                .where(ID, model.guid)
+                .build(JdbcFactory.getApiMethod(model));
+    }
+
+    public SingleSqlCommand deleteTaxGroup(TaxGroupModel model, IAppCommandContext appCommandContext) {
+        Log.d("BemaCarl","TaxGroupJdbcConverter.deleteTaxGroup.model.guid: " + model.guid);
+        Log.d("BemaCarl","TaxGroupJdbcConverter.deleteTaxGroup.model.title: " + model.title);
+        Log.d("BemaCarl","TaxGroupJdbcConverter.deleteTaxGroup.model.tax: " + model.tax);
+        return _update(TABLE_NAME, appCommandContext)
+                .add(ID, model.guid)
+                .add(TITLE, model.title)
+                .add(TAX, model.tax)
+                .add(IS_DEFAULT, model.isDefault)
+                .add(FIELD_IS_DELETED, 1)
                 .where(ID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }

@@ -7,6 +7,7 @@ import android.net.Uri;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.ItemsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.TaxGroupJdbcConverter;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -26,18 +27,13 @@ public class DeleteTaxGroupCommand extends AsyncCommand {
     private static final Uri TAX_GROUP_URI = ShopProvider.getContentUri(ShopStore.TaxGroupTable.URI_CONTENT);
     private static final Uri ITEMS_URI = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
 
-    private static final String ARG_GUID = "ARG_GUID";
+    private static final String ARG_MODEL = "tax_group_model";
 
     private TaxGroupModel model;
 
     @Override
     protected TaskResult doCommand() {
-        String guid = getStringArg(ARG_GUID);
-
-        model = new TaxGroupModel(
-                guid,
-                null,
-                null);
+        model = (TaxGroupModel) getArgs().getSerializable(ARG_MODEL);
 
         return succeeded();
     }
@@ -61,14 +57,21 @@ public class DeleteTaxGroupCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
+
+        TaxGroupJdbcConverter taxGroupJdbcConverter = (TaxGroupJdbcConverter)JdbcFactory.getConverter(ShopStore.TaxGroupTable.TABLE_NAME);
+        ItemsJdbcConverter itemsJdbcConverter = (ItemsJdbcConverter)JdbcFactory.getConverter(ShopStore.ItemTable.TABLE_NAME);
+
         BatchSqlCommand sql = batchDelete(model);
-        sql.add(((ItemsJdbcConverter)JdbcFactory.getConverter(ShopStore.ItemTable.TABLE_NAME)).removeTaxGroup(model.guid, getAppCommandContext()));
-        sql.add(JdbcFactory.getConverter(model).deleteSQL(model, getAppCommandContext()));
+
+        sql.add(taxGroupJdbcConverter.deleteTaxGroup(model, getAppCommandContext()));
+
+        sql.add(itemsJdbcConverter.removeTaxGroup(model, getAppCommandContext()));
+
         return sql;
     }
 
-    public static void start(Context context, String guid, BaseDeleteTaxGroupCallback callback) {
-        create(DeleteTaxGroupCommand.class).arg(ARG_GUID, guid).callback(callback).queueUsing(context);
+    public static void start(Context context, TaxGroupModel model, BaseDeleteTaxGroupCallback callback) {
+        create(DeleteTaxGroupCommand.class).arg(ARG_MODEL, model).callback(callback).queueUsing(context);
     }
 
     public static abstract class BaseDeleteTaxGroupCallback {

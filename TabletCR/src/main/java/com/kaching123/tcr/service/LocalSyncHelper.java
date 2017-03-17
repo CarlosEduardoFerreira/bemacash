@@ -405,12 +405,54 @@ public class LocalSyncHelper {
 
     }
 
+
+    public static Object[] getContentValuesAndGuidColumn(SqlCommandObj.SqlCommandObjOperation operation, boolean insertOrReplace) throws JSONException {
+        if (operation == null) return null;
+        JdbcJSONObject json;
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        if (insertOrReplace) {
+            json = new JdbcJSONObject(gson.toJson(operation.args));
+        } else {
+            json = new JdbcJSONObject(gson.toJson(operation.args.get("update")));
+        }
+        IValueModel valueModel = getModel(operation, json);
+        if (valueModel == null) {
+            return null;
+        }
+
+        ContentValues contentValues = valueModel.toValues();
+        if (json.has(JdbcBuilder.FIELD_IS_DELETED)) {
+            contentValues.put(ShopStore.DEFAULT_IS_DELETED, json.getInt(JdbcBuilder.FIELD_IS_DELETED));
+        }
+        if (json.has(JdbcBuilder.FIELD_UPDATE_TIME)) {
+            contentValues.put(ShopStore.DEFAULT_UPDATE_TIME, json.getTimestamp(JdbcBuilder.FIELD_UPDATE_TIME).getTime());
+        }
+        if (json.has(JdbcBuilder.FIELD_UPDATE_TIME_LOCAL)) {
+            Date datetime = json.getTimestamp(JdbcBuilder.FIELD_UPDATE_TIME_LOCAL);
+            if (datetime != null) {
+                contentValues.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, datetime.getTime());
+            }
+        }
+
+        contentValues.put(ShopStore.ISupportDraftTable.UPDATE_IS_DRAFT, 1);
+
+        Object[] returned = new Object[2];
+        returned[0] = contentValues;
+        returned[1] = valueModel.getIdColumn();
+        return returned;
+    }
+
+
     private static IValueModel getModel(SqlCommandObj.SqlCommandObjOperation operation, JdbcJSONObject json) {
         IValueModel model = null;
 
         try {
             String table = operation.table;
-
+            Log.d("BemaCarl","LocalSyncHelper.getModel----------------------- start -----------------------");
+            Log.d("BemaCarl","LocalSyncHelper.getModel.operation.table: " + operation.table);
+            Log.d("BemaCarl","LocalSyncHelper.getModel.operation.action: " + operation.action);
+            Log.d("BemaCarl","LocalSyncHelper.getModel.operation.args: " + operation.args);
+            Log.d("BemaCarl","LocalSyncHelper.getModel.json: " + json);
             if (JdbcConverter.compareTable(table, ShopStore.CashDrawerMovementTable.TABLE_NAME, CashDrawerMovementJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.CashDrawerMovementTable.TABLE_NAME;
                 model = new CashDrawerMovementJdbcConverter().toValues(json);
@@ -550,44 +592,16 @@ public class LocalSyncHelper {
         } catch (JSONException e) {
             Logger.e(TAG_HEIGHT, e);
         }
+        if( model != null )
+            Log.d("BemaCarl","LocalSyncHelper.getModel.model.getIdColumn(): " + model.getIdColumn());
+        else
+            Log.d("BemaCarl","LocalSyncHelper.getModel.model: model is null!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        Log.d("BemaCarl","LocalSyncHelper.getModel------------------------ finish ---------------------");
+
         return model;
     }
 
-    public static Object[] getContentValuesAndGuidColumn(SqlCommandObj.SqlCommandObjOperation operation, boolean insertOrReplace) throws JSONException {
-        if (operation == null) return null;
-        JdbcJSONObject json;
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        if (insertOrReplace) {
-            json = new JdbcJSONObject(gson.toJson(operation.args));
-        } else {
-            json = new JdbcJSONObject(gson.toJson(operation.args.get("update")));
-        }
-        IValueModel valueModel = getModel(operation, json);
-        if (valueModel == null) {
-            return null;
-        }
 
-        ContentValues contentValues = valueModel.toValues();
-        if (json.has(JdbcBuilder.FIELD_IS_DELETED)) {
-            contentValues.put(ShopStore.DEFAULT_IS_DELETED, json.getInt(JdbcBuilder.FIELD_IS_DELETED));
-        }
-        if (json.has(JdbcBuilder.FIELD_UPDATE_TIME)) {
-            contentValues.put(ShopStore.DEFAULT_UPDATE_TIME, json.getTimestamp(JdbcBuilder.FIELD_UPDATE_TIME).getTime());
-        }
-        if (json.has(JdbcBuilder.FIELD_UPDATE_TIME_LOCAL)) {
-            Date datetime = json.getTimestamp(JdbcBuilder.FIELD_UPDATE_TIME_LOCAL);
-            if (datetime != null) {
-                contentValues.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, datetime.getTime());
-            }
-        }
-
-        contentValues.put(ShopStore.ISupportDraftTable.UPDATE_IS_DRAFT, 1);
-
-        Object[] returned = new Object[2];
-        returned[0] = contentValues;
-        returned[1] = valueModel.getIdColumn();
-        return returned;
-    }
 
     private static Map<String, RunCommandsMsg.SqlCommand> sortCommandsMap(Map<String, RunCommandsMsg.SqlCommand> commandsSend) {
         List<String> mapKeys = new ArrayList<>(commandsSend.keySet());

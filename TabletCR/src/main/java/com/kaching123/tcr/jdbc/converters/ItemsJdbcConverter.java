@@ -10,6 +10,7 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.PriceType;
+import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit.CodeType;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.store.ShopStore;
@@ -335,10 +336,10 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                 .build(JdbcFactory.getApiMethod(item));
     }
 
-    public SingleSqlCommand removeTaxGroup(String taxGroupGuid, IAppCommandContext appCommandContext) {
+    public SingleSqlCommand removeTaxGroup(TaxGroupModel taxGroupModel, IAppCommandContext appCommandContext) {
         return _update(ITEM_TABLE_NAME, appCommandContext)
                 .add(TAX_GROUP_ID, (String) null)
-                .where(TAX_GROUP_ID, taxGroupGuid)
+                .where(TAX_GROUP_ID, taxGroupModel.guid)
                 .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
 
