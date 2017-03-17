@@ -46,6 +46,7 @@ public class DetailedSalesChooserAlertDialogFragment extends StyledDialogFragmen
     @ViewById
     protected EditText fromEdit, toEdit;
 
+    private RegisterModel registerModel;
     private DetailedSalesRegistersAdapter registersAdapter;
     private Calendar dateTimePickerCalendar = Calendar.getInstance();
     private Date fromDate;
@@ -135,6 +136,7 @@ public class DetailedSalesChooserAlertDialogFragment extends StyledDialogFragmen
 
         registersAdapter = new DetailedSalesRegistersAdapter(getContext());
         registerSpinner.setAdapter(registersAdapter);
+        registerModel = getApp().getRegisterModel();
         getLoaderManager().restartLoader(0, null, registersLoader);
     }
 
@@ -273,6 +275,11 @@ public class DetailedSalesChooserAlertDialogFragment extends StyledDialogFragmen
             arrayList.add(new RegisterModel(0, null, null, getString(R.string.register_label_all), null, 0, 0, null));
             arrayList.addAll(result);
             registersAdapter.changeCursor(arrayList);
+            for (int i = 0; i < arrayList.size() - 1; i++) {
+                if (arrayList.get(i).equals(registerModel)) {
+                    registerSpinner.setSelection(i);
+                }
+            }
         }
 
         @Override

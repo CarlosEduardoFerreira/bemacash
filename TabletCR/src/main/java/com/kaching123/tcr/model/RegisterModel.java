@@ -80,4 +80,10 @@ public class RegisterModel implements IValueModel {
         ACTIVE, INACTIVE, PAUSED, BLOCKED, PENDING
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return this == o || (o != null && id == ((RegisterModel)o).id &&
+                registerSerial.equals(((RegisterModel)o).registerSerial) &&
+                title.equals(((RegisterModel)o).title));
+    }
 }

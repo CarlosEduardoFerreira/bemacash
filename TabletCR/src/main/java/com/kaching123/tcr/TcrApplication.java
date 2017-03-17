@@ -41,6 +41,7 @@ import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.EmployeePermissionsModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptionsResponse;
+import com.kaching123.tcr.model.RegisterModel;
 import com.kaching123.tcr.model.payment.blackstone.payment.User;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.PrepaidUser;
@@ -108,10 +109,8 @@ public class TcrApplication extends MultiDexApplication {
 
     protected ShopPref_ shopPref;
 
-    private long registerId;
     private String registerSerial;
-    private String registerDescription;
-    private String registerTitle;
+    private RegisterModel registerModel;
     private EmployeeModel operator;
     private Set<Permission> operatorPermissions;
 
@@ -564,9 +563,7 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public void setRegisterInfo(long registerId, int prepaidTid, int blackstonePaymentCid, String description, String title) {
-        this.registerId = registerId;
-        this.registerDescription = description;
-        this.registerTitle = title;
+        this.registerModel = new RegisterModel(registerId, registerSerial, description, title, null, prepaidTid, blackstonePaymentCid, null);
         setUsers(prepaidTid, blackstonePaymentCid);
     }
 
@@ -579,8 +576,12 @@ public class TcrApplication extends MultiDexApplication {
         blackstoneUser = new User(blackstoneUser.getUsername(), blackstoneUser.getPassword(), blackstoneUser.getMid(), blackstonePaymentCid, blackstoneUser.getAppkey(), blackstoneUser.getApptype());
     }
 
+    public RegisterModel getRegisterModel() {
+        return registerModel;
+    }
+
     public long getRegisterId() {
-        return registerId;
+        return registerModel == null ? 0 : registerModel.id;
     }
 
     public String getRegisterSerial() {
@@ -588,11 +589,11 @@ public class TcrApplication extends MultiDexApplication {
     }
 
     public String getRegisterDescription() {
-        return registerDescription;
+        return registerModel == null ? null : registerModel.description;
     }
 
     public String getRegisterTitle() {
-        return registerTitle;
+        return registerModel == null ? null : registerModel.title;
     }
 
     public void lockOnSalesHistory() {
