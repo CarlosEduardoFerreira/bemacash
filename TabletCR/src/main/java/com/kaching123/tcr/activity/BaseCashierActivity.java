@@ -427,6 +427,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (saleOrderModel != null && saleOrderModel.orderStatus == OrderStatus.HOLDON) {
+            Toast.makeText(this, R.string.nav_back_order_is_on_hold_msg, Toast.LENGTH_LONG).show();
+            return;
+        }
+        super.onBackPressed();
+    }
+
     private void bindToDisplayService() {
         boolean displayConfigured = !TextUtils.isEmpty(getApp().getShopPref().displayAddress().get()); //Serial Port?
         if (displayConfigured)

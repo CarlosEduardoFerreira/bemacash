@@ -2214,6 +2214,7 @@
     <string name="item_activity_sales_permitted_title">Attention</string>
     <string name="item_activity_sales_permitted_near_end" formatted = "false">After this sale, you will break %s percent of yearly transction amount. Are you sure you want to proceed?</string>
     <string name="warning_new_msg">Error TransactionUtil setNewValues</string>
+    <string name="nav_back_order_is_on_hold_msg">To navigate back, you must put this order on hold</string>
     <!-- local sync ends -->
 
 
