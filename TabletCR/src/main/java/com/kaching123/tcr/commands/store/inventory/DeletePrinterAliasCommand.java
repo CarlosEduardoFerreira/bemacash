@@ -1,12 +1,14 @@
 package com.kaching123.tcr.commands.store.inventory;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.ItemsJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.PrinterAliasJdbcConverter;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -18,6 +20,8 @@ import com.kaching123.tcr.store.ShopStore.PrinterTable;
 import com.telly.groundy.TaskResult;
 
 import java.util.ArrayList;
+
+import static com.kaching123.tcr.model.SqlCommandHelper.getContentValues;
 
 /**
  * Created by vkompaniets on 12.02.14.
@@ -34,6 +38,7 @@ public class DeletePrinterAliasCommand extends AsyncCommand {
 
     private PrinterAliasModel model;
 
+    protected BatchSqlCommand sql;
 
     @Override
     protected TaskResult doCommand() {
@@ -57,22 +62,26 @@ public class DeletePrinterAliasCommand extends AsyncCommand {
                 .build());
 
         operations.add(ContentProviderOperation.newUpdate(URI_PRINTER_ALIAS)
-                .withValues(ShopStore.DELETE_VALUES)
+                .withValue(PrinterAliasTable.IS_DELETED, 1)
                 .withSelection(PrinterAliasTable.GUID + " = ?", new String[]{model.guid})
                 .build());
 
         return operations;
     }
 
+
     @Override
     protected ISqlCommand createSqlCommand() {
-        /** create SQL batch **/
-        ItemsJdbcConverter converter = (ItemsJdbcConverter) JdbcFactory.getConverter(ItemTable.TABLE_NAME);
+        PrinterAliasJdbcConverter converterPrinterAlias = (PrinterAliasJdbcConverter) JdbcFactory.getConverter(PrinterAliasTable.TABLE_NAME);
+        ItemsJdbcConverter converterItem = (ItemsJdbcConverter) JdbcFactory.getConverter(ItemTable.TABLE_NAME);
+
         BatchSqlCommand batchSqlCommand = batchDelete(model);
-        batchSqlCommand.add(converter.removePrinterAlias(model.guid, getAppCommandContext()));
-        batchSqlCommand.add(JdbcFactory.getConverter(model).deleteSQL(model, getAppCommandContext()));
+        batchSqlCommand.add(converterPrinterAlias.deleteSQL(model, getAppCommandContext()));
+        batchSqlCommand.add(converterItem.removePrinterAlias(model.guid, getAppCommandContext()));
+
         return batchSqlCommand;
     }
+
 
     public static void start(Context context, PrinterAliasModel model){
         create(DeletePrinterAliasCommand.class).arg(ARG_MODEL, model).queueUsing(context);

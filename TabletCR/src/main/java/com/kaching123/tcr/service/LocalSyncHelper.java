@@ -321,7 +321,6 @@ public class LocalSyncHelper {
 
         Logger.d(TAG + ": Running command: " + sqlCommand.command);
         for (SqlCommandObj.SqlCommandObjOperation operation : sqlCommandObj.operations) {
-            Log.d("BemaCarl4","LocalSyncHelper.runCommand.operation: " + operation);
             if (operation == null || operation.action == null) {
                 Logger.e(TAG_HEIGHT, new Throwable("SQl command incorrect: " + sqlCommand));
                 return false;
@@ -329,10 +328,6 @@ public class LocalSyncHelper {
 
             try {
                 if ("INSERT".equals(operation.action.toUpperCase()) || "REPLACE".equals(operation.action.toUpperCase())) {
-
-                    Log.d("BemaCarl9","LocalSyncHelper.runCommand.INSERTorREPLACE.operation.action: " + operation.action);
-                    Log.d("BemaCarl9","LocalSyncHelper.runCommand.INSERTorREPLACE.operation.table: " + operation.table);
-                    Log.d("BemaCarl9","LocalSyncHelper.runCommand.INSERTorREPLACE.operation.args: " + operation.args);
 
                     Object[] model = getContentValuesAndGuidColumn(operation, true);
 
@@ -360,10 +355,8 @@ public class LocalSyncHelper {
                     Object value2 = where.get(JdbcBuilder.FIELD_UPDATE_TIME_LOCAL);
                     Date updateTimeLocal = value2 != null ? SyncUtil.formatMillisec(value2.toString()) : null;
 
-                    Log.d("BemaCarl4","LocalSyncHelper.runCommand.UPDATE.operation.args: " + operation.args);
                     Object[] model = getContentValuesAndGuidColumn(operation, false);
                     if (model == null || model.length == 0) {
-                        Log.d("BemaCarl4","LocalSyncHelper.runCommand.model: " + model);
                         Logger.e(TAG_HEIGHT, new Throwable("Table not found: " + sqlCommand));
                         return false;
                     }
@@ -417,6 +410,7 @@ public class LocalSyncHelper {
 
         try {
             String table = operation.table;
+
             if (JdbcConverter.compareTable(table, ShopStore.CashDrawerMovementTable.TABLE_NAME, CashDrawerMovementJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.CashDrawerMovementTable.TABLE_NAME;
                 model = new CashDrawerMovementJdbcConverter().toValues(json);
@@ -568,9 +562,7 @@ public class LocalSyncHelper {
         } else {
             json = new JdbcJSONObject(gson.toJson(operation.args.get("update")));
         }
-        Log.d("BemaCarl4","LocalSyncHelper.getContentValuesAndGuidColumn.gson.toJson(operation.args): " + gson.toJson(operation.args));
         IValueModel valueModel = getModel(operation, json);
-        Log.d("BemaCarl4","LocalSyncHelper.getContentValuesAndGuidColumn.valueModel: " + valueModel);
         if (valueModel == null) {
             return null;
         }
@@ -594,8 +586,6 @@ public class LocalSyncHelper {
         Object[] returned = new Object[2];
         returned[0] = contentValues;
         returned[1] = valueModel.getIdColumn();
-        Log.d("BemaCarl4","LocalSyncHelper.getContentValuesAndGuidColumn.returned[0]: " + returned[0]);
-        Log.d("BemaCarl4","LocalSyncHelper.getContentValuesAndGuidColumn.returned[1]: " + returned[1]);
         return returned;
     }
 

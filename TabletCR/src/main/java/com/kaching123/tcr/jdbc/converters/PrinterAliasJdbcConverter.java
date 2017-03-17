@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kaching123.tcr.jdbc.JdbcBuilder.FIELD_IS_DELETED;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 
@@ -78,6 +79,16 @@ public class PrinterAliasJdbcConverter extends JdbcConverter<PrinterAliasModel> 
     public SingleSqlCommand updateSQL(PrinterAliasModel model, IAppCommandContext appCommandContext) {
         return _update(TABLE_NAME, appCommandContext)
                 .add(ALIAS, model.alias)
+                .where(ID, model.guid)
+                .build(JdbcFactory.getApiMethod(model));
+    }
+
+    @Override
+    public SingleSqlCommand deleteSQL(PrinterAliasModel model, IAppCommandContext appCommandContext) {
+        return _update(TABLE_NAME, appCommandContext)
+                .add(ID, model.guid)
+                .add(ALIAS, model.alias)
+                .add(FIELD_IS_DELETED, 1)
                 .where(ID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }
