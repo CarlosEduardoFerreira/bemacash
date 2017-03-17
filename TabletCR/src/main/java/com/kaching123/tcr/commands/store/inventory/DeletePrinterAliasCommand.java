@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -76,7 +77,8 @@ public class DeletePrinterAliasCommand extends AsyncCommand {
         ItemsJdbcConverter converterItem = (ItemsJdbcConverter) JdbcFactory.getConverter(ItemTable.TABLE_NAME);
 
         BatchSqlCommand batchSqlCommand = batchDelete(model);
-        batchSqlCommand.add(converterPrinterAlias.deleteSQL(model, getAppCommandContext()));
+
+        batchSqlCommand.add(converterPrinterAlias.deletePrinterAlias(model.guid, model.alias, getAppCommandContext()));
         batchSqlCommand.add(converterItem.removePrinterAlias(model.guid, getAppCommandContext()));
 
         return batchSqlCommand;

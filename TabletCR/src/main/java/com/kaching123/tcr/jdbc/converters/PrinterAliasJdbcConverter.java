@@ -83,14 +83,12 @@ public class PrinterAliasJdbcConverter extends JdbcConverter<PrinterAliasModel> 
                 .build(JdbcFactory.getApiMethod(model));
     }
 
-    @Override
-    public SingleSqlCommand deleteSQL(PrinterAliasModel model, IAppCommandContext appCommandContext) {
+    public SingleSqlCommand deletePrinterAlias(String aliasGuid, String aliasAlias, IAppCommandContext appCommandContext) {
         return _update(TABLE_NAME, appCommandContext)
-                .add(ID, model.guid)
-                .add(ALIAS, model.alias)
+                .add(ALIAS, aliasAlias)
                 .add(FIELD_IS_DELETED, 1)
-                .where(ID, model.guid)
-                .build(JdbcFactory.getApiMethod(model));
+                .where(ID, aliasGuid)
+                .build(JdbcFactory.getApiMethod(PrinterAliasModel.class));
     }
 
     @Override
