@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -123,6 +124,21 @@ public class ComposerEditFragment extends StyledDialogFragment implements Barcod
 
             @Override
             public void afterTextChanged(Editable s) {
+            }
+        });
+
+        track.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(!isChecked) {
+                    free.setChecked(false);
+                    free.setEnabled(false);
+                } else {
+                    free.setEnabled(true);
+                    if (model != null) {
+                        free.setChecked(false);
+                    }
+                }
             }
         });
         if (model != null) {
