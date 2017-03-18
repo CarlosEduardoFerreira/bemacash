@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.loyalty.AddLoyaltyPointsMovementCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.model.CustomerModel;
@@ -65,11 +66,7 @@ public abstract class BaseCustomerCommand extends AsyncCommand {
 
         doQuery(operations);
 
-        /** Upload *********************************************************/
-        ContentValues values = getContentValues(sql, System.currentTimeMillis(), false);
-        getContext().getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT), values);
-        OfflineCommandsService.startUpload(getContext());
-        /********************************************************* Upload **/
+        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
 
         return succeeded();
     }

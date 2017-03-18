@@ -21,6 +21,8 @@ public class PrinterAliasModel extends AliasModel implements Serializable, IValu
     public String guid;
     public String alias;
 
+    private List<String> mIgnoreFields;
+
     public PrinterAliasModel() {
         super();
     }
@@ -47,8 +49,8 @@ public class PrinterAliasModel extends AliasModel implements Serializable, IValu
         ContentValues cv = new ContentValues();
         cv.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
 
-        cv.put(PrinterAliasTable.GUID, guid);
-        cv.put(PrinterAliasTable.ALIAS, alias);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShopStore.PrinterAliasTable.GUID)) cv.put(PrinterAliasTable.GUID, guid);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ShopStore.PrinterAliasTable.ALIAS)) cv.put(PrinterAliasTable.ALIAS, alias);
         return cv;
     }
 

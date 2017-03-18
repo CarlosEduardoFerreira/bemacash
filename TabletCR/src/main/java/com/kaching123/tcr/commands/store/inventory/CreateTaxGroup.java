@@ -1,13 +1,19 @@
 package com.kaching123.tcr.commands.store.inventory;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 
+import com.kaching123.tcr.activity.TaxGroupsActivity;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.jdbc.converters.TaxGroupJdbcConverter;
 import com.kaching123.tcr.model.TaxGroupModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
+import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskResult;
@@ -17,6 +23,8 @@ import com.telly.groundy.annotations.OnSuccess;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
+
+import static com.kaching123.tcr.model.SqlCommandHelper.getContentValues;
 
 /**
  * Created by pkabakov on 25.12.13.
@@ -56,7 +64,13 @@ public class CreateTaxGroup extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.insert(model, getAppCommandContext());
+        TaxGroupJdbcConverter taxGroupJdbcConverter = (TaxGroupJdbcConverter)JdbcFactory.getConverter(ShopStore.TaxGroupTable.TABLE_NAME);
+        BatchSqlCommand sql = batchInsert(model);
+        sql.add(taxGroupJdbcConverter.insertSQL(model, getAppCommandContext()));
+
+        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
+
+        return sql;
     }
 
     public static void start(Context context, BaseCreateTaxGroupCallback callback,

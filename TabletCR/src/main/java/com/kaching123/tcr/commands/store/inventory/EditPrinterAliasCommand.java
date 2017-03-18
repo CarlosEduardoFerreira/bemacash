@@ -3,9 +3,11 @@ package com.kaching123.tcr.commands.store.inventory;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.PrinterAliasModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PrinterAliasTable;
@@ -41,7 +43,12 @@ public class EditPrinterAliasCommand extends AsyncCommand{
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext());
+
+        BatchSqlCommand sqlPrinterAlias = batchUpdate(model);
+        sqlPrinterAlias.add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()));
+        new AtomicUpload().upload(sqlPrinterAlias, AtomicUpload.UploadType.WEB);
+
+        return sqlPrinterAlias;
     }
 
     public static void start(Context context, PrinterAliasModel model){

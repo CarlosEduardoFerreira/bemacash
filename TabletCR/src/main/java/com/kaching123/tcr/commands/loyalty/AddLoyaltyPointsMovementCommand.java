@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.CustomerJdbcConverter;
@@ -63,11 +64,7 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
         sql = batchInsert(movement);
         sql.add(JdbcFactory.getConverter(movement).insertSQL(movement, getAppCommandContext()));
 
-        /** Upload *********************************************************/
-        ContentValues values = getContentValues(sql, System.currentTimeMillis(), false);
-        getContext().getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT), values);
-        OfflineCommandsService.startUpload(getContext());
-        /********************************************************* Upload **/
+        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
 
         /*
         Cursor cursor = ProviderAction.query(CUSTOMER_URI)

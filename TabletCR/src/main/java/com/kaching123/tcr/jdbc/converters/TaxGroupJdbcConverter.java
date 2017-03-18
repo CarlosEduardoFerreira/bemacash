@@ -103,20 +103,6 @@ public class TaxGroupJdbcConverter extends JdbcConverter<TaxGroupModel> {
                 .build(JdbcFactory.getApiMethod(model));
     }
 
-    public SingleSqlCommand deleteTaxGroup(TaxGroupModel model, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl","TaxGroupJdbcConverter.deleteTaxGroup.model.guid: " + model.guid);
-        Log.d("BemaCarl","TaxGroupJdbcConverter.deleteTaxGroup.model.title: " + model.title);
-        Log.d("BemaCarl","TaxGroupJdbcConverter.deleteTaxGroup.model.tax: " + model.tax);
-        return _update(TABLE_NAME, appCommandContext)
-                .add(ID, model.guid)
-                .add(TITLE, model.title)
-                .add(TAX, model.tax)
-                .add(IS_DEFAULT, model.isDefault)
-                .add(FIELD_IS_DELETED, 1)
-                .where(ID, model.guid)
-                .build(JdbcFactory.getApiMethod(model));
-    }
-
     @Override
     public boolean supportUpdateTimeLocalFlag() {
         return true;

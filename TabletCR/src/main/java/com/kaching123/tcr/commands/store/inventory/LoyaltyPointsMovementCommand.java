@@ -56,18 +56,6 @@ public class LoyaltyPointsMovementCommand extends AsyncCommand {
         sql = batchUpdate(loyaltyPointsMovementModel);
         sql.add(JdbcFactory.getConverter(loyaltyPointsMovementModel).insertSQL(loyaltyPointsMovementModel, getAppCommandContext()));
 
-
-
-
-        /** Upload Item to Return ***********************************************
-        ContentValues values = getContentValues(sql, System.currentTimeMillis(), false);
-        Log.d("BemaCarl6","ReturnItemMovementCommand...doCommand.sql: " + sql.toJson());
-
-        getContext().getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT), values);
-
-        OfflineCommandsService.startUpload(getContext());
-        /*********************************************** Upload Item to Return **/
-
         return succeeded();
     }
 

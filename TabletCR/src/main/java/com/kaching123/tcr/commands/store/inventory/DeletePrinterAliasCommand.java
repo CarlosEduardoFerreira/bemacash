@@ -6,13 +6,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.ItemsJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PrinterAliasJdbcConverter;
+import com.kaching123.tcr.model.ItemModel;
 import com.kaching123.tcr.model.PrinterAliasModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
+import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
@@ -73,15 +76,18 @@ public class DeletePrinterAliasCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        PrinterAliasJdbcConverter converterPrinterAlias = (PrinterAliasJdbcConverter) JdbcFactory.getConverter(PrinterAliasTable.TABLE_NAME);
-        ItemsJdbcConverter converterItem = (ItemsJdbcConverter) JdbcFactory.getConverter(ItemTable.TABLE_NAME);
 
-        BatchSqlCommand batchSqlCommand = batchDelete(model);
+        PrinterAliasJdbcConverter printerAliasConverter = (PrinterAliasJdbcConverter) JdbcFactory.getConverter(PrinterAliasTable.TABLE_NAME);
+        BatchSqlCommand sqlPrinterAlias = batchUpdate(model);
+        sqlPrinterAlias.add(printerAliasConverter.deletePrinterAlias(model, getAppCommandContext()));
+        new AtomicUpload().upload(sqlPrinterAlias, AtomicUpload.UploadType.WEB);
 
-        batchSqlCommand.add(converterPrinterAlias.deletePrinterAlias(model.guid, model.alias, getAppCommandContext()));
-        batchSqlCommand.add(converterItem.removePrinterAlias(model.guid, getAppCommandContext()));
+        ItemsJdbcConverter itemsJdbcConverter = (ItemsJdbcConverter) JdbcFactory.getConverter(ItemTable.TABLE_NAME);
+        BatchSqlCommand sqlItem = batchUpdate(ItemModel.class);
+        sqlItem.add(itemsJdbcConverter.removePrinterAlias(model.guid, getAppCommandContext()));
+        new AtomicUpload().upload(sqlItem, AtomicUpload.UploadType.WEB);
 
-        return batchSqlCommand;
+        return sqlPrinterAlias;
     }
 
 

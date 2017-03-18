@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ItemMatrixModel;
@@ -65,14 +66,7 @@ public class ReturnItemMovementCommand extends AsyncCommand {
         sql = batchUpdate(itemMovementModel);
         sql.add(JdbcFactory.getConverter(itemMovementModel).insertSQL(itemMovementModel, getAppCommandContext()));
 
-        /** Upload Item to Return ***********************************************/
-        ContentValues values = getContentValues(sql, System.currentTimeMillis(), false);
-        Log.d("BemaCarl6","ReturnItemMovementCommand...doCommand.sql: " + sql.toJson());
-
-        getContext().getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT), values);
-
-        OfflineCommandsService.startUpload(getContext());
-        /*********************************************** Upload Item to Return **/
+        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
 
         return succeeded();
     }

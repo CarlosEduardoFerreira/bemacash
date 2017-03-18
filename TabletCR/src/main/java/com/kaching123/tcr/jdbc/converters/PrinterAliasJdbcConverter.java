@@ -30,6 +30,10 @@ public class PrinterAliasJdbcConverter extends JdbcConverter<PrinterAliasModel> 
 
     @Override
     public PrinterAliasModel toValues(JdbcJSONObject rs) throws JSONException {
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(ID)) ignoreFields.add(ShopStore.PrinterAliasTable.GUID);
+        if (!rs.has(ALIAS)) ignoreFields.add(ShopStore.PrinterAliasTable.ALIAS);
+
         return new PrinterAliasModel(
                 rs.getString(ID),
                 rs.getString(ALIAS)
@@ -83,12 +87,12 @@ public class PrinterAliasJdbcConverter extends JdbcConverter<PrinterAliasModel> 
                 .build(JdbcFactory.getApiMethod(model));
     }
 
-    public SingleSqlCommand deletePrinterAlias(String aliasGuid, String aliasAlias, IAppCommandContext appCommandContext) {
+    public SingleSqlCommand deletePrinterAlias(PrinterAliasModel printerAliasModel, IAppCommandContext appCommandContext) {
         return _update(TABLE_NAME, appCommandContext)
-                .add(ALIAS, aliasAlias)
+                .add(ALIAS, printerAliasModel.alias)
                 .add(FIELD_IS_DELETED, 1)
-                .where(ID, aliasGuid)
-                .build(JdbcFactory.getApiMethod(PrinterAliasModel.class));
+                .where(ID, printerAliasModel.guid)
+                .build(JdbcFactory.getApiMethod(printerAliasModel));
     }
 
     @Override

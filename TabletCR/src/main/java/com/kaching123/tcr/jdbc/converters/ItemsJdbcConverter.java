@@ -336,13 +336,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                 .build(JdbcFactory.getApiMethod(item));
     }
 
-    public SingleSqlCommand removeTaxGroup(TaxGroupModel taxGroupModel, IAppCommandContext appCommandContext) {
-        return _update(ITEM_TABLE_NAME, appCommandContext)
-                .add(TAX_GROUP_ID, (String) null)
-                .where(TAX_GROUP_ID, taxGroupModel.guid)
-                .build(JdbcFactory.getApiMethod(ItemModel.class));
-    }
-
     public SingleSqlCommand updateOrderSQL(String guid, int orderNum, IAppCommandContext appCommandContext) {
         ItemModel model = ItemModel.getById(TcrApplication.get(), guid, true);
         model.orderNum = orderNum;
@@ -372,6 +365,14 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
         return _update(ITEM_TABLE_NAME, appCommandContext)
                 .add(IS_DELETED, isDeleted)
                 .where(ID, guid)
+                .build(JdbcFactory.getApiMethod(ItemModel.class));
+    }
+
+    public SingleSqlCommand removeTaxGroup(String taxGroupId, IAppCommandContext appCommandContext) {
+        Log.d("BemaCarl","ItemJdbcConverter.removeTaxGroup.taxGroupId: " + taxGroupId);
+        return _update(ITEM_TABLE_NAME, appCommandContext)
+                .add(TAX_GROUP_ID, (String) null)
+                .where(TAX_GROUP_ID, taxGroupId)
                 .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
 

@@ -10,6 +10,7 @@ import android.util.Log;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ItemMatrixModel;
@@ -125,14 +126,7 @@ public class EditItemCommand extends AsyncCommand {
             shiftOrderNums(oldCategoryId);
         }
 
-        /** Upload Item to Return ***********************************************/
-        ContentValues values = getContentValues(sql, System.currentTimeMillis(), false);
-        Log.d("BemaCarl6","EditItemCommand...doCommand.sql: " + sql);
-
-        getContext().getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT), values);
-
-        OfflineCommandsService.startUpload(getContext());
-        /*********************************************** Upload Item to Return **/
+        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
 
         return succeeded();
     }
