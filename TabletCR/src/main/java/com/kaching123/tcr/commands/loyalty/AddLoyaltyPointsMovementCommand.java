@@ -64,9 +64,6 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
         sql = batchInsert(movement);
         sql.add(JdbcFactory.getConverter(movement).insertSQL(movement, getAppCommandContext()));
 
-        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
-
-        /*
         Cursor cursor = ProviderAction.query(CUSTOMER_URI)
                 .where(ShopStore.CustomerTable.GUID + " = ?", customerId)
                 .perform(getContext());
@@ -79,11 +76,12 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
             Log.d("BemaCarl1","AddLoyaltyPointsMovementCommand.doCommand.customerModel.newPoints: " + newPoints);
             customerModel.loyaltyPoints = newPoints;
 
-            //CustomerJdbcConverter customerJdbcConverter = (CustomerJdbcConverter) JdbcFactory.getConverter(ShopStore.CustomerTable.TABLE_NAME);
-            //sql.add(customerJdbcConverter.updateSQL(customerModel, getAppCommandContext()));
+            CustomerJdbcConverter customerJdbcConverter = (CustomerJdbcConverter) JdbcFactory.getConverter(ShopStore.CustomerTable.TABLE_NAME);
+            sql.add(customerJdbcConverter.updateSQL(customerModel, getAppCommandContext()));
 
         }
-        /**/
+
+        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
 
         return succeeded();
     }
