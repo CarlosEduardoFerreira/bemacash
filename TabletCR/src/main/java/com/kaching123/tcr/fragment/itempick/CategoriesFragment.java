@@ -1,11 +1,13 @@
 package com.kaching123.tcr.fragment.itempick;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,8 @@ public class CategoriesFragment extends ListFragment implements LoaderCallbacks<
 	private ICategoryListener listener;
 
     private int pressedPos = -1;
+
+	Loader<Cursor> cursorLoader;
 
     @Bean
     protected CategoriesAdapter adapter;
@@ -56,16 +60,18 @@ public class CategoriesFragment extends ListFragment implements LoaderCallbacks<
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
-		return CursorLoaderBuilder.forUri(URI_CATEGORIES)
-		        .projection(CategoryTable.ID, CategoryTable.GUID, CategoryTable.TITLE)
-		        .orderBy(CategoryTable.TITLE).build(getActivity());
+		Log.d("BemaCarl2","CategoriesFragment.onCreateLoader.loaderId: " + loaderId);
+		Log.d("BemaCarl2","CategoriesFragment.onCreateLoader.args: " + args);
+		cursorLoader = CursorLoaderBuilder.forUri(URI_CATEGORIES)
+				.projection(CategoryTable.ID, CategoryTable.GUID, CategoryTable.TITLE)
+				.orderBy(CategoryTable.TITLE).build(getActivity());
+		return cursorLoader;
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		checkFirstRow(cursor);
 		adapter.changeCursor(cursor);
-
 	}
 
 	private void checkFirstRow(Cursor cursor) {

@@ -45,7 +45,7 @@ public class EditCategoryCommand extends AsyncCommand{
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        BatchSqlCommand batch = batchInsert(model);
+        BatchSqlCommand batch = batchUpdate(model);
         batch.add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()));
 
         new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);

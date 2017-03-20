@@ -6,8 +6,11 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.jdbc.converters.CategoryJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.DepartmentJdbcConverter;
 import com.kaching123.tcr.model.DepartmentModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -98,10 +101,15 @@ public class DeleteDepartmentCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
+        DepartmentJdbcConverter departmentJdbcConverter = (DepartmentJdbcConverter)JdbcFactory.getConverter(DepartmentTable.TABLE_NAME);
+
         BatchSqlCommand sqlCommand = batchDelete(model);
         if (subResult.getSqlCmd() != null)
             sqlCommand.add(subResult.getSqlCmd());
-        sqlCommand.add(JdbcFactory.getConverter(model).deleteSQL(model, getAppCommandContext()));
+        sqlCommand.add(departmentJdbcConverter.deleteSQL(model, getAppCommandContext()));
+
+        new AtomicUpload().upload(sqlCommand, AtomicUpload.UploadType.WEB);
+
         return sqlCommand;
     }
 

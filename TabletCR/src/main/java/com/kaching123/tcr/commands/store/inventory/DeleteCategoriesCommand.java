@@ -4,9 +4,11 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
 
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.CategoryJdbcConverter;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -43,8 +45,14 @@ public class DeleteCategoriesCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        CategoryJdbcConverter converter = (CategoryJdbcConverter)JdbcFactory.getConverter(CategoryTable.TABLE_NAME);
-        return converter.deleteByDepartment(departmentGuid, getAppCommandContext());
+        CategoryJdbcConverter categoryJdbcConverter = (CategoryJdbcConverter)JdbcFactory.getConverter(CategoryTable.TABLE_NAME);
+
+        BatchSqlCommand batch = batchDelete(CategoryTable.TABLE_NAME);
+        batch.add(categoryJdbcConverter.deleteByDepartment(departmentGuid, getAppCommandContext()));
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+
+        return batch;
     }
 
     public SyncResult sync(Context context, String departmentGuid, IAppCommandContext appCommandContext) {

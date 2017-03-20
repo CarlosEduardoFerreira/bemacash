@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -124,6 +125,9 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         boolean loadEmptyCategories = this instanceof CategoriesFragment;
+
+        Log.d("BemaCarl2","BaseCategoriesFragment.onCreateLoader.i: " + i);
+
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(URI_CATEGORIES);
         builder.projection(CategoryTable.ID,
                 CategoryTable.DEPARTMENT_GUID,
@@ -173,6 +177,7 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
             header.invalidate();
         }
         adapter.changeCursor(cursor);
+        Log.d("BemaCarl2","BaseCategoriesFragment.onLoadFinished.cursor.getCount(): " + cursor.getCount());
         checkFirstRow(cursor);
     }
 
