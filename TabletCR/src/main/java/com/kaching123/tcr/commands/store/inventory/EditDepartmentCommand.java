@@ -4,9 +4,11 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.DepartmentModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
@@ -43,7 +45,12 @@ public class EditDepartmentCommand extends AsyncCommand{
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext());
+        BatchSqlCommand batch = batchInsert(model);
+        batch.add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()));
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+        
+        return batch;
     }
 
     public static void start(Context context, DepartmentModel department){
