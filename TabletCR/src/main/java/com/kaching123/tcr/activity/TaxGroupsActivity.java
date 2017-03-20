@@ -22,6 +22,7 @@ import com.kaching123.tcr.commands.store.inventory.UpdateTaxGroup;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelListener;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.taxgroup.TaxGroupDialog;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.TaxGroupModel;
@@ -39,6 +40,7 @@ import org.androidannotations.annotations.ViewById;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
@@ -133,13 +135,14 @@ public class TaxGroupsActivity extends SuperBaseActivity {
 
         @Override
         protected void onTaxGroupDeleted() {
+            WaitDialogFragment.hide(TaxGroupsActivity.this);
             onGroupDeleted();
         }
 
         @Override
-        protected void onTaxGroupDeleteError() {
-            Toast.makeText(TaxGroupsActivity.this, getString(R.string.tax_group_delete_failed_message,
-                    tax2DeleteTitle), Toast.LENGTH_SHORT).show();
+        protected void onTaxGroupHasItems(String taxName, int itemsCount) {
+            WaitDialogFragment.hide(TaxGroupsActivity.this);
+            Toast.makeText(TaxGroupsActivity.this, String.format(Locale.US, getString(R.string.tax_group_toast_failed_message), taxName, itemsCount), Toast.LENGTH_LONG).show();
             adapter.notifyDataSetChanged();
         }
     }
@@ -190,13 +193,14 @@ public class TaxGroupsActivity extends SuperBaseActivity {
                     @Override
                     public boolean onClick() {
                         tax2DeleteTitle = item.title;
-                        deleteTaxGroup(item);
+                        try2DeleteTaxGroup(item);
                         return true;
                     }
                 }, adapter);
     }
 
-    private void deleteTaxGroup(TaxGroupModel model) {
+    private void try2DeleteTaxGroup(TaxGroupModel model) {
+        WaitDialogFragment.show(this, getString(R.string.search_items_wait_dialog_message));
         DeleteTaxGroupCommand.start(TaxGroupsActivity.this, model, deleteTaxGroupCallback);
     }
 

@@ -748,7 +748,7 @@
   <string name="departments_delete_dialog_message">Esta seguro que desea borrar departamento \'%s\'?</string>
   <string name="departments_toast_success_message">Departamento \'%s\' satisfactoriamente borrado</string>
   <string name="departments_toast_failed_message" formatted="false">Error al borrar departamento \'%s\'. Contiene %d Categoría.</string>
-  <string name="categories_departments_wait_dialog_message">Búsqueda por código articulo</string>
+  <string name="search_items_wait_dialog_message">Búsqueda por código articulo</string>
   <string name="department_dialog_name_hint">Nombre</string>
   <string name="login_login_hint">Acceso</string>
   <string name="login_password_hint">Clave</string>

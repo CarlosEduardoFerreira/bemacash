@@ -3,9 +3,11 @@ package com.kaching123.tcr.commands.store.inventory;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -21,6 +23,7 @@ import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
+import com.telly.groundy.annotations.Param;
 
 import java.util.ArrayList;
 
@@ -34,6 +37,8 @@ public class DeleteTaxGroupCommand extends AsyncCommand {
     private static final Uri TAX_GROUP_URI = ShopProvider.getContentUri(ShopStore.TaxGroupTable.URI_CONTENT);
     private static final Uri ITEMS_URI = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
 
+    private static final String EXTRA_TAX_NAME = "EXTRA_TAX_NAME";
+    private static final String EXTRA_ITEMS_COUNT = "EXTRA_ITEMS_COUNT";
     private static final String ARG_MODEL = "tax_groups";
 
     protected TaxGroupModel model;
@@ -41,6 +46,17 @@ public class DeleteTaxGroupCommand extends AsyncCommand {
     @Override
     protected TaskResult doCommand() {
         model = (TaxGroupModel) getArgs().getSerializable(ARG_MODEL);
+
+        Cursor c = ProviderAction.query(ITEMS_URI)
+                .projection(ShopStore.ItemTable.TAX_GROUP_GUID, ShopStore.ItemTable.TAX_GROUP_GUID2)
+                .where(ShopStore.ItemTable.TAX_GROUP_GUID + " = ? OR " + ShopStore.ItemTable.TAX_GROUP_GUID2 + " = ?", model.guid, model.guid)
+                .perform(getContext());
+        int count = c.getCount();
+        c.close();
+
+        if (count > 0){
+            return failed().add(EXTRA_TAX_NAME, model.title).add(EXTRA_ITEMS_COUNT, count);
+        }
 
         return succeeded();
     }
@@ -89,13 +105,12 @@ public class DeleteTaxGroupCommand extends AsyncCommand {
         }
 
         @OnFailure(DeleteTaxGroupCommand.class)
-        public void onFailure() {
-            onTaxGroupDeleteError();
+        public void onFailure(@Param(EXTRA_TAX_NAME) String taxName, @Param(EXTRA_ITEMS_COUNT) int itemsCount) {
+            onTaxGroupHasItems(taxName, itemsCount);
         }
 
         protected abstract void onTaxGroupDeleted();
-
-        protected abstract void onTaxGroupDeleteError();
+        protected abstract void onTaxGroupHasItems(String categoryName, int itemsCount);
 
     }
 }

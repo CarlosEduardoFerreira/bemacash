@@ -158,7 +158,7 @@ public class CategoriesActivity extends SuperBaseActivity {
     }
 
     private void try2DeleteCategory(CategoryModel model) {
-        WaitDialogFragment.show(CategoriesActivity.this, getString(R.string.categories_departments_wait_dialog_message));
+        WaitDialogFragment.show(CategoriesActivity.this, getString(R.string.search_items_wait_dialog_message));
         DeleteCategoryCommand.start(this, model, new DeleteCategoryCommand.DeleteCategoryCommandCallback() {
             @Override
             protected void onCategoryDeleted(String categoryName) {

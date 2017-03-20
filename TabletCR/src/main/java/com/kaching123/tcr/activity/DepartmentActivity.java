@@ -141,7 +141,7 @@ public class DepartmentActivity extends SuperBaseActivity {
     }
 
     private void try2DeleteDepartment(DepartmentModel model) {
-        WaitDialogFragment.show(DepartmentActivity.this, getString(R.string.categories_departments_wait_dialog_message));
+        WaitDialogFragment.show(DepartmentActivity.this, getString(R.string.search_items_wait_dialog_message));
         DeleteDepartmentCommand.start(this, model, new DeleteDepartmentCallback() {
             @Override
             protected void onDepartmentDeleted(String departmentName) {

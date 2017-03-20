@@ -777,11 +777,12 @@
     <string name="categories_delete_dialog_message">Are you sure you want to delete category \'%s\'?</string>
     <string name="categories_toast_success_message">Category \'%s\' was successfully deleted</string>
     <string name="categories_toast_failed_message" formatted="false">Failed to delete category \'%s\'. It has %d items</string>
+    <string name="tax_group_toast_failed_message" formatted="false">Failed to delete tax group \'%s\'. It has %d items</string>
     <string name="departments_delete_dialog_title">Delete department</string>
     <string name="departments_delete_dialog_message">Are you sure you want to delete department \'%s\'?</string>
     <string name="departments_toast_success_message">Department \'%s\' was successfully deleted</string>
     <string name="departments_toast_failed_message" formatted="false">Failed to delete department \'%s\'. It has %d items</string>
-    <string name="categories_departments_wait_dialog_message">Searching for items...</string>
+    <string name="search_items_wait_dialog_message">Searching for items...</string>
     <string name="department_dialog_name_hint">Name</string>
     <string name="login_login_hint">Login</string>
     <string name="login_password_hint">Password</string>
@@ -920,7 +921,7 @@
     <string name="tax_group_default">Default</string>
     <string name="tax_group_choose_tax_goups">Choose Tax Groups</string>
     <string name="tax_group_delete_warning_dialog_title">Delete Tax Group</string>
-    <string name="tax_group_delete_warning_dialog_message">You are about to delete tax group \'%s\', this will affect all items that linked to it. Do you want to proceed?</string>
+    <string name="tax_group_delete_warning_dialog_message">You are about to delete tax group \'%s\'. Do you want to proceed?</string>
     <string name="tax_group_delete_succeded_message">Tax group \'%s\' successfully deleted</string>
     <string name="tax_group_delete_failed_message">Failed to delete tax group \'%s\'.\nTry again later</string>
     <string name="item_tax_group_default">Store tax</string>
