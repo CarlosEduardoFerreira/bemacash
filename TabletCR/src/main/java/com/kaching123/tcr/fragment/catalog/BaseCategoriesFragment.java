@@ -126,8 +126,6 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         boolean loadEmptyCategories = this instanceof CategoriesFragment;
 
-        Log.d("BemaCarl2","BaseCategoriesFragment.onCreateLoader.i: " + i);
-
         CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(URI_CATEGORIES);
         builder.projection(CategoryTable.ID,
                 CategoryTable.DEPARTMENT_GUID,
@@ -177,7 +175,6 @@ public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.IC
             header.invalidate();
         }
         adapter.changeCursor(cursor);
-        Log.d("BemaCarl2","BaseCategoriesFragment.onLoadFinished.cursor.getCount(): " + cursor.getCount());
         checkFirstRow(cursor);
     }
 

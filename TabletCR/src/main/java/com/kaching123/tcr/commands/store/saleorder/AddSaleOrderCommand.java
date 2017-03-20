@@ -10,6 +10,7 @@ import android.util.Log;
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
@@ -18,6 +19,7 @@ import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.SaleOrderModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
@@ -67,7 +69,13 @@ public class AddSaleOrderCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.getConverter(order).insertSQL(order, getAppCommandContext());
+        Log.d("BemaCarl6","AddSaleOrderCommand.createSqlCommand.order." + order.orderStatus);
+        BatchSqlCommand batch = batchInsert(order);
+        batch.add(JdbcFactory.getConverter(order).insertSQL(order, getAppCommandContext()));
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+
+        return batch;
     }
 
     public static SaleOrderModel createSaleOrder(Context context,

@@ -25,12 +25,9 @@ public class EmployeePermissionModel implements IValueModel {
         this(c.getString(c.getColumnIndex(EmployeePermissionTable.USER_GUID)),
                 c.getLong(c.getColumnIndex(EmployeePermissionTable.PERMISSION_ID)),
                 c.getInt(c.getColumnIndex(EmployeePermissionTable.ENABLED)) > 0, null);
-        Log.d("BemaCarl4","EmployeePermissionModel.EmployeePermissionModel(Cursor c) {: " + c.getLong(c.getColumnIndex(EmployeePermissionTable.PERMISSION_ID)));
     }
 
     public EmployeePermissionModel(String userGuid, long permissionId, boolean enabled, List<String> ignoreFields) {
-
-        Log.d("BemaCarl4","EmployeePermissionModel.EmployeePermissionModel(String userGuid.permissionId: " + permissionId);
         this.userGuid = userGuid;
         this.permissionId = permissionId;
         this.enabled = enabled;

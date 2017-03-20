@@ -2,12 +2,15 @@ package com.kaching123.tcr.commands.store.saleorder;
 
 import android.content.ContentProviderOperation;
 import android.net.Uri;
+import android.util.Log;
 
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
 import com.kaching123.tcr.model.SaleOrderModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -51,7 +54,13 @@ public abstract class UpdateSaleOrderCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.getConverter(order).updateSQL(order, getAppCommandContext());
+        Log.d("BemaCarl6","UpdateSaleOrderCommand.createSqlCommand.order." + order.orderStatus);
+        BatchSqlCommand batch = batchUpdate(order);
+        batch.add(JdbcFactory.getConverter(order).updateSQL(order, getAppCommandContext()));
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+
+        return batch;
     }
 
 

@@ -369,7 +369,6 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
     }
 
     public SingleSqlCommand removeTaxGroup(String taxGroupId, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl","ItemJdbcConverter.removeTaxGroup.taxGroupId: " + taxGroupId);
         return _update(ITEM_TABLE_NAME, appCommandContext)
                 .add(TAX_GROUP_ID, (String) null)
                 .where(TAX_GROUP_ID, taxGroupId)

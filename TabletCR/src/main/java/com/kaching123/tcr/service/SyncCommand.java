@@ -376,7 +376,7 @@ public class SyncCommand implements Runnable {
                         checkIsLoadingOldOrders();
                     }
 
-                    Logger.e("SyncCommand.syncNowInner(): attempt #" + (FINALIZE_SYNC_RETRIES - retriesCount + 1) + "; serverLastTimestamp: " + serverLastTimestamp + "; minUpdateTime: " + minUpdateTime);
+                    Logger.d("SyncCommand.syncNowInner(): attempt #" + (FINALIZE_SYNC_RETRIES - retriesCount + 1) + "; serverLastTimestamp: " + serverLastTimestamp + "; minUpdateTime: " + minUpdateTime);
                     serverHasBeenUpdated = false;
                     count += syncSingleTable2(service, api2, UnitLabelTable.TABLE_NAME, UnitLabelTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, RegisterTable.TABLE_NAME, RegisterTable.ID, employee, serverLastTimestamp);

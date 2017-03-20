@@ -183,7 +183,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
          */
         if(!tips && digital_signature && signature_receipt.equals("SHORT")) {        // condition 1
             //print_digital_signature = true;
-            Log.i("BemaCarl","doubleCheckBeforePrint Condition 1");
 
             /** Condition 2
              *  If “Tips” are “Disabled” and “Digital Signature” is set to “No” and “Signature Receipt” is set to “Short”
@@ -194,7 +193,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
              */
         }else if(!tips && !digital_signature && signature_receipt.equals("SHORT")) {   // condition 2
             //signatureBox.setEnabled(true);
-            Log.i("BemaCarl","doubleCheckBeforePrint Condition 2 e 3");
 
             /** Condition 4
              *  If “Tips” are “Disabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Long”
@@ -205,7 +203,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
              */
         }else if(!tips && !digital_signature && signature_receipt.equals("LONG")) {   // condition 4
             //signatureBox.setEnabled(true);
-            Log.i("BemaCarl","doubleCheckBeforePrint Condition 4 e 5");
 
             /** Condition 6
              *  If “Tips” are “Enabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Short”
@@ -216,7 +213,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
              */
         }else if(tips && !digital_signature && signature_receipt.equals("SHORT")) {   // condition 6
             //signatureBox.setEnabled(true);
-            Log.i("BemaCarl","doubleCheckBeforePrint Condition 6 e 7");
 
             /** Condition 8
              *  If “Tips” are “Enabled” “Digital Signature” is set to “No” and “Signature Receipt” is set to “Long”
@@ -227,7 +223,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
              */
         }else if(tips && !digital_signature && signature_receipt.equals("LONG")) {   // condition 8
             //signatureBox.setEnabled(true);
-            Log.i("BemaCarl","doubleCheckBeforePrint Condition 8 e 9");
         }
 
     }

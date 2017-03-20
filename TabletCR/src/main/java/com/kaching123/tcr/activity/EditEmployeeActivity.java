@@ -90,7 +90,6 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    Log.d("BemaCarl3","EditEmployeeActivity.init.statusChanged: |"+statusValue+"|"+status.getSelectedItemId()+"|");
                     statusValue = status.getSelectedItemId();
                 }
                 return false;
@@ -101,7 +100,6 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    Log.d("BemaCarl3","EditEmployeeActivity.init.presedChanged: |"+presedValue+"|"+preset.getSelectedItemId()+"|");
                     presedValue = preset.getSelectedItemId();
                 }
                 return false;
