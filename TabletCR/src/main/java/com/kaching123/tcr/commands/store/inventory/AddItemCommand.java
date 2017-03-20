@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.kaching123.tcr.InventoryHelper;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.ItemModel;
@@ -86,6 +87,7 @@ public class AddItemCommand extends AsyncCommand {
             batch.add(JdbcFactory.getConverter(movementModel)
                     .insertSQL(movementModel, getAppCommandContext()));
         }
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
         return batch;
     }
 

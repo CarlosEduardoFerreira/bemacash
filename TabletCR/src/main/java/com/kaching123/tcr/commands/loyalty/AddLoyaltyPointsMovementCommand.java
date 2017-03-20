@@ -71,14 +71,10 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
         if(cursor.moveToNext()) {
             CustomerModel customerModel = new CustomerModel(cursor);
             BigDecimal newPoints = customerModel.loyaltyPoints.add(points);
-            Log.d("BemaCarl1","AddLoyaltyPointsMovementCommand.doCommand.customerModel.loyaltyPoints: " + customerModel.loyaltyPoints);
-            Log.d("BemaCarl1","AddLoyaltyPointsMovementCommand.doCommand.customerModel.points: " + points);
-            Log.d("BemaCarl1","AddLoyaltyPointsMovementCommand.doCommand.customerModel.newPoints: " + newPoints);
             customerModel.loyaltyPoints = newPoints;
 
             CustomerJdbcConverter customerJdbcConverter = (CustomerJdbcConverter) JdbcFactory.getConverter(ShopStore.CustomerTable.TABLE_NAME);
             sql.add(customerJdbcConverter.updateSQL(customerModel, getAppCommandContext()));
-
         }
 
         new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
