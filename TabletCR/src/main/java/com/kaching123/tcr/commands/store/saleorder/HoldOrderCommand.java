@@ -4,12 +4,15 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.OnHoldStatus;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.SaleOrderModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.annotations.OnSuccess;
@@ -98,7 +101,13 @@ public class HoldOrderCommand extends UpdateSaleOrderCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         order.orderStatus = action == HoldOnAction.ADD ? OrderStatus.HOLDON : OrderStatus.CANCELED;
-        return JdbcFactory.getConverter(order).updateSQL(order, getAppCommandContext());
+        Log.d("BemaCarl6","UpdateSaleOrderCommand.createSqlCommand.order." + order.orderStatus);
+        BatchSqlCommand batch = batchUpdate(order);
+        batch.add(JdbcFactory.getConverter(order).updateSQL(order, getAppCommandContext()));
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+
+        return batch;
     }
 
     public static abstract class BaseHoldOrderCallback {
