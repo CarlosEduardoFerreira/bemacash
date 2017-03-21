@@ -17,6 +17,7 @@ import com.kaching123.tcr.commands.device.FindPrinterCommand;
 import com.kaching123.tcr.commands.device.FindPrinterCommand.BaseFindPrinterCallback;
 import com.kaching123.tcr.commands.device.PrinterInfo;
 import com.kaching123.tcr.commands.store.settings.AddPrintersCommand;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.telly.groundy.TaskHandler;
@@ -72,6 +73,20 @@ public class FindPrinterFragment extends StyledDialogFragment {
                         printers.add(adapter.getItem(position));
                     }
                 }
+                StringBuilder notReachablePrinters = new StringBuilder();
+                for (PrinterInfo printer : printers) {
+                    String tabletNetworkIp = getApp().getCurrentIp();
+                    tabletNetworkIp = tabletNetworkIp.substring(0, tabletNetworkIp.lastIndexOf('.'));
+                    if (!tabletNetworkIp.equals(printer.ip.substring(0, printer.ip.lastIndexOf('.')))) {
+                        notReachablePrinters.append("\n").append(printer.fullAddress);
+                    }
+                }
+                if(notReachablePrinters.length() > 0) {
+                    notReachablePrinters.append("\n");
+                    AlertDialogFragment.showAlert(getActivity(), R.string.alert_message_printer_is_not_in_same_network_title,
+                            getString(R.string.alert_message_printer_is_not_in_same_network, notReachablePrinters.toString()));
+                }
+
                 AddPrintersCommand.start(getActivity(), printers);
                 return true;
             }

@@ -87,6 +87,7 @@ import retrofit.mime.TypedInput;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
+import static com.kaching123.tcr.util.Util.refreshCurrentIp;
 
 @EApplication
 public class TcrApplication extends MultiDexApplication {
@@ -155,6 +156,8 @@ public class TcrApplication extends MultiDexApplication {
     public boolean paxSignatureCanceledByCustomer = false;
     public boolean paxMachineHasTransactionSuccessfull = false;
 
+    public String currentIp;
+
     /** Local Sync *************************** **/
     private List<BroadcastInfo> mLanDevices;
     /** *************************** Local Sync **/
@@ -184,6 +187,7 @@ public class TcrApplication extends MultiDexApplication {
 
         String LogOutputFile = Environment.getExternalStorageDirectory().toString();
         LogSetting.setOutputPath(LogOutputFile);
+        refreshCurrentIp();
     }
 
     @Override
@@ -211,6 +215,14 @@ public class TcrApplication extends MultiDexApplication {
                 .setLogLevel(BuildConfig.DEBUG ? LogLevel.FULL : LogLevel.NONE)
                 .setLog(new AndroidLog("TCR"))
                 .build();
+    }
+
+    public String getCurrentIp() {
+        return currentIp != null ? currentIp : "";
+    }
+
+    public synchronized void setCurrentIp(String currentIp) {
+        this.currentIp = currentIp;
     }
 
     @Background

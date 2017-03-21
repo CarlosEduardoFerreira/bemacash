@@ -10,6 +10,8 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.service.OfflineCommandsService;
 import com.kaching123.tcr.util.Util;
 
+import static com.kaching123.tcr.util.Util.refreshCurrentIp;
+
 /**
  * Created by gdubina on 30.01.14.
  */
@@ -30,6 +32,7 @@ public class NetworkStateListener extends BroadcastReceiver {
             return;
         }
         TcrApplication.get().setNetworkConnected(hasConnection);
+        refreshCurrentIp();
 
         if (!TcrApplication.get().isUserLogin()) {
             Logger.d("[NETWORK] not logged in - action ignored");

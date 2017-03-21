@@ -1490,6 +1490,10 @@
     <string name="credit_receipt_print_signature">Merchant signature: ________________________________</string>
     <string name="credit_receipt_print_valid_through">Valid through:</string>
     <string name="dashboard_action_credit_receipts">Credit Receipts</string>
+
+    <string name="alert_message_printer_is_not_in_same_network" formatted="false">The IP addresses of these printers %s are not in the same range as the Android device</string>
+    <string name="alert_message_printer_is_not_in_same_network_title" >Printer IP Alert</string>
+
     <string name="error_message_display_disconnected">Display disconnected!</string>
     <string name="error_message_display_command_error">Error executing display command!</string>
     <string name="error_message_scanner_disconnected">Scanner disconnected!</string>
