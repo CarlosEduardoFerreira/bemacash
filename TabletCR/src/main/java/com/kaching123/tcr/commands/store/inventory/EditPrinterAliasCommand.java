@@ -43,9 +43,9 @@ public class EditPrinterAliasCommand extends AsyncCommand{
 
     @Override
     protected ISqlCommand createSqlCommand() {
-
         BatchSqlCommand sqlPrinterAlias = batchUpdate(model);
         sqlPrinterAlias.add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()));
+
         new AtomicUpload().upload(sqlPrinterAlias, AtomicUpload.UploadType.WEB);
 
         return sqlPrinterAlias;

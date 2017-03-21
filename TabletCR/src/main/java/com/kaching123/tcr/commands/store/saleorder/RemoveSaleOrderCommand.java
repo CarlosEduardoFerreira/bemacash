@@ -6,8 +6,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.loyalty.AddLoyaltyPointsMovementCommand;
 import com.kaching123.tcr.commands.loyalty.DeleteOrderIncentivesCommand;
 import com.kaching123.tcr.commands.store.AsyncCommand;
@@ -260,9 +262,14 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         }
 
         SaleOrderModel model = new SaleOrderModel(orderId);
+        Log.d("BemaCarl6","RemoveSaleOrderCommand.createSqlCommand.model.orderStatus1" + model.orderStatus);
         model.orderStatus = OrderStatus.CANCELED;
         SaleOrdersJdbcConverter converter = (SaleOrdersJdbcConverter) JdbcFactory.getConverter(model);
         batchSqlCommand.add(converter.deleteUpdateStatus(model, getAppCommandContext()));
+
+        Log.d("BemaCarl6","RemoveSaleOrderCommand.createSqlCommand.model.orderStatus2" + model.orderStatus);
+
+        new AtomicUpload().upload(batchSqlCommand, AtomicUpload.UploadType.WEB);
 
         return batchSqlCommand;
     }
