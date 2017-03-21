@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.androidannotations.annotations.EFragment;
+
+import com.kaching123.pos.USBPrinter;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.device.FindPrinterCommand;
 import com.kaching123.tcr.commands.device.FindPrinterCommand.BaseFindPrinterCallback;
@@ -75,6 +77,9 @@ public class FindPrinterFragment extends StyledDialogFragment {
                 }
                 StringBuilder notReachablePrinters = new StringBuilder();
                 for (PrinterInfo printer : printers) {
+                    if (printer.ip.compareTo(USBPrinter.USB_DESC) == 0) {
+                        continue;
+                    }
                     String tabletNetworkIp = getApp().getCurrentIp();
                     tabletNetworkIp = tabletNetworkIp.substring(0, tabletNetworkIp.lastIndexOf('.'));
                     if (!tabletNetworkIp.equals(printer.ip.substring(0, printer.ip.lastIndexOf('.')))) {
