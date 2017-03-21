@@ -278,10 +278,10 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             printOrder(false, false);
         } else if (signatureBox.isChecked() && !signatureOrderPrinted) {
             printSignatureOrder(false, false, ReceiptType.MERCHANT, printSignatureCallback);
-        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && isPrinterTwoCopiesReceipt) {
+        } else if (printBox.isChecked() && gateWay == ReceiptType.DEBIT && isPrinterTwoCopiesReceipt) {
             printOrder(false, false);
             isPrinterTwoCopiesReceipt = false;
-        } else if (printBox.isChecked() && (gateWay == ReceiptType.DEBIT || gateWay == ReceiptType.EBT || gateWay == ReceiptType.EBT_CASH) && !debitOrEBTDetailsPrinted) {
+        } else if (printBox.isChecked() && gateWay == ReceiptType.DEBIT && !debitOrEBTDetailsPrinted) {
             printDebitorEBTDetails(false, false);
         }
         completeProcess();
