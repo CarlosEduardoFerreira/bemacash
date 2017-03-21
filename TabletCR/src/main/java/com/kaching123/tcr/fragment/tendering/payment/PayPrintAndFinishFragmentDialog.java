@@ -359,7 +359,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
     private void onSignaturePrintSuccess() {
         signatureOrderPrinted = true;
-        completeProcess();
+        printReceipts();
     }
 
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
