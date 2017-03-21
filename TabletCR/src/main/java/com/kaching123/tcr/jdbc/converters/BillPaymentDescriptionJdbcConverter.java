@@ -1,15 +1,20 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel.PrepaidType;
 import com.kaching123.tcr.model.CategoryModel;
 import com.kaching123.tcr.service.SingleSqlCommand;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -32,6 +37,16 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
 
     @Override
     public BillPaymentDescriptionModel toValues(JdbcJSONObject rs) throws JSONException {
+        List<String> ignoreFields = new ArrayList<>();
+        if (!rs.has(ID)) ignoreFields.add(ShopStore.BillPaymentDescriptionTable.GUID);
+        if (!rs.has(DESCRIPTION)) ignoreFields.add(ShopStore.BillPaymentDescriptionTable.GUID);
+        if (!rs.has(TYPE)) ignoreFields.add(ShopStore.BillPaymentDescriptionTable.GUID);
+        if (!rs.has(IS_VOIDED)) ignoreFields.add(ShopStore.BillPaymentDescriptionTable.GUID);
+        if (!rs.has(TRANSACTION_ID)) ignoreFields.add(ShopStore.BillPaymentDescriptionTable.GUID);
+        if (!rs.has(IS_FAILED)) ignoreFields.add(ShopStore.BillPaymentDescriptionTable.GUID);
+        if (!rs.has(ORDER_ID)) ignoreFields.add(ShopStore.BillPaymentDescriptionTable.GUID);
+
+
         return new BillPaymentDescriptionModel(
                 rs.getString(ID),
                 rs.getString(DESCRIPTION),
@@ -39,7 +54,8 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
                 rs.getLong(TRANSACTION_ID),
                 rs.getBoolean(IS_VOIDED),
                 rs.getBoolean(IS_FAILED),
-                rs.getString(ORDER_ID)
+                rs.getString(ORDER_ID),
+                ignoreFields
         );
     }
 
@@ -55,12 +71,28 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
 
     @Override
     public String getLocalGuidColumn() {
-        return null;
+        return ShopStore.BillPaymentDescriptionTable.GUID;
     }
 
     @Override
     public JSONObject getJSONObject(BillPaymentDescriptionModel model) {
-        return null;
+
+        JSONObject json = null;
+
+        try {
+            json = new JSONObject()
+                    .put(ID, model.guid)
+                    .put(DESCRIPTION, model.description)
+                    .put(TYPE, model.type)
+                    .put(TRANSACTION_ID, model.saleOrderId)
+                    .put(IS_VOIDED, model.isVoided)
+                    .put(IS_FAILED, model.isFailed)
+                    .put(ORDER_ID, model.orderId);
+        } catch (JSONException e) {
+            Logger.e("JSONException", e);
+        }
+
+        return json;
     }
 
     @Override
@@ -96,6 +128,11 @@ public class BillPaymentDescriptionJdbcConverter extends JdbcConverter<BillPayme
                 .add(ORDER_ID, model.saleOrderId)
                 .where(ID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 
 }

@@ -998,7 +998,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     }
 
     private void hideSearchFragment() {
-        getSupportFragmentManager().beginTransaction().hide(searchResultFragment).commitAllowingStateLoss();
+        if (!isFinishing()) {
+            getSupportFragmentManager().beginTransaction().hide(searchResultFragment).commitAllowingStateLoss();
+        }
     }
 
     private void closeSearch() {
@@ -1796,9 +1798,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             isPrepaidItemStart = false;
             BillPaymentDescriptionModel billPaymentDescriptionModel = null;
             if (!isGiftCardReload)
-                billPaymentDescriptionModel = new BillPaymentDescriptionModel(UUID.randomUUID().toString(), model.description, BillPaymentDescriptionModel.PrepaidType.WIRELESS_TOPUP, Integer.parseInt(model.productCode), false, false, saleOrderItemGuid);
+                billPaymentDescriptionModel = new BillPaymentDescriptionModel(UUID.randomUUID().toString(), model.description, BillPaymentDescriptionModel.PrepaidType.WIRELESS_TOPUP, Integer.parseInt(model.productCode), false, false, saleOrderItemGuid, null);
             else
-                billPaymentDescriptionModel = new BillPaymentDescriptionModel(UUID.randomUUID().toString(), model.description, BillPaymentDescriptionModel.PrepaidType.GIFT_CARD_RELOAD, 0, false, false, saleOrderItemGuid);
+                billPaymentDescriptionModel = new BillPaymentDescriptionModel(UUID.randomUUID().toString(), model.description, BillPaymentDescriptionModel.PrepaidType.GIFT_CARD_RELOAD, 0, false, false, saleOrderItemGuid, null);
 
             isGiftCardReload = false;
 

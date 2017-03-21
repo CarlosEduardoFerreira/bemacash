@@ -4,8 +4,10 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.payment.SOAPWebCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
@@ -15,6 +17,7 @@ import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.TransactionMode;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.pinserve.ResponseCode;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.wireless.request.VoidOrderRequest;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.PrepaidOrderView2;
@@ -155,7 +158,14 @@ public class VoidOrderCommand extends SOAPWebCommand<VoidOrderRequest> {
         if (ignore)
             return null;
 
-        BillPaymentDescriptionModel model = new BillPaymentDescriptionModel(prepaidOrderGuid, null, null, 0L, true, false, null);
-        return JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext());
+        BillPaymentDescriptionModel model = new BillPaymentDescriptionModel(prepaidOrderGuid, null, null, 0L, true, false, null, null);
+
+        Log.d("BemaCarl6","VoidOrderCommand.createSqlCommand.order." + model.isVoided);
+        BatchSqlCommand batch = batchUpdate(model);
+        batch.add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()));
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+
+        return batch;
     }
 }

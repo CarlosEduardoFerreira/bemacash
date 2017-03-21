@@ -3,10 +3,13 @@ package com.kaching123.tcr.commands.prepaid;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -37,7 +40,14 @@ public class BillPaymentDescriptionCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.insert(model, getAppCommandContext());
+
+        Log.d("BemaCarl6","BillPaymentDescriptionCommand.createSqlCommand.order." + model.isVoided);
+        BatchSqlCommand batch = batchInsert(model);
+        batch.add(JdbcFactory.insert(model, getAppCommandContext()));
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+
+        return batch;
     }
 
     @Override
