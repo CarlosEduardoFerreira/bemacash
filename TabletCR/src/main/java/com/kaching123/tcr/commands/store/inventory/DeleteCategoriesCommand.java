@@ -3,6 +3,7 @@ package com.kaching123.tcr.commands.store.inventory;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
@@ -46,7 +47,7 @@ public class DeleteCategoriesCommand extends AsyncCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         CategoryJdbcConverter categoryJdbcConverter = (CategoryJdbcConverter)JdbcFactory.getConverter(CategoryTable.TABLE_NAME);
-
+        Log.d("BemaCarl7","DeleteCategoriesCommand.createSqlCommand.departmentGuid: " + departmentGuid);
         BatchSqlCommand batch = batchDelete(CategoryTable.TABLE_NAME);
         batch.add(categoryJdbcConverter.deleteByDepartment(departmentGuid, getAppCommandContext()));
 
@@ -56,6 +57,7 @@ public class DeleteCategoriesCommand extends AsyncCommand {
     }
 
     public SyncResult sync(Context context, String departmentGuid, IAppCommandContext appCommandContext) {
+        Log.d("BemaCarl7","DeleteCategoriesCommand.sync.departmentGuid: " + departmentGuid);
         this.departmentGuid = departmentGuid;
         return syncDependent(context, appCommandContext);
     }

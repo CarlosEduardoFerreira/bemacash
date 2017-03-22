@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
@@ -44,6 +45,8 @@ import com.telly.groundy.TaskResult;
 import com.telly.groundy.annotations.OnFailure;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
+
+import org.json.JSONObject;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -296,7 +299,9 @@ public class LoginCommand extends GroundyTask {
         TcrApplication app = TcrApplication.get();
         SyncApi api = app.getRestAdapter().create(SyncApi.class);
         try {
-            AuthResponse resp = api.auth(app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(userName, password, registerSerial, getContext()));
+            JSONObject credentials = SyncUploadRequestBuilder.getReqCredentials(userName, password, registerSerial, getContext());
+            Log.d("BemaCarl","LoginCommand.webLogin.credentials: " + credentials.toString());
+            AuthResponse resp = api.auth(app.emailApiKey, credentials);
             if (resp == null) {
                 Logger.e("Login web login error: can't get response");
                 return null;

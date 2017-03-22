@@ -1,5 +1,7 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import android.util.Log;
+
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -81,7 +83,6 @@ public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
                     .put(ORDER_NUM, model.orderNum)
                     .put(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
                     .put(COMMISSION, model.commission);
-
         } catch (JSONException e) {
             Logger.e("JSONException", e);
         }
@@ -123,6 +124,7 @@ public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
     }
 
     public SingleSqlCommand deleteByDepartment(String departmentGuid, IAppCommandContext appCommandContext) {
+        Log.d("BemaCarl7","CategoryJdbcConverter.deleteByDepartment.departmentGuid: " + departmentGuid);
         return _update(CATEGORY_TABLE_NAME, appCommandContext)
                 .add(JdbcBuilder.FIELD_IS_DELETED, 1)
                 .where(DEPARTMENT_ID, departmentGuid)

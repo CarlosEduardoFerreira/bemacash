@@ -7,6 +7,7 @@ import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.method.SingleLineTransformationMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +50,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.kaching123.tcr.fragment.UiHelper.isValidEmail;
@@ -118,13 +120,15 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
     protected EditText commissions;
 
     private ArrayList<Permission> permissions = new ArrayList<Permission>();
-    private ArrayList<PresetWrapper> presetDataList;
+    protected ArrayList<PresetWrapper> presetDataList;
 
     protected abstract void callCommand(EmployeeModel model, ArrayList<Permission> permissions);
 
     private boolean isFirstSpinnerCall = true;
 
     private int spinnerLastPos;
+
+    public Collection<Permission> customPermissionsBase;
 
     protected void init() {
         login.setTransformationMethod(SingleLineTransformationMethod.getInstance());
@@ -261,12 +265,7 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
 
     @Click
     protected void btnEditPermissionClicked() {
-        //if (!PlanOptions.isCustomPermissionAllowed()) {
-        //    AlertDialogFragment.showAlert(BaseEmployeeActivity.this,
-        //            R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
-        //} else {
         PermissionActivity.start(this, PERMISSIONS_REQUEST_INDEX, permissions);
-        //}
     }
 
     @OnActivityResult(PERMISSIONS_REQUEST_INDEX)
@@ -290,6 +289,7 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity {
     }
 
     private boolean updatePreset(Collection<Permission> list) {
+        customPermissionsBase = list;
         int len = presetDataList.size();
         for (int i = 0; i < len; i++) {
             EnumWrapper<PermissionPreset> preset = presetDataList.get(i);

@@ -52,7 +52,7 @@ public class PermissionsFragment extends Fragment {
     @ViewById
     protected TextView titleCounter;
 
-    private PermissionsAdapter adapter;
+    public PermissionsAdapter adapter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

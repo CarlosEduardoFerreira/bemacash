@@ -48,6 +48,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -75,6 +76,8 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
     long presedValue;
     boolean statusChanged = false;
     boolean presedChanged = false;
+
+    protected Collection<Permission> customPermissionInitial;
 
     @AfterViews
     @Override
@@ -107,7 +110,6 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         });
 
         fillFields();
-
     }
 
     private void initUserAndPwd() {
@@ -359,13 +361,13 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
     @Override
     public void onBackPressed() {
-        if(employeeHasChanges()) {
+        if(employeeHasChanges() || permissionsHasChanges()) {
             final FragmentActivity actv = this;
             AlertDialogFragment.showAlert(
                 this,
                 R.string.dlg_title_back_button,
                 getApplicationContext().getResources().getString(R.string.dlg_text_back_button),
-                R.string.btn_ok,
+                R.string.btn_yes,
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
@@ -409,65 +411,78 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         presedChanged = presedValue != preset.getSelectedItemId();
 
         if(!initEmployeeModel.firstName.equals(firstName.getText().toString())) {
-            Log.d("BemaCarl3","employeeHasChanges.firstName"); return true;
+            return true;
         }
         if(!initEmployeeModel.lastName.equals(lastName.getText().toString())) {
-            Log.d("BemaCarl3","employeeHasChanges.lastName"); return true;
+            return true;
         }
         if(!initEmployeeModel.login.equals(login.getText().toString())) {
-            Log.d("BemaCarl3","employeeHasChanges.login"); return true;
+            return true;
         }
         if(initEmployeeModel.email != null)
         if(!initEmployeeModel.email.equals(email.getText().toString())) {
-            Log.d("BemaCarl3","employeeHasChanges.email"); return true;
+            return true;
         }
         if(initEmployeeModel.phone != null)
         if(!initEmployeeModel.phone.equals(phone.getText().toString())) {
-            Log.d("BemaCarl3","employeeHasChanges.phone"); return true;
+            return true;
         }
         if(initEmployeeModel.street != null)
         if(!initEmployeeModel.street.equals(street.getText().toString())) {
-            Log.d("BemaCarl3","employeeHasChanges.street"); return true;
+            return true;
         }
         if(initEmployeeModel.complementary != null)
         if(!initEmployeeModel.complementary.equals(complementary.getText().toString())) {
-            Log.d("BemaCarl3","employeeHasChanges.complementary"); return true;
+            return true;
         }
         if(initEmployeeModel.city != null)
         if(!initEmployeeModel.city.equals(city.getText().toString())) {
-            Log.d("BemaCarl3","employeeHasChanges.city"); return true;
+            return true;
         }
         if(initEmployeeModel.state != null)
         if(!initEmployeeModel.state.equals(state.getText().toString())) {
-            Log.d("BemaCarl3","employeeHasChanges.state"); return true;
+            return true;
         }
         if(initEmployeeModel.country != null)
         if(!initEmployeeModel.country.equals(country.getText().toString())) {
-            Log.d("BemaCarl3","employeeHasChanges.country"); return true;
+            return true;
         }
         if(initEmployeeModel.zip != null)
         if(!initEmployeeModel.zip.equals(zip.getText().toString())) {
-            Log.d("BemaCarl3","employeeHasChanges.zip"); return true;
+            return true;
         }
         if(!hRate1.equals(hRate2)) {
-            Log.d("BemaCarl3","employeeHasChanges.hRate"); return true;
+            return true;
         }
         if(initEmployeeModel.tipsEligible != tipsEligible.isChecked()) {
-            Log.d("BemaCarl3","employeeHasChanges.tipsEligible"); return true;
+            return true;
         }
         if(initEmployeeModel.commissionEligible != commissionsEligible.isChecked()) {
-            Log.d("BemaCarl3","employeeHasChanges.commissionsEligible"); return true;
+            return true;
         }
         if(!commission1.equals(commission2)) {
-            Log.d("BemaCarl3","employeeHasChanges.commissions"); return true;
+            return true;
         }
         if(statusChanged) {
-            Log.d("BemaCarl3","employeeHasChanges.statusChanged"); return true;
+            return true;
         }
         if(presedChanged) {
-            Log.d("BemaCarl3","employeeHasChanges.presedChanged"); return true;
+            return true;
         }
 
+        return false;
+    }
+
+
+    private boolean permissionsHasChanges(){
+        if(customPermissionInitial!=null && customPermissionsBase!=null) {
+            for (Permission a : customPermissionInitial) {
+                if (!customPermissionsBase.contains(a)) return true;
+            }
+            for (Permission b : customPermissionsBase) {
+                if (!customPermissionInitial.contains(b)) return true;
+            }
+        }
         return false;
     }
 
@@ -500,6 +515,7 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
                                     return p1.getGroup().compareTo(p2.getGroup());
                                 }
                             });
+                            customPermissionInitial = permissions;
                             return permissions;
                         }
                     })

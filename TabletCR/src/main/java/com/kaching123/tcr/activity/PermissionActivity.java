@@ -30,7 +30,7 @@ public class PermissionActivity extends SuperBaseActivity {
     public static final String EXTRA_PERMISSIONS = "EXTRA_PERMISSIONS";
 
     @Extra
-    protected List<Permission> userPermissions;
+    public List<Permission> userPermissions;
 
     private HashMap<Group, Integer> group2Resource = new HashMap<Group, Integer>();
 

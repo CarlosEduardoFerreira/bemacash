@@ -34,9 +34,9 @@ public enum Permission implements LabaledEnum {
     ADMIN(18, R.string.permission_admin, Group.SYSTEM_CONFIGURATION),
     SOFTWARE_UPDATE(25, R.string.permission_software_update, Group.SYSTEM_CONFIGURATION);
 
-    private final long id;
-    private final int labelId;
-    private final Group group;
+    public final long id;
+    public final int labelId;
+    public final Group group;
 
     Permission(long id, int labelId, Group group) {
         this.id = id;

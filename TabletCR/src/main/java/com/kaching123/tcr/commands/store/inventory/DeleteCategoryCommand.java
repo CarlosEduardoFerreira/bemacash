@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.AtomicUpload;
@@ -67,6 +68,7 @@ public class DeleteCategoryCommand extends AsyncCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         BatchSqlCommand batch = batchDelete(CategoryTable.TABLE_NAME);
+        Log.d("BemaCarl7","DeleteCategoryCommand.createSqlCommand.departmentGuid: " + model.guid);
         batch.add(JdbcFactory.delete(model, getAppCommandContext()));
 
         new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);

@@ -10,13 +10,10 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
-import com.kaching123.tcr.notification.NotificationHelper;
 import com.kaching123.tcr.service.broadcast.WifiSocketService;
 import com.kaching123.tcr.service.broadcast.messages.RequestCommandsMsg;
 import com.kaching123.tcr.service.v2.UploadTaskV2;

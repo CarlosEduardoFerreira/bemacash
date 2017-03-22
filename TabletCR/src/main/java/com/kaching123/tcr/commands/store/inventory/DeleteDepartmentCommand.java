@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.AtomicUpload;
@@ -11,10 +12,12 @@ import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.CategoryJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.DepartmentJdbcConverter;
+import com.kaching123.tcr.model.CategoryModel;
 import com.kaching123.tcr.model.DepartmentModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.CategoryTable;
 import com.kaching123.tcr.store.ShopStore.DepartmentTable;
@@ -54,7 +57,7 @@ public class DeleteDepartmentCommand extends AsyncCommand {
         if (count > 0) {
             return failed().add(EXTRA_DEPARTMENT_NAME, model.title).add(EXTRA_ITEMS_COUNT, count).add(EXTRA_DEPARTMENT_GUID, model.guid);
         }
-
+        Log.d("BemaCarl7","DeleteDepartmentCommand.doCommand.model.guid: " + model.guid);
         subResult = new DeleteCategoriesCommand().sync(getContext(), model.guid, getAppCommandContext());
         if (subResult == null)
             return failed().add(EXTRA_DEPARTMENT_NAME, model.title).add(EXTRA_ITEMS_COUNT, count).add(EXTRA_DEPARTMENT_GUID, model.guid);
@@ -101,16 +104,23 @@ public class DeleteDepartmentCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
+        /*
+        if (subResult.getSqlCmd() != null) {
+            BatchSqlCommand sqlCategories = batchDelete(CategoryModel.class);
+            sqlCategories.add(subResult.getSqlCmd());
+            Log.d("BemaCarl7", "DeleteDepartmentCommand.createSqlCommand.subResult.getSqlCmd(): " + subResult.getLocalDbOperations());
+
+            new AtomicUpload().upload(sqlCategories, AtomicUpload.UploadType.WEB);
+        }
+        /**/
+        Log.d("BemaCarl7", "DeleteDepartmentCommand.createSqlCommand.model.guid: " + model.guid);
         DepartmentJdbcConverter departmentJdbcConverter = (DepartmentJdbcConverter)JdbcFactory.getConverter(DepartmentTable.TABLE_NAME);
+        BatchSqlCommand sqlDepartment = batchDelete(model);
+        sqlDepartment.add(departmentJdbcConverter.deleteSQL(model, getAppCommandContext()));
 
-        BatchSqlCommand sqlCommand = batchDelete(model);
-        if (subResult.getSqlCmd() != null)
-            sqlCommand.add(subResult.getSqlCmd());
-        sqlCommand.add(departmentJdbcConverter.deleteSQL(model, getAppCommandContext()));
+        //new AtomicUpload().upload(sqlDepartment, AtomicUpload.UploadType.WEB);
 
-        new AtomicUpload().upload(sqlCommand, AtomicUpload.UploadType.WEB);
-
-        return sqlCommand;
+        return sqlDepartment;
     }
 
     public static void start(Context context, DepartmentModel model, DeleteDepartmentCallback callback){

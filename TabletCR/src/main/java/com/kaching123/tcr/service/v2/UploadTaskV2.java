@@ -69,6 +69,7 @@ public class UploadTaskV2 {
             while (c.moveToNext()) {
                 final long id = c.getLong(0);
                 String json = c.getString(1);
+                Log.d("BemaCarl","UploadTaskV2.employeeUpload.json: " + json);
                 Logger.d("[CMD_TABLE] %d = %s", id, json);
                 if (CMD_START_TRANSACTION.equals(json) || CMD_START_EMPLOYEE.equals(json)) {
                     Logger.d("START TRANSACTION");
@@ -148,6 +149,7 @@ public class UploadTaskV2 {
                 boolean emloyee_upload_end = false;
                 final long id = c.getLong(0);
                 String json = c.getString(1);
+                Log.d("BemaCarl","UploadTaskV2.employeeUpload.json: " + json);
                 Logger.d("[CMD_TABLE] %d = %s", id, json);
                 if (CMD_START_EMPLOYEE.equals(json)) {
                     Logger.d("START EMPLOYEE UPLOAD");
@@ -159,7 +161,9 @@ public class UploadTaskV2 {
                         long subId = c.getLong(0);
                         subIds.add(subId);
                         String subJson = c.getString(1);
+
                         Logger.d("[CMD_TABLE] %d = %s", subId, subJson);
+                        Log.d("BemaCarl", "UploadTask2.employeeUpload.json|subJson: |" + json +"|"+ subJson + "|");
                         //TODO need to verify end
                         if ((CMD_START_TRANSACTION.equals(json)) || (CMD_END_TRANSACTION.equals(json))) {
                             break;
@@ -178,6 +182,7 @@ public class UploadTaskV2 {
                                 Logger.e("transaction is not finalized!");
                             } else {
                                 String transactionCmd = batch.toJson();
+                                Log.d("BemaCarl","UploadTaskV2.employeeUpload.transactionCmd: " + transactionCmd);
                                 Logger.d("TRANSACTION_RESULT: %s", transactionCmd);
                                 commands.add(new UploadCommand(id, transactionCmd, subIds));
                             }
@@ -185,6 +190,7 @@ public class UploadTaskV2 {
                             break;
                         }
                         try {
+                            Log.d("BemaCarl","UploadTaskV2.employeeUpload.subJson: " + subJson);
                             if (batch == null) {
                                 batch = BatchSqlCommand.fromJson(subJson);
                             } else {
@@ -231,6 +237,7 @@ public class UploadTaskV2 {
         try {
             req = SyncUploadRequestBuilder.getUploadObject(commands);
             Logger.d("[UploadWeb] req = %s", req.toString());
+            Log.d("BemaCarl","UploadTaskV2.try2Upload.req.toString(): " + req.toString());
             SyncApi api = app.getRestAdapter().create(SyncApi.class);
             UploadResponseV1 resp = api.upload(app.emailApiKey, SyncUploadRequestBuilder.getReqCredentials(employeeModel, app), req);
             if (resp == null) {

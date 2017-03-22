@@ -324,7 +324,7 @@
     <string name="dlg_return_title">Return order</string>
 
     <string name="dlg_title_back_button">Save changes</string>
-    <string name="dlg_text_back_button">Are you sure you do not want to save changes?</string>
+    <string name="dlg_text_back_button">Are you sure you don\'t want to save changes?</string>
 
     <string name="dlg_return_msg">Are you sure you want to return\n%1$s %2$s on order %3$s?</string>
     <string name="dlg_void_fail_title">Void Fail</string>
