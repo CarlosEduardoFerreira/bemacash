@@ -112,7 +112,11 @@ public class PaxProcessorRefundCommand extends PaxProcessorBaseCommand {
 
         String errorReason = "";
         try {
-            PaymentRequest requestVoid = getRequest(true, sAmount, transactionModel);
+            boolean isVoid = false;
+            if(amount != null && (transactionModel != null || transaction!= null)) {
+                isVoid = amount.compareTo(transaction != null ? transaction.amount : transactionModel.amount) == 0;
+            }
+            PaymentRequest requestVoid = getRequest(isVoid, sAmount, transactionModel);
 
 //            requestVoid.Amount = sAmount;
 //            requestVoid.TransType = TRANS_TYPE_VOID;
