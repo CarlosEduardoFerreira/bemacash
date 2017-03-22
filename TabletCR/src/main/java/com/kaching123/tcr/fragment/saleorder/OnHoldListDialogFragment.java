@@ -282,7 +282,6 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
         if(getApp().getShopInfo().printOnholdOrders) {
             WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         }
-        PrintItemsForKitchenCommand.itComesFromPay = false;
 
         String title;
         if(isOnHoldOrdersDefined) {
@@ -291,7 +290,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
             title = clickedOrder.getHoldName();
         }
         PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip,
-                new KitchenKitchenPrintCallback(), false, title);
+                new KitchenKitchenPrintCallback(), false, title, false);
     }
 
     @Override

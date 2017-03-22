@@ -184,9 +184,8 @@ public class AddOnHoldDialogFragment extends BaseOnHoldDialogFragment {
         if(getApp().getShopInfo().printOnholdOrders) {
             WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         }
-        PrintItemsForKitchenCommand.itComesFromPay = false;
         PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip,
-                new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString(), getOnHoldStatus(), orderPhone.getText().toString());
+                new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString(), getOnHoldStatus(), orderPhone.getText().toString(), false);
     }
 
     protected void printItemToKds(){

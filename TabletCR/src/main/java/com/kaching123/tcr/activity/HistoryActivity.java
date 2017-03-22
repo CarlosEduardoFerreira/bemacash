@@ -355,7 +355,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
         WaitDialogFragment.show(this, getString(R.string.wait_printing));
 
-        PrintItemsForKitchenCommand.start(this, skipPaperWarning, searchByMac, orderItemsListFragment.guid, fromPrinter, skip, new KitchenPrintCallback(), true, null);
+        PrintItemsForKitchenCommand.start(this, skipPaperWarning, searchByMac, orderItemsListFragment.guid, fromPrinter, skip, new KitchenPrintCallback(), true, null, false);
     }
 
     private void reprintOrder(boolean skipPaperWarning, boolean searchByMac) {

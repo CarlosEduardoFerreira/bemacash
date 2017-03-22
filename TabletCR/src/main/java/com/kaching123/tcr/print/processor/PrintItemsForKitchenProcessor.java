@@ -12,8 +12,10 @@ import com.kaching123.tcr.commands.device.PrinterInfo;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.ItemInfo;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.SimpleModifier;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
+import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.OnHoldStatus;
+import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopStore;
@@ -45,12 +47,13 @@ public class PrintItemsForKitchenProcessor {
     private boolean isUpdated;
     private boolean printAllItems;
     private boolean isVoid;
+    private boolean itComesFromPay;
 
     private final IAppCommandContext appCommandContext;
 
     public PrintItemsForKitchenProcessor(List<ItemInfo> items, PrinterInfo printer, String aliasGuid, String orderGuid,
                                          boolean isUpdated, String orderTitle, boolean printAllItems, boolean isVoid,
-                                         String onHoldPhone, OnHoldStatus onHoldStatus, IAppCommandContext appCommandContext) {
+                                         String onHoldPhone, OnHoldStatus onHoldStatus, boolean itComesFromPay, IAppCommandContext appCommandContext) {
         this.items = items;
         this.printer = printer;
         this.aliasGuid = aliasGuid;
@@ -62,6 +65,7 @@ public class PrintItemsForKitchenProcessor {
         this.isVoid = isVoid;
         this.onHoldPhone = onHoldPhone;
         this.onHoldStatus = onHoldStatus;
+        this.itComesFromPay = itComesFromPay;
     }
 
     public void print(Context context, TcrApplication app, IKitchenPrinter printer){
@@ -106,15 +110,27 @@ public class PrintItemsForKitchenProcessor {
             c = ProviderAction.query(ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT))
                     .projection(
                             ShopStore.SaleOrderTable.HOLD_TEL,
+                            ShopStore.SaleOrderTable.HOLD_NAME,
                             ShopStore.SaleOrderTable.HOLD_STATUS)
                     .where(ShopStore.SaleOrderTable.GUID + " = ?", orderGuid)
                     .perform(context);
 
             if (c.moveToFirst()) {
                 onHoldPhone = parseDigitsToFormattedPhone(c.getString(0));
-                onHoldStatus = _onHoldStatus(c, 1);
+                orderTitle = c.getString(1);
+                onHoldStatus = _onHoldStatus(c, 2);
             }
             c.close();
+        }
+
+        if(!isUpdated && itComesFromPay) {
+            SaleOrderModel saleOrderModel = SaleOrderModel.getById(context, orderGuid);
+            if (!TextUtils.isEmpty(saleOrderModel.customerGuid)) {
+                CustomerModel customerModel = CustomerModel.loadSync(context, saleOrderModel.customerGuid);
+                if (customerModel != null) {
+                    orderTitle = customerModel.getFullName();
+                }
+            }
         }
 
         String holdStatus = null;
