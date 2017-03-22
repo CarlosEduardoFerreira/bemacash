@@ -778,6 +778,7 @@
     <string name="categories_toast_success_message">Category \'%s\' was successfully deleted</string>
     <string name="categories_toast_failed_message" formatted="false">Failed to delete category \'%s\'. It has %d items</string>
     <string name="tax_group_toast_failed_message" formatted="false">Failed to delete tax group \'%s\'. It has %d items</string>
+    <string name="printer_alias_toast_failed_message" formatted="false">Failed to delete printer alias \'%s\'. It has %d items</string>
     <string name="departments_delete_dialog_title">Delete department</string>
     <string name="departments_delete_dialog_message">Are you sure you want to delete department \'%s\'?</string>
     <string name="departments_toast_success_message">Department \'%s\' was successfully deleted</string>

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
@@ -22,6 +23,7 @@ import com.kaching123.tcr.commands.store.inventory.DeletePrinterAliasCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.printeralias.AddEditDialog;
 import com.kaching123.tcr.model.AliasModel;
 import com.kaching123.tcr.model.Permission;
@@ -40,6 +42,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by vkompaniets on 11.02.14.
@@ -55,6 +58,8 @@ public class PrinterAliasActivity extends SuperBaseActivity {
     }
 
     private static final Uri URI_PRINTER_ALIAS = ShopProvider.getContentUri(PrinterAliasTable.URI_CONTENT);
+
+    private DeletePrinterAliasGroupCallback deletePrinterAliasGroupCallback = new DeletePrinterAliasGroupCallback();
 
     @Override
     protected HashSet<Permission> getPermissions() {
@@ -137,7 +142,8 @@ public class PrinterAliasActivity extends SuperBaseActivity {
                 new OnDialogClickListener() {
                     @Override
                     public boolean onClick() {
-                        DeletePrinterAliasCommand.start(PrinterAliasActivity.this, model);
+                        WaitDialogFragment.show(PrinterAliasActivity.this, getString(R.string.search_items_wait_dialog_message));
+                        DeletePrinterAliasCommand.start(PrinterAliasActivity.this, model, deletePrinterAliasGroupCallback);
                         return true;
                     }
                 }, new OnDialogClickListener() {
@@ -148,6 +154,21 @@ public class PrinterAliasActivity extends SuperBaseActivity {
                     }
                 }, null
         );
+    }
+
+    private class DeletePrinterAliasGroupCallback extends DeletePrinterAliasCommand.BaseDeletePrinterAliasCallback {
+        @Override
+        protected void onAliasDeleted() {
+            WaitDialogFragment.hide(PrinterAliasActivity.this);
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        protected void onAliasHasItems(String aliasName, int itemsCount) {
+            WaitDialogFragment.hide(PrinterAliasActivity.this);
+            Toast.makeText(PrinterAliasActivity.this, String.format(Locale.US, getString(R.string.printer_alias_toast_failed_message), aliasName, itemsCount), Toast.LENGTH_LONG).show();
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private class PrinterAliasLoader implements LoaderCallbacks<List<PrinterAliasModel>> {
