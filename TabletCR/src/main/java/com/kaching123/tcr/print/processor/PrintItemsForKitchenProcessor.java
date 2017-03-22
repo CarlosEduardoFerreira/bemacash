@@ -124,6 +124,7 @@ public class PrintItemsForKitchenProcessor {
         }
 
         if(!isUpdated && itComesFromPay) {
+            orderTitle = null;
             SaleOrderModel saleOrderModel = SaleOrderModel.getById(context, orderGuid);
             if (!TextUtils.isEmpty(saleOrderModel.customerGuid)) {
                 CustomerModel customerModel = CustomerModel.loadSync(context, saleOrderModel.customerGuid);
