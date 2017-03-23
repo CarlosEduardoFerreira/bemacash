@@ -173,7 +173,6 @@ public class EmployeeModel implements IValueModel, Serializable{
         if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.TIPS_ELIGIBLE)) v.put(EmployeeTable.TIPS_ELIGIBLE, tipsEligible);
         if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.ELIGIBLE_FOR_COMMISSION)) v.put(EmployeeTable.ELIGIBLE_FOR_COMMISSION, commissionEligible);
         if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.COMMISSION)) v.put(EmployeeTable.COMMISSION, _decimal(commission));
-        if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.IS_MERCHANT)) v.put(EmployeeTable.IS_MERCHANT, isMerchant);
         if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.IS_SYNC)) v.put(EmployeeTable.IS_SYNC, isSynced);
         return v;
     }

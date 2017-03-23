@@ -6,6 +6,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.EmployeePermissionJdbcConverter;
 import com.kaching123.tcr.model.EmployeeModel;
@@ -46,7 +47,7 @@ public class AddEmployeeCommand extends BaseEmployeeCommand {
     protected ISqlCommand createSqlCommand() {
         model.isSynced = true;
         EmployeePermissionJdbcConverter permissionJdbcConverter = (EmployeePermissionJdbcConverter)JdbcFactory.getConverter(EmployeePermissionTable.TABLE_NAME);
-        BatchSqlCommand batch = batchInsert(model).add(JdbcFactory.getConverter(model).insertSQL(model, getAppCommandContext()));
+        batch = batchInsert(model).add(JdbcFactory.getConverter(model).insertSQL(model, getAppCommandContext()));
         for(Permission p : permissions){
             batch.add(permissionJdbcConverter.insertSQL(new EmployeePermissionModel(model.guid, p.getId(), true, null), getAppCommandContext()));
         }

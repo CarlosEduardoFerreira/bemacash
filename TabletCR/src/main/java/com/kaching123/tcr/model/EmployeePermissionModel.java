@@ -38,7 +38,7 @@ public class EmployeePermissionModel implements IValueModel {
 
     @Override
     public String getGuid() {
-        return String.valueOf(permissionId);
+        return userGuid;
     }
 
     @Override

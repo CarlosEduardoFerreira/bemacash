@@ -22,7 +22,15 @@ public class AtomicUpload {
         LOCAL, WEB, BOTH
     }
 
-    public void upload(BatchSqlCommand sql, UploadType type) {
+    public enum UploadObject{
+        DATA, EMPLOYEE
+    }
+
+    public void upload(BatchSqlCommand sql, UploadType type){
+        upload(sql, type, UploadObject.DATA);
+    }
+
+    public void upload(BatchSqlCommand sql, UploadType type, UploadObject object) {
 
         Context context = TcrApplication.get().getApplicationContext();
 
@@ -37,7 +45,12 @@ public class AtomicUpload {
             Log.d("BemaCarl7", "AtomicUpload.upload.type|sql2: " + type + "|" + sql.toJson());
             ContentValues values = getContentValues(sql, System.currentTimeMillis(), false);
             context.getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT), values);
-            OfflineCommandsService.startUpload(context);
+
+            if(object.equals(UploadObject.DATA)) {
+                OfflineCommandsService.startUpload(context);
+            }else{
+                OfflineCommandsService.startemployeeTableUpload(context);
+            }
         }
 
     }

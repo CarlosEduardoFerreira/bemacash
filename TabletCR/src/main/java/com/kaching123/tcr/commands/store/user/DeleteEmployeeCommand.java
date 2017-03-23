@@ -6,8 +6,10 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -49,7 +51,10 @@ public class DeleteEmployeeCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.delete(EmployeeTable.TABLE_NAME, guid, getAppCommandContext());
+        BatchSqlCommand batch = batchDelete(EmployeeTable.TABLE_NAME);
+        batch.add(JdbcFactory.delete(EmployeeTable.TABLE_NAME, guid, getAppCommandContext()));
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+        return batch;
     }
 
     public static void start(Context context, String employeeGuid, DeleteEmployeeCallback callback) {

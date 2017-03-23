@@ -329,34 +329,43 @@ public class LocalSyncHelper {
             }
 
             try {
-                Log.d("BemaCarl7","LocalSyncHelper.runCommand.operation.action: " + operation.action);
-                Log.d("BemaCarl7","LocalSyncHelper.runCommand.operation.table: " + operation.table);
-                Log.d("BemaCarl7","LocalSyncHelper.runCommand.operation.args: " + operation.args);
+                Log.d("BemaCarl","LocalSyncHelper.runCommand.operation.action: " + operation.action);
+                Log.d("BemaCarl","LocalSyncHelper.runCommand.operation.table: " + operation.table);
+                Log.d("BemaCarl","LocalSyncHelper.runCommand.operation.args: " + operation.args);
                 if ("INSERT".equals(operation.action.toUpperCase()) || "REPLACE".equals(operation.action.toUpperCase())) {
-
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand----------------------- INSERT or REPLACE Start  -----------------------");
                     Object[] model = getContentValuesAndGuidColumn(operation, true);
 
                     if (model == null || model.length == 0) {
+                        Log.e("BemaCarl","LocalSyncHelper.runCommand.model:    Table not found");
                         Logger.e(TAG_HEIGHT, new Throwable("Table not found: " + operation.table + " - " + "put this on LocalSyncHelper.getModel() method right now!"));
                         return false;
                     }
                     ContentValues contentValues = (ContentValues) model[0];
-                    if (contentValues.size() == 0) return true;
-
-                    if(ShopStore.EmployeePermissionTable.TABLE_NAME.equals(operation.table)){
-                        db.insertWithOnConflict(operation.table, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
-                    }else{
-                        db.insertWithOnConflict(operation.table, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
+                    if (contentValues.size() == 0){
+                        Log.e("BemaCarl","LocalSyncHelper.runCommand: contentValues.size() == 0");
+                        return true;
                     }
 
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand.contentValues:    " + contentValues);
+                    long idInsertedRow = 0;
+                    if(ShopStore.EmployeePermissionTable.TABLE_NAME.equals(operation.table)){
+                        idInsertedRow = db.insertWithOnConflict(operation.table, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+                    }else{
+                        idInsertedRow = db.insertWithOnConflict(operation.table, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
+                    }
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand.idInsertedRow:     " + idInsertedRow);
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand----------------------- INSERT or REPLACE End   -----------------------");
+
                 } else if ("UPDATE".equals(operation.action.toUpperCase())) {
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand----------------------- UPDATE Start  -----------------------");
                     LinkedTreeMap<String, Object> where = (LinkedTreeMap<String, Object>) operation.args.get("where");
 
                     Object value = where.get(where.keySet().iterator().next());
 
                     if (value == null) return false;
                     String id = value.toString();
-                    Log.d("BemaCarl7","LocalSyncHelper.runCommand.id: " + id);
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand.id: " + id);
 
                     Object value2 = where.get(JdbcBuilder.FIELD_UPDATE_TIME_LOCAL);
                     Date updateTimeLocal = value2 != null ? SyncUtil.formatMillisec(value2.toString()) : null;
@@ -381,13 +390,13 @@ public class LocalSyncHelper {
                         whereString += String.format(" AND (%s < %s OR %s IS NULL)",
                                 ShopStore.DEFAULT_UPDATE_TIME_LOCAL, updateTimeLocal.getTime(), ShopStore.DEFAULT_UPDATE_TIME_LOCAL);
                     }
-                    Log.d("BemaCarl7","LocalSyncHelper.runCommand----------------------- db.update Start  -----------------------");
-                    Log.d("BemaCarl7","LocalSyncHelper.runCommand.operation.table:  " + operation.table);
-                    Log.d("BemaCarl7","LocalSyncHelper.runCommand.contentValues:    " + contentValues);
-                    Log.d("BemaCarl7","LocalSyncHelper.runCommand.whereString:      " + whereString);
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand----------------------- db.update Start  -----------------------");
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand.operation.table:  " + operation.table);
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand.contentValues:    " + contentValues);
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand.whereString:      " + whereString);
                     int affectedRows = db.update(operation.table, contentValues, whereString, null);
-                    Log.d("BemaCarl7","LocalSyncHelper.runCommand.affectedRows:     " + affectedRows);
-                    Log.d("BemaCarl7","LocalSyncHelper.runCommand----------------------- db.update End   -----------------------");
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand.affectedRows:     " + affectedRows);
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand----------------------- db.update End   -----------------------");
                     if (affectedRows == 0 && !ignoreTables.contains(operation.table)) {
                         if (!areThereRow(db, operation.table, model[1].toString(), id)){
                             return false;
@@ -397,7 +406,7 @@ public class LocalSyncHelper {
                     if(operation.table.equals(ShopStore.SaleOrderTable.TABLE_NAME) && affectedRows != 0) {
                         LocalBroadcastManager.getInstance(wifiSocketService).sendBroadcast(new Intent(SyncCommand.ACTION_SYNC_GAP));
                     }
-
+                    Log.d("BemaCarl","LocalSyncHelper.runCommand----------------------- UPDATE End   -----------------------");
                 } else {
                     Logger.e(TAG_HEIGHT, new Throwable("Action not found: " + operation.action));
                     return false;
@@ -420,6 +429,7 @@ public class LocalSyncHelper {
 
 
     public static Object[] getContentValuesAndGuidColumn(SqlCommandObj.SqlCommandObjOperation operation, boolean insertOrReplace) throws JSONException {
+        Log.d("BemaCarl","LocalSyncHelper.getContentValuesAndGuidColumn------------- Start getContentValuesAndGuidColumn -------------");
         if (operation == null) return null;
         JdbcJSONObject json;
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -428,12 +438,13 @@ public class LocalSyncHelper {
         } else {
             json = new JdbcJSONObject(gson.toJson(operation.args.get("update")));
         }
-
+        Log.d("BemaCarl","LocalSyncHelper.getContentValuesAndGuidColumn.json: " + json);
         IValueModel valueModel = getModel(operation, json);
         if (valueModel == null) {
+            Log.e("BemaCarl","LocalSyncHelper.getContentValuesAndGuidColumn: valueModel == null");
             return null;
         }
-
+        Log.d("BemaCarl","LocalSyncHelper.getContentValuesAndGuidColumn: valueModel.getClass()" + valueModel.getClass());
         ContentValues contentValues = valueModel.toValues();
         if (json.has(JdbcBuilder.FIELD_IS_DELETED)) {
             contentValues.put(ShopStore.DEFAULT_IS_DELETED, json.getInt(JdbcBuilder.FIELD_IS_DELETED));
@@ -453,12 +464,12 @@ public class LocalSyncHelper {
         Object[] returned = new Object[2];
         returned[0] = contentValues;
         returned[1] = valueModel.getIdColumn();
-
+        Log.d("BemaCarl","LocalSyncHelper.getContentValuesAndGuidColumn------------- Start getContentValuesAndGuidColumn -------------");
         return returned;
     }
 
     private static Object resolveWhereClause(SqlCommandObj.SqlCommandObjOperation operation, LinkedTreeMap<String, Object> where){
-        Log.d("BemaCarl7","LocalSyncHelper.resolveWhereClause----------------------- Start resolveWhereClause -----------------------");
+        Log.d("BemaCarl","LocalSyncHelper.resolveWhereClause----------------------- Start resolveWhereClause -----------------------");
         String whereClause = null;
         JSONObject json = new JSONObject(where);
         JdbcJSONObject jdbcJson = null;
@@ -468,30 +479,30 @@ public class LocalSyncHelper {
             e.printStackTrace();
         }
         if(jdbcJson != null) {
-            Log.d("BemaCarl7", "LocalSyncHelper.resolveWhereClause.json.toString(): " + json.toString());
+            Log.d("BemaCarl", "LocalSyncHelper.resolveWhereClause.json.toString(): " + json.toString());
             IValueModel model = getModel(operation, jdbcJson);
             String webGuidColumn = JdbcFactory.getConverter(model).getGuidColumn();
-            Log.d("BemaCarl7","LocalSyncHelper.resolveWhereClause.webGuidColumn: " + webGuidColumn);
+            Log.d("BemaCarl","LocalSyncHelper.resolveWhereClause.webGuidColumn: " + webGuidColumn);
             whereClause = model.getIdColumn();
             if(!where.containsKey(webGuidColumn)) {
                 ContentValues contentValues = model.toValues();
-                Log.d("BemaCarl7", "LocalSyncHelper.resolveWhereClause.contentValues: " + contentValues);
+                Log.d("BemaCarl", "LocalSyncHelper.resolveWhereClause.contentValues: " + contentValues);
                 contentValues.remove(JdbcBuilder.FIELD_UPDATE_TIME_LOCAL.toLowerCase());
                 Set setWhere = contentValues.valueSet();
 
-                Log.d("BemaCarl7", "LocalSyncHelper.resolveWhereClause.where: " + where);
+                Log.d("BemaCarl", "LocalSyncHelper.resolveWhereClause.where: " + where);
                 //Set setWhere = where.entrySet();
                 Iterator itWhere = setWhere.iterator();
                 if (itWhere.hasNext()) {
                     Map.Entry clause = (Map.Entry) itWhere.next();
                     whereClause = clause.getKey().toString();
-                    Log.d("BemaCarl7", "LocalSyncHelper.resolveWhereClause.clause: key=" + clause.getKey() + "|value=" + clause.getValue());
+                    Log.d("BemaCarl", "LocalSyncHelper.resolveWhereClause.clause: key=" + clause.getKey() + "|value=" + clause.getValue());
                 }
             }
         }else{
-            Log.d("BemaCarl7", "LocalSyncHelper.resolveWhereClause: jdbcJson is null");
+            Log.d("BemaCarl", "LocalSyncHelper.resolveWhereClause: jdbcJson is null");
         }
-        Log.d("BemaCarl7","LocalSyncHelper.resolveWhereClause----------------------- End resolveWhereClause  -----------------------");
+        Log.d("BemaCarl","LocalSyncHelper.resolveWhereClause----------------------- End resolveWhereClause  -----------------------");
         return whereClause;
     }
 

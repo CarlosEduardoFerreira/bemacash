@@ -1,6 +1,7 @@
 package com.kaching123.tcr.jdbc.converters;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
@@ -194,7 +195,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(TIPS_ELIGIBLE, model.tipsEligible)
                 .add(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
                 .add(COMMISSION, model.commission)
-                .add(RESELLER_ID, model.isMerchant)
+                .add(RESELLER_ID, (byte[]) null)
                 .add(IS_SYNC, model.isSynced)
                 .build(JdbcFactory.getApiMethod(model));
     }

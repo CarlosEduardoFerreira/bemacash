@@ -7,6 +7,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.EmployeeJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeePermissionJdbcConverter;
@@ -79,9 +80,8 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        // create sql for uploading.
         EmployeePermissionJdbcConverter permissionJdbcConverter = (EmployeePermissionJdbcConverter) JdbcFactory.getConverter(EmployeePermissionTable.TABLE_NAME);
-        BatchSqlCommand batch = batchUpdate(model)
+        batch = batchUpdate(model)
                 .add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()))
                 .add(permissionJdbcConverter.disableAllSQL(model.guid, getAppCommandContext()));
         Log.d("BemaCarl5","EditEmployeeCommand.createSqlCommand1: " + model.guid);

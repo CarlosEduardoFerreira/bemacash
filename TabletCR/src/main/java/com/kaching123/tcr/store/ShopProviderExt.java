@@ -328,7 +328,6 @@ public class ShopProviderExt extends ShopProvider {
             }else if (ShopStore.ComposerTable.URI_CONTENT.equals(path)){
                 scheduleUpdate();
             }else if (LoyaltyPointsMovementTable.URI_CONTENT.equals(path)){
-                Logger.d("recalculateLoyaltyPoints BemaCarl9");
                 loyaltyPointsHelper.bulkRecalcCustomerLoyaltyPointsAfterSync();
             }
         }

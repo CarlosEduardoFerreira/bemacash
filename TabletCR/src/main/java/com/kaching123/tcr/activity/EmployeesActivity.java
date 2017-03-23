@@ -141,7 +141,7 @@ public class EmployeesActivity extends SuperBaseActivity {
         } else {
             EmployeeModel model = new EmployeeModel(UUID.randomUUID().toString(), null, null, null, null, null, null, null, null, null, null, null, null, true, null, null,
                     EmployeeStatus.ACTIVE,
-                    TcrApplication.get().getShopId(), BigDecimal.ZERO, false, false, null, false, true, null);//TcrApplication.get().getShopId());
+                    TcrApplication.get().getShopId(), BigDecimal.ZERO, false, false, null, false, false, null);//TcrApplication.get().getShopId());
             AddEmployeeActivity.start(this, model);
         }
     }

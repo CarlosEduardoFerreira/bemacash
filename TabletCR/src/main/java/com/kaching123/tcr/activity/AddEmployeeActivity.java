@@ -142,6 +142,7 @@ public class AddEmployeeActivity extends BaseEmployeeActivity {
     @Override
     protected void callCommand(final EmployeeModel model, ArrayList<Permission> permissions) {
         StartEmployeeCommand.start(this);
+        model.isMerchant = false;
         AddEmployeeCommand.start(AddEmployeeActivity.this, model, permissions, addEmployeeCallback);
     }
 

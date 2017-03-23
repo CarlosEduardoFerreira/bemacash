@@ -4,11 +4,14 @@ import android.content.ContentProviderOperation;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.Permission;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
@@ -38,6 +41,8 @@ public abstract class BaseEmployeeCommand extends AsyncCommand {
 
     protected EmployeeModel model;
     protected ArrayList<Permission> permissions;
+
+    static BatchSqlCommand batch;
 
     @Override
     protected TaskResult doCommand() {
@@ -91,6 +96,8 @@ public abstract class BaseEmployeeCommand extends AsyncCommand {
     public static abstract class BaseEmployeeCallback{
         @OnSuccess(BaseEmployeeCommand.class)
         public void handleSuccess() {
+            Log.d("BemaCarl9","BaseEmployeeCommand.handleSuccess.batch.toJson(): " + batch.toJson());
+            new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB, AtomicUpload.UploadObject.EMPLOYEE);
             onSuccess();
         }
 
