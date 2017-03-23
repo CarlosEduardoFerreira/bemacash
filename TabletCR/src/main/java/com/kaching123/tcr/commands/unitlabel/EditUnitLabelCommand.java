@@ -5,10 +5,12 @@ import android.content.Context;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.function.UnitLabelWrapFunction;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.UnitLabelModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskResult;
@@ -32,6 +34,8 @@ public class EditUnitLabelCommand extends AsyncCommand {
 
     private UnitLabelModel model;
 
+    static BatchSqlCommand sql;
+
     @Override
     protected TaskResult doCommand() {
         Logger.d("EditUnitLabelCommand doCommand");
@@ -49,11 +53,6 @@ public class EditUnitLabelCommand extends AsyncCommand {
     }
 
     @Override
-    protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext());
-    }
-
-    @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>(1);
         operations.add(ContentProviderOperation
@@ -62,6 +61,13 @@ public class EditUnitLabelCommand extends AsyncCommand {
                 .withValues(model.toUpdateValues())
                 .build());
         return operations;
+    }
+
+    @Override
+    protected ISqlCommand createSqlCommand() {
+        sql = batchUpdate(model);
+        sql.add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()));
+        return sql;
     }
 
     public static void start(Context context, UnitLabelModel model, UnitLabelCallback callback) {
@@ -75,6 +81,7 @@ public class EditUnitLabelCommand extends AsyncCommand {
 
         @OnSuccess(EditUnitLabelCommand.class)
         public final void onSuccess() {
+            new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
             handleSuccess();
         }
 

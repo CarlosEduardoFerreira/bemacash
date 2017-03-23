@@ -48,10 +48,10 @@ public class DeleteCategoriesCommand extends AsyncCommand {
     protected ISqlCommand createSqlCommand() {
         CategoryJdbcConverter categoryJdbcConverter = (CategoryJdbcConverter)JdbcFactory.getConverter(CategoryTable.TABLE_NAME);
         Log.d("BemaCarl7","DeleteCategoriesCommand.createSqlCommand.departmentGuid: " + departmentGuid);
-        BatchSqlCommand batch = batchDelete(CategoryTable.TABLE_NAME);
+        BatchSqlCommand batch = batchUpdate(CategoryTable.TABLE_NAME);
         batch.add(categoryJdbcConverter.deleteByDepartment(departmentGuid, getAppCommandContext()));
 
-        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+        //new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
 
         return batch;
     }

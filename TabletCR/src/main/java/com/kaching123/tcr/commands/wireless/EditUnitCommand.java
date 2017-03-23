@@ -4,10 +4,13 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.Unit;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
@@ -32,6 +35,8 @@ public class EditUnitCommand extends AsyncCommand  {
     private static final String RESULT_DESC = "RESULT_DESC";
 
     private Unit unit;
+
+    static BatchSqlCommand sql;
 
     @Override
     protected TaskResult doCommand() {
@@ -67,7 +72,9 @@ public class EditUnitCommand extends AsyncCommand  {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.getConverter(unit).updateSQL(unit, this.getAppCommandContext());
+        sql = batchUpdate(unit);
+        sql.add(JdbcFactory.getConverter(unit).updateSQL(unit, getAppCommandContext()));
+        return sql;
     }
 
     public SyncResult sync(Context context, Unit unit, IAppCommandContext appCommandContext) {
@@ -90,6 +97,7 @@ public class EditUnitCommand extends AsyncCommand  {
 
         @OnSuccess(EditUnitCommand.class)
         public final void onSuccess() {
+            new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
             handleSuccess();
         }
 

@@ -16,6 +16,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -29,6 +30,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
@@ -327,6 +329,9 @@ public class LocalSyncHelper {
             }
 
             try {
+                Log.d("BemaCarl7","LocalSyncHelper.runCommand.operation.action: " + operation.action);
+                Log.d("BemaCarl7","LocalSyncHelper.runCommand.operation.table: " + operation.table);
+                Log.d("BemaCarl7","LocalSyncHelper.runCommand.operation.args: " + operation.args);
                 if ("INSERT".equals(operation.action.toUpperCase()) || "REPLACE".equals(operation.action.toUpperCase())) {
 
                     Object[] model = getContentValuesAndGuidColumn(operation, true);
@@ -348,9 +353,10 @@ public class LocalSyncHelper {
                     LinkedTreeMap<String, Object> where = (LinkedTreeMap<String, Object>) operation.args.get("where");
 
                     Object value = where.get(where.keySet().iterator().next());
-                    if (value == null) return false;
 
+                    if (value == null) return false;
                     String id = value.toString();
+                    Log.d("BemaCarl7","LocalSyncHelper.runCommand.id: " + id);
 
                     Object value2 = where.get(JdbcBuilder.FIELD_UPDATE_TIME_LOCAL);
                     Date updateTimeLocal = value2 != null ? SyncUtil.formatMillisec(value2.toString()) : null;
@@ -366,15 +372,22 @@ public class LocalSyncHelper {
                     contentValues.remove((String) model[1]);
                     contentValues.remove("create_time");
 
-                    String whereString = String.format("%s = '%s'", model[1], id);
+                    model[1] = resolveWhereClause(operation, where);
+
+                    String whereString = String.format("%s = '%s'", model[1].toString(), id);
 
                     if (updateTimeLocal != null && JdbcFactory.getConverter(operation.table).supportUpdateTimeLocalFlag()
                             && !(contentValues.getAsBoolean(ShopStore.DEFAULT_IS_DELETED) != null && contentValues.getAsBoolean(ShopStore.DEFAULT_IS_DELETED))) {
                         whereString += String.format(" AND (%s < %s OR %s IS NULL)",
                                 ShopStore.DEFAULT_UPDATE_TIME_LOCAL, updateTimeLocal.getTime(), ShopStore.DEFAULT_UPDATE_TIME_LOCAL);
                     }
+                    Log.d("BemaCarl7","LocalSyncHelper.runCommand----------------------- db.update Start  -----------------------");
+                    Log.d("BemaCarl7","LocalSyncHelper.runCommand.operation.table:  " + operation.table);
+                    Log.d("BemaCarl7","LocalSyncHelper.runCommand.contentValues:    " + contentValues);
+                    Log.d("BemaCarl7","LocalSyncHelper.runCommand.whereString:      " + whereString);
                     int affectedRows = db.update(operation.table, contentValues, whereString, null);
-
+                    Log.d("BemaCarl7","LocalSyncHelper.runCommand.affectedRows:     " + affectedRows);
+                    Log.d("BemaCarl7","LocalSyncHelper.runCommand----------------------- db.update End   -----------------------");
                     if (affectedRows == 0 && !ignoreTables.contains(operation.table)) {
                         if (!areThereRow(db, operation.table, model[1].toString(), id)){
                             return false;
@@ -398,11 +411,11 @@ public class LocalSyncHelper {
         return true;
     }
 
+
     private static boolean areThereRow(SQLiteDatabase db, String table, String idColumn, String idValue) {
                 Cursor c = db.query(table, new String[]{idColumn},
                         String.format("%s = '%s'", idColumn, idValue), null, null, null, null, null);
             return c.getCount() > 0;
-
     }
 
 
@@ -415,6 +428,7 @@ public class LocalSyncHelper {
         } else {
             json = new JdbcJSONObject(gson.toJson(operation.args.get("update")));
         }
+
         IValueModel valueModel = getModel(operation, json);
         if (valueModel == null) {
             return null;
@@ -439,7 +453,46 @@ public class LocalSyncHelper {
         Object[] returned = new Object[2];
         returned[0] = contentValues;
         returned[1] = valueModel.getIdColumn();
+
         return returned;
+    }
+
+    private static Object resolveWhereClause(SqlCommandObj.SqlCommandObjOperation operation, LinkedTreeMap<String, Object> where){
+        Log.d("BemaCarl7","LocalSyncHelper.resolveWhereClause----------------------- Start resolveWhereClause -----------------------");
+        String whereClause = null;
+        JSONObject json = new JSONObject(where);
+        JdbcJSONObject jdbcJson = null;
+        try {
+            jdbcJson = new JdbcJSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(jdbcJson != null) {
+            Log.d("BemaCarl7", "LocalSyncHelper.resolveWhereClause.json.toString(): " + json.toString());
+            IValueModel model = getModel(operation, jdbcJson);
+            String webGuidColumn = JdbcFactory.getConverter(model).getGuidColumn();
+            Log.d("BemaCarl7","LocalSyncHelper.resolveWhereClause.webGuidColumn: " + webGuidColumn);
+            whereClause = model.getIdColumn();
+            if(!where.containsKey(webGuidColumn)) {
+                ContentValues contentValues = model.toValues();
+                Log.d("BemaCarl7", "LocalSyncHelper.resolveWhereClause.contentValues: " + contentValues);
+                contentValues.remove(JdbcBuilder.FIELD_UPDATE_TIME_LOCAL.toLowerCase());
+                Set setWhere = contentValues.valueSet();
+
+                Log.d("BemaCarl7", "LocalSyncHelper.resolveWhereClause.where: " + where);
+                //Set setWhere = where.entrySet();
+                Iterator itWhere = setWhere.iterator();
+                if (itWhere.hasNext()) {
+                    Map.Entry clause = (Map.Entry) itWhere.next();
+                    whereClause = clause.getKey().toString();
+                    Log.d("BemaCarl7", "LocalSyncHelper.resolveWhereClause.clause: key=" + clause.getKey() + "|value=" + clause.getValue());
+                }
+            }
+        }else{
+            Log.d("BemaCarl7", "LocalSyncHelper.resolveWhereClause: jdbcJson is null");
+        }
+        Log.d("BemaCarl7","LocalSyncHelper.resolveWhereClause----------------------- End resolveWhereClause  -----------------------");
+        return whereClause;
     }
 
 
@@ -480,6 +533,8 @@ public class LocalSyncHelper {
             if (JdbcConverter.compareTable(table, ShopStore.DepartmentTable.TABLE_NAME, DepartmentJdbcConverter.DEPARTMENT_TABLE_NAME)) {
                 operation.table = ShopStore.DepartmentTable.TABLE_NAME;
                 model = new DepartmentJdbcConverter().toValues(json);
+                Log.d("BemaCarl7","LocalSyncHelper.getModel.model.getIdColumn(): " + model.getIdColumn());
+                Log.d("BemaCarl7","LocalSyncHelper.getModel.json: " + json);
             }
             if (JdbcConverter.compareTable(table, ShopStore.EmployeeCommissionsTable.TABLE_NAME, CommissionsJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.EmployeeCommissionsTable.TABLE_NAME;

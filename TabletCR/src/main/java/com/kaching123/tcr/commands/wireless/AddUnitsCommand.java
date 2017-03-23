@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.function.UnitWrapFunction;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -47,7 +48,7 @@ public class AddUnitsCommand extends AsyncCommand {
     private static final String PARAM_PURPOSE = "PURPOSE";
 
     ArrayList<ContentProviderOperation> ops;
-    private BatchSqlCommand sqlCommand;
+    private static BatchSqlCommand sqlCommand;
 
     @Override
     protected TaskResult doCommand() {
@@ -150,6 +151,7 @@ public class AddUnitsCommand extends AsyncCommand {
 
         @OnSuccess(AddUnitsCommand.class)
         public final void onSuccess(@Param(RESULT_ITEM) ItemExModel model) {
+            new AtomicUpload().upload(sqlCommand, AtomicUpload.UploadType.WEB);
             handleSuccess(model);
         }
 

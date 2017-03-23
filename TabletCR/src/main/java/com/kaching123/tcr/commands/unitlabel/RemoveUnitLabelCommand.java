@@ -3,9 +3,11 @@ package com.kaching123.tcr.commands.unitlabel;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.UnitLabelModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskResult;
@@ -23,15 +25,12 @@ public class RemoveUnitLabelCommand extends AsyncCommand {
 
     private UnitLabelModel model;
 
+    static BatchSqlCommand sql;
+
     @Override
     protected TaskResult doCommand() {
         model = (UnitLabelModel) getArgs().getSerializable(ARG_MODEL);
         return succeeded();
-    }
-
-    @Override
-    protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.delete(model, getAppCommandContext());
     }
 
     @Override
@@ -42,6 +41,13 @@ public class RemoveUnitLabelCommand extends AsyncCommand {
                 .withSelection(ShopStore.UnitLabelTable.GUID + " = ?", new String[]{model.guid})
                 .build());
         return operations;
+    }
+
+    @Override
+    protected ISqlCommand createSqlCommand() {
+        sql = batchDelete(model);
+        sql.add(JdbcFactory.delete(model, getAppCommandContext()));
+        return sql;
     }
 
     public static void start(Context context, UnitLabelModel model, UnitLabelCallback callback) {
@@ -55,6 +61,7 @@ public class RemoveUnitLabelCommand extends AsyncCommand {
 
         @OnSuccess(RemoveUnitLabelCommand.class)
         public final void onSuccess() {
+            new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
             handleSuccess();
         }
 

@@ -67,7 +67,7 @@ public class DeleteCategoryCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        BatchSqlCommand batch = batchDelete(CategoryTable.TABLE_NAME);
+        BatchSqlCommand batch = batchUpdate(CategoryTable.TABLE_NAME);
         Log.d("BemaCarl7","DeleteCategoryCommand.createSqlCommand.departmentGuid: " + model.guid);
         batch.add(JdbcFactory.delete(model, getAppCommandContext()));
 
