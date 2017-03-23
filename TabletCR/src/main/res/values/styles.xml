@@ -17,6 +17,10 @@
         <item name="android:maxWidth">168dp</item>
     </style>
 
+    <style name="CustomEditBox.Histry.Modif">
+        <item name="android:textCursorDrawable">@drawable/text_cursor_holo_dark</item>
+    </style>
+
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="android:dialogTheme">@style/DialogBema</item>

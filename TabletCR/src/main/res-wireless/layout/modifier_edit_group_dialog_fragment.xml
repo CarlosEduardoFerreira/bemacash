@@ -12,7 +12,7 @@
 
     <EditText
         android:id="@+id/description"
-        style="@style/CustomEditBox.Histry"
+        style="@style/CustomEditBox.Histry.Modif"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left"
@@ -41,7 +41,7 @@
 
         <EditText
             android:id="@+id/condition_value"
-            style="@style/CustomEditBox.Histry"
+            style="@style/CustomEditBox.Histry.Modif"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
