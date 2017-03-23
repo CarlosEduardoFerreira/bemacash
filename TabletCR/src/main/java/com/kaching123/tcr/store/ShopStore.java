@@ -4832,4 +4832,35 @@ public abstract class ShopStore {
         @SqlQuery
         String QUERY = "SELECT * FROM " + ItemTable.TABLE_NAME;
     }
+
+    @RawQuery(SaleOrderDailyRawQuery.QUERY_NAME)
+    public interface SaleOrderDailyRawQuery {
+
+        String QUERY_NAME = "sale_order_daily_raw";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "sale_order_daily_raw";
+
+        @SqlQuery
+        String SQL = "SELECT * FROM " + SaleOrderTable.TABLE_NAME +
+                " WHERE " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.CREATE_TIME + " > ?" +
+                " AND " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.CREATE_TIME + " < ?";
+
+    }
+
+    @RawQuery(SaleOrderDailyRegisterRawQuery.QUERY_NAME)
+    public interface SaleOrderDailyRegisterRawQuery {
+
+        String QUERY_NAME = "sale_order_daily_register_raw";
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "sale_order_daily_register_raw";
+
+        @SqlQuery
+        String SQL = "SELECT * FROM " + SaleOrderTable.TABLE_NAME +
+                " WHERE " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.CREATE_TIME + " > ?" +
+                " AND " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.CREATE_TIME + " < ?" +
+                " AND " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.REGISTER_ID + " = ?";
+
+    }
 }

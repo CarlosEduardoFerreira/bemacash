@@ -19,6 +19,7 @@ import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
+import static com.kaching123.tcr.util.CursorUtil._selectionArgs;
 import static com.kaching123.tcr.util.DateUtils.getStartOfDay;
 
 /**
@@ -96,17 +97,25 @@ public class ShiftModel implements IValueModel {
     }
 
     public static List<String> getDailyGuidList(Context context, long registerID, long fromDate, long toDate) {
-        Cursor c = null;
-        Query query = ProviderAction.query(URI_SALE_ORDER)
-                .where(ShopStore.SaleOrderTable.CREATE_TIME + " > ? ", fromDate)
-                .where(ShopStore.SaleOrderTable.CREATE_TIME + " < ? ", toDate);
-        if (registerID == 0) {
-            c = query.perform(context);
-        } else {
-            c = query.where(ShopStore.SaleOrderTable.REGISTER_ID + " = ? ", registerID)
-                    .perform(context);
+        Uri uri;
+        String[] selectionArgs;
 
+        if (registerID == 0) {
+            uri = ShopProvider.contentUri(ShopStore.SaleOrderDailyRawQuery.URI_CONTENT);
+            selectionArgs = _selectionArgs(fromDate, toDate);
+        } else {
+            uri = ShopProvider.contentUri(ShopStore.SaleOrderDailyRegisterRawQuery.URI_CONTENT);
+            selectionArgs = _selectionArgs(fromDate, toDate, registerID);
         }
+
+        Cursor c = context.getContentResolver().query(
+                uri,
+                null,
+                null,
+                selectionArgs,
+                null
+        );
+
         final List<String> guidList = new ArrayList<>();
 
         if (c != null && c.moveToFirst()) {
