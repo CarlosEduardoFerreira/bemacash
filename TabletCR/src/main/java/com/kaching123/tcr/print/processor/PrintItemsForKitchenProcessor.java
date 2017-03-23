@@ -123,13 +123,14 @@ public class PrintItemsForKitchenProcessor {
             c.close();
         }
 
+        String customer = null;
         if(!isUpdated && itComesFromPay) {
             orderTitle = null;
             SaleOrderModel saleOrderModel = SaleOrderModel.getById(context, orderGuid);
             if (!TextUtils.isEmpty(saleOrderModel.customerGuid)) {
                 CustomerModel customerModel = CustomerModel.loadSync(context, saleOrderModel.customerGuid);
                 if (customerModel != null) {
-                    orderTitle = customerModel.getFullName();
+                    customer = customerModel.getFullName();
                 }
             }
         }
@@ -162,7 +163,9 @@ public class PrintItemsForKitchenProcessor {
                 context.getString(R.string.kitchen_receipt_holder_label),
                 orderTitle,
                 context.getString(R.string.phone),
-                onHoldPhone
+                onHoldPhone,
+                context.getString(R.string.customer_colon),
+                customer
         );
 
         printer.drawLine();

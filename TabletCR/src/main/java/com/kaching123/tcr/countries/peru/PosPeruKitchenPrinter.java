@@ -1,5 +1,7 @@
 package com.kaching123.tcr.countries.peru;
 
+import android.text.TextUtils;
+
 import com.kaching123.pos.printer.BarcodeTextBelowPositionAction;
 import com.kaching123.pos.printer.InitPrintAction;
 import com.kaching123.pos.printer.PrintLineAction;
@@ -22,7 +24,8 @@ public class PosPeruKitchenPrinter extends PosPeruOrderTextPrinter implements IK
 
     @Override
     public void header(String shopName, String registerTitle, String orderTypeLabel, String orderType, String orderNumLabel,
-                       int orderSeqNum, String operatorLabel, String operatorName, String stationLabel, String station, String orderHolder, String orderTitle, String phoneLabel, String phone) {
+                       int orderSeqNum, String operatorLabel, String operatorName, String stationLabel, String station,
+                       String orderHolder, String orderTitle, String phoneLabel, String phone, String customerLabel, String customerName) {
         boldString(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, shopName)));
         if (orderType != null) {
             tabbed(orderTypeLabel, orderType);
@@ -30,11 +33,14 @@ public class PosPeruKitchenPrinter extends PosPeruOrderTextPrinter implements IK
         tabbed(orderNumLabel, String.format("%s-%d", registerTitle, orderSeqNum));
         tabbed(stationLabel, station);
         tabbed(operatorLabel, operatorName);
-        if (orderTitle != null) {
+        if (!TextUtils.isEmpty(orderTitle)) {
             tabbed(orderHolder, orderTitle);
         }
-        if (phone != null) {
+        if (!TextUtils.isEmpty(phone)) {
             tabbed(phoneLabel, phone);
+        }
+        if (!TextUtils.isEmpty(customerName)) {
+            tabbed(customerLabel, customerName);
         }
     }
 

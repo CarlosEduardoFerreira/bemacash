@@ -36,7 +36,8 @@ public class PosKitchenPrinter extends PosOrderTextPrinter implements IKitchenPr
 
     @Override
     public void header(String shopName, String registerTitle, String orderTypeLabel, String orderType, String orderNumLabel,
-                       int orderSeqNum, String operatorLabel, String operatorName, String stationLabel, String station, String orderHolder, String orderTitle, String phoneLabel, String phone) {
+                       int orderSeqNum, String operatorLabel, String operatorName, String stationLabel, String station,
+                       String orderHolder, String orderTitle, String phoneLabel, String phone, String customerLabel, String customerName) {
         boldString(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, shopName)));
         if (!TextUtils.isEmpty(orderType)) {
             tabbed(orderTypeLabel, orderType);
@@ -49,6 +50,9 @@ public class PosKitchenPrinter extends PosOrderTextPrinter implements IKitchenPr
         }
         if (!TextUtils.isEmpty(phone)) {
             tabbed(phoneLabel, phone);
+        }
+        if (!TextUtils.isEmpty(customerName)) {
+            tabbed(customerLabel, customerName);
         }
         if(isVoidOrder){
             boldString(new PrintLineAction(centerString(PRINTER_MAX_TEXT_LEN, "****VOID****")));

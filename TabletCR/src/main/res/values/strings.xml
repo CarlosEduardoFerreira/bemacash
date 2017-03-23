@@ -2150,6 +2150,7 @@
     <string name="customer_order_code">Order</string>
     <string name="customer_order_price">Amount</string>
     <string name="customer_order_customer">Customer</string>
+    <string name="customer_colon">Customer:</string>
     <string name="table_btn_prepare">Prepare</string>
     <string name="table_btn_serve">Serve</string>
     <string name="table_btn_close">Close</string>
