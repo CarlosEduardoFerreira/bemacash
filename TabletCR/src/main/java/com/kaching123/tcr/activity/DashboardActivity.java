@@ -665,6 +665,8 @@ public class DashboardActivity extends SuperBaseActivity {
         } else {
             CashierActivity.start(this);
         }
+        OfflineCommandsService.startUpload(this);
+        OfflineCommandsService.startDownload(this);
     }
 
     @Click

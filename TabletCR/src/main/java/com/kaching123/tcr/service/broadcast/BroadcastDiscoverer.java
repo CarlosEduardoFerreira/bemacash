@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.preference.Preference;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -30,6 +31,7 @@ import java.util.Objects;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.DashboardActivity;
 import com.kaching123.tcr.model.ApplicationVersion;
 import com.kaching123.tcr.service.LocalSyncHelper;
 import com.kaching123.tcr.service.OfflineCommandsService;
@@ -232,6 +234,16 @@ public class BroadcastDiscoverer extends Thread {
                                     Intent intent = new Intent(LocalSyncHelper.LOCAL_SYNC);
                                     intent.putExtra(LocalSyncHelper.MESSAGE, mContext.getString(R.string.new_bema_found, info.getSerial()));
                                     LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+
+                                    Log.d("BemaCarl","BroadcastDiscover.listenForResponses------------ SetSyncTime Start  ------------");
+                                    //new SetupSyncTime().setLocalSyncTime();
+                                    OfflineCommandsService.localSync = true;
+                                    Integer LocalSyncDefTime = mContext.getResources().getInteger(R.integer.local_sync_time_def_val);
+                                    int mins = Integer.parseInt(LocalSyncDefTime.toString());
+                                    Log.d("BemaCarl","BroadcastDiscover.listenForResponses.mins: " + mins);
+                                    app.getShopPref().syncPeriod().put(mins);
+                                    OfflineCommandsService.scheduleSyncAction(mContext);
+                                    Log.d("BemaCarl","BroadcastDiscover.listenForResponses------------ SetSyncTime End   ------------");
                                 }
 
                                 int index = app.getLanDevices().indexOf(info);

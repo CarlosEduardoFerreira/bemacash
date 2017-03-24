@@ -34,7 +34,6 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
 
     @Override
     public EmployeePermissionModel toValues(JdbcJSONObject rs) throws JSONException {
-        Log.d("BemaCarl4","EmployeePermissionJdbcConverter.toValues.rs: " + rs);
         List<String> ignoreFields = new ArrayList<>();
         if (!rs.has(USER_ID)) ignoreFields.add(ShopStore.EmployeePermissionTable.USER_GUID);
         if (!rs.has(PERM_ID)) ignoreFields.add(ShopStore.EmployeePermissionTable.PERMISSION_ID);

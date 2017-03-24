@@ -4,10 +4,12 @@
     <string name="pref_drawer_key">pref_drawer</string>
     <string name="pref_update_manual">pref_update_manual</string>
 
+    <integer name="local_sync_time_def_val">5</integer>
     <integer name="sync_time_entries_def_val">60</integer>
     <integer name="drawer_pin_high_entries_def">1</integer>
 
     <string-array name="sync_time_values">
+        <item>5</item>
         <item>15</item>
         <item>30</item>
         <item>60</item>
@@ -17,6 +19,7 @@
     </string-array>
 
     <string-array name="sync_time_entries">
+        <item>5 min (Local Sync)</item>
         <item>15 min</item>
         <item>30 min</item>
         <item>1 h</item>

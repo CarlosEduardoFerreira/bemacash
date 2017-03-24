@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.support.v4.app.Fragment;
 import android.support.v4.preference.PreferenceFragment;
@@ -141,7 +142,17 @@ public class SyncSettingsFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings_sync_pref_fragment);
-        Preference timePref = findPreference(getString(R.string.pref_sync_time_key));
+        ListPreference timePref = (ListPreference)findPreference(getString(R.string.pref_sync_time_key));
+
+        if(OfflineCommandsService.localSync){
+            timePref.setDefaultValue(R.integer.local_sync_time_def_val);
+            timePref.setShouldDisableView(true);
+            timePref.setValueIndex(0);
+        }else{
+            timePref.setDefaultValue(R.integer.sync_time_entries_def_val);
+            timePref.setShouldDisableView(false);
+            timePref.setValueIndex(3);
+        }
 
         assert timePref != null;
 
@@ -149,9 +160,13 @@ public class SyncSettingsFragment extends PreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                int mins = Integer.parseInt(newValue.toString());
-                app.getShopPref().syncPeriod().put(mins);
-                OfflineCommandsService.scheduleSyncAction(getActivity());
+                if(OfflineCommandsService.localSync) {
+                    return false;
+                }else {
+                    int mins = Integer.parseInt(newValue.toString());
+                    app.getShopPref().syncPeriod().put(mins);
+                    OfflineCommandsService.scheduleSyncAction(getActivity());
+                }
                 return true;
             }
         });
@@ -167,7 +182,6 @@ public class SyncSettingsFragment extends PreferenceFragment {
                 return true;
             }
         });
-
     }
 
     protected long getUpdateCheckTimer() {

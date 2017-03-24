@@ -10,6 +10,7 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
@@ -48,6 +49,7 @@ public class OfflineCommandsService extends Service {
 
     public static boolean ignoreCommandObserver;
 
+    public static boolean localSync = false;
 
     private ContentObserver commandObserver = new ContentObserver(handler) {
         public void onChange(boolean selfChange) {
@@ -155,6 +157,7 @@ public class OfflineCommandsService extends Service {
         TcrApplication app = ((TcrApplication) context.getApplicationContext());
         assert app != null;
         int mins = app.getShopPref().syncPeriod().get();
+        mins = localSync ? context.getResources().getInteger(R.integer.local_sync_time_def_val) : mins;
         if (mins <= 0) {
             mins = context.getResources().getInteger(R.integer.sync_time_entries_def_val);
         }
