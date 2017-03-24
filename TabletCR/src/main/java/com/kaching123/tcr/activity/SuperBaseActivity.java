@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -67,11 +68,13 @@ import java.util.Set;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
+import static android.view.MenuItem.SHOW_AS_ACTION_ALWAYS;
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._paymentGateway;
 import static com.kaching123.tcr.model.ContentValuesUtil._paymentStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._paymentType;
+import static com.kaching123.tcr.util.Util.isOnline;
 
 /**
  * Created by gdubina on 04.12.13.
@@ -109,6 +112,8 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
     private static final Uri OPENED_TRANSACTIONS_URI = ShopProvider.getContentUri(ShopStore.PaymentTransactionTable.URI_CONTENT);
 
     public int openedTrnsactionsCount;
+
+    private MenuItem offline;
 
     static {
         intentFilter.addAction(SerialPortScannerService.ACTION_SERIAL_PORT_SCANNER);
@@ -391,6 +396,13 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
         }
     };
 
+    private BroadcastReceiver networkStateChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            invalidateOptionsMenu();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -445,6 +457,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        registerReceiver(networkStateChanged, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(localSyncReceiver, new IntentFilter(LocalSyncHelper.LOCAL_SYNC));
         progressReceiver.register(SuperBaseActivity.this);
@@ -455,6 +468,7 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
     protected void onPause() {
         super.onPause();
         progressReceiver.unregister(SuperBaseActivity.this);
+        unregisterReceiver(networkStateChanged);
     }
 
     @Override
@@ -479,6 +493,10 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
 
         MenuItem batchOutItem = menu.add(Menu.CATEGORY_ALTERNATIVE, Menu.NONE, getResources().getInteger(R.integer.menu_order_default), R.string.action_batchout_label);
         batchOutItem.setVisible(isInSettingPage());
+
+        offline = menu.add(Menu.FIRST, Menu.NONE, Menu.FIRST, R.string.offline_mode).setActionView(R.layout.offline_mode_menu_layout);
+        offline.setShowAsAction(SHOW_AS_ACTION_ALWAYS);
+        offline.setVisible(!isOnline(getApplicationContext()));
 
         batchOutItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override

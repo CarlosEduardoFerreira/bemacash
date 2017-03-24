@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.model.ApplicationVersion;
@@ -16,6 +17,12 @@ import java.util.Date;
 import java.util.List;
 
 public class Util {
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return (netInfo != null && netInfo.isConnected());
+    }
 
     public static void refreshCurrentIp(){
         Thread updateIpTask = new Thread(new Runnable() {
