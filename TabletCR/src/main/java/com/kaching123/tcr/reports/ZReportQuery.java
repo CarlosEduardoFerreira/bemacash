@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus.PRINTED;
+import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus.UPDATED;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._paymentGateway;
 import static com.kaching123.tcr.model.ContentValuesUtil._tipsPaymentType;
@@ -582,13 +583,14 @@ public final class ZReportQuery extends XReportQuery {
                         .perform(context);
             }
 
-
-            while (c.moveToNext()) {
-                BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY), BigDecimal.ZERO);
-
+            while (c != null && c.moveToNext()) {
                 BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.QUANTITY), BigDecimal.ZERO);
-                if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
-                        ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
+
+                if ((ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) ||
+                        (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.HOLDON) &&
+                                c.getInt(c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.IS_DELETED)) == 1)) &&
+                        (ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) ||
+                                ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(UPDATED)) &&
                         c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {
 
                     voidCount = voidCount.add(itemQty);
@@ -600,7 +602,6 @@ public final class ZReportQuery extends XReportQuery {
             }
         }
 
-        assert c != null;
         if (c != null)
             c.close();
     }
@@ -610,13 +611,16 @@ public final class ZReportQuery extends XReportQuery {
                 .where(ShopSchema2.ZReportView2.SaleOrderTable.SHIFT_GUID + " = ?", shiftGuid)
                 .perform(context);
 
-        while (c.moveToNext()) {
-            BigDecimal itemPrintedQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.KITCHEN_PRINTED_QTY), BigDecimal.ZERO);
-
+        while (c != null && c.moveToNext()) {
             BigDecimal itemQty = ContentValuesUtil._decimalQty(c, c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.QUANTITY), BigDecimal.ZERO);
-            if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) &&
-                    ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) &&
+
+            if ((ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.CANCELED) ||
+                    (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.HOLDON) &&
+                            c.getInt(c.getColumnIndex(ShopSchema2.ZReportView2.SaleOrderItemTable.IS_DELETED)) == 1)) &&
+                    (ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(PRINTED) ||
+                            ContentValuesUtil._kitchenPrintStatus(c, c.getColumnIndex(KITCHEN_PRINT_STATUS)).equals(UPDATED)) &&
                     c.getString(c.getColumnIndex(PRINTER_ALIAS_GUID)) != null) {
+
                 voidCount = voidCount.add(itemQty);
             } else if (ContentValuesUtil._orderStatus(c, c.getColumnIndex(STATUS)).equals(OrderStatus.COMPLETED)) {
                 salesCount = salesCount.add(itemQty);
@@ -626,8 +630,8 @@ public final class ZReportQuery extends XReportQuery {
         }
 
 
-        assert c != null;
-        c.close();
+        if (c != null)
+            c.close();
 
     }
 

@@ -162,7 +162,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
             }
         }
 
-        if (!new UpdateSaleOrderKitchenPrintStatusCommand().syncStandalone(getContext(), orderGuid, KitchenPrintStatus.PRINTED, getAppCommandContext()))
+        if (items.size() > 0 && !new UpdateSaleOrderKitchenPrintStatusCommand().syncStandalone(getContext(), orderGuid, KitchenPrintStatus.PRINTED, getAppCommandContext()))
             return failed();
 
         return succeeded();
