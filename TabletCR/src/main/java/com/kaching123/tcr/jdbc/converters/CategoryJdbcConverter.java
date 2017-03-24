@@ -135,4 +135,9 @@ public class CategoryJdbcConverter extends JdbcConverter<CategoryModel> {
     public boolean supportUpdateTimeLocalFlag() {
         return true;
     }
+
+    @Override
+    public boolean isChild(){
+        return true;
+    }
 }

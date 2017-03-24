@@ -242,7 +242,6 @@ public class LocalSyncHelper {
                         RunCommandsMsg.SqlCommand command = commandRunner.request.commandsSend.get(guid);
                         if (runCommand(db, command)) {
                             commandWithSuccess.add(guid);
-
                         } else {
                             checkRetryCommands(commandRunner, commandWithSuccess);
                         }
@@ -399,7 +398,9 @@ public class LocalSyncHelper {
                     Log.d("BemaCarl","LocalSyncHelper.runCommand----------------------- db.update End   -----------------------");
                     if (affectedRows == 0 && !ignoreTables.contains(operation.table)) {
                         if (!areThereRow(db, operation.table, model[1].toString(), id)){
-                            return false;
+                            if(!JdbcFactory.getConverter(operation.table).isChild()){
+                                return false;
+                            }
                         }
                     }
 

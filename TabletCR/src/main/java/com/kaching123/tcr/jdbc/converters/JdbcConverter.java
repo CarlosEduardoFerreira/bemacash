@@ -40,6 +40,10 @@ public abstract class JdbcConverter<T extends IValueModel> {
         return false;
     }
 
+    public boolean isChild(){
+        return false;
+    }
+
     public boolean supportUpdateTimeFlag() {
         return true;
     }
