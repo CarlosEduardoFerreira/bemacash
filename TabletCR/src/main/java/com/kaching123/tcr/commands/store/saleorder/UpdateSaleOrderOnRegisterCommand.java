@@ -34,15 +34,18 @@ public class UpdateSaleOrderOnRegisterCommand extends UpdateSaleOrderCommand {
                 .where(ShopStore.SaleOrderTable.STATUS + " = ?", OrderStatus.HOLDON.ordinal())
                 .perform(getContext());
         try {
-            SaleOrderModel order = null;
-            if (c.moveToFirst()) {
-                order = new SaleOrderModel(c);
-            }
-            if (order == null)
-                return null;
+            if(c.getCount() > 0) {
+                SaleOrderModel order = null;
+                if (c.moveToFirst()) {
+                    order = new SaleOrderModel(c);
+                }
+                if (order == null)
+                    return null;
 
-            order.setOrderOnRegister(onRegister);
-            return order;
+                order.setOrderOnRegister(onRegister);
+                return order;
+            }
+            return null;
         } finally {
             c.close();
         }

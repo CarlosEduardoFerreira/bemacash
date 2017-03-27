@@ -126,10 +126,11 @@ public class ScannerFragment extends SuperBaseFragment {
     }
 
     public UsbSerialPort getPort(){
-
+        Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort");
         mUsbManager = (UsbManager) getActivity().getSystemService(Context.USB_SERVICE);
         final List<UsbSerialDriver> drivers =
                 UsbSerialProber.getDefaultProber().findAllDrivers(mUsbManager);
+        Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.drivers: " + drivers.size());
         final List<UsbSerialPort> result = new ArrayList<UsbSerialPort>();
         for (final UsbSerialDriver driver : drivers) {
             final List<UsbSerialPort> ports = driver.getPorts();
