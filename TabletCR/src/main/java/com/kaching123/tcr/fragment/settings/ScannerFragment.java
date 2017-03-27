@@ -141,7 +141,9 @@ public class ScannerFragment extends SuperBaseFragment {
         for(UsbSerialPort port: result){
             final UsbSerialDriver driver = port.getDriver();
             final UsbDevice device = driver.getDevice();
-            if(device.getInterface(0).getInterfaceClass() == 2){
+            Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterfaceCount(): " + device.getInterfaceCount());
+            Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterface(0).getInterfaceClass(): " + device.getInterface(0).getInterfaceClass());
+            if(device.getInterface(0).getInterfaceClass() == 2 || device.getInterface(0).getInterfaceClass() == 3){
                 return port;
             }
         }
