@@ -35,6 +35,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.BaseCashierActivity.IHoldListener;
 import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.model.DefinedOnHoldModel;
@@ -61,6 +62,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.kaching123.tcr.fragment.UiHelper.showPhone;
+import static com.kaching123.tcr.util.Util.isOnline;
 
 /**
  * Created by mboychenko on 2/6/2017.
@@ -115,6 +117,8 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
     private SaleOrderModel clickedOrder;
     private DefinedOnHoldModel clickedDefinedOnHold;
 
+    private boolean singleRegInStore;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -124,6 +128,9 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
 
         gridAdapter = new GridAdapter(getContext(), isOnHoldOrdersDefined);
         gridView.setAdapter(gridAdapter);
+
+        singleRegInStore = getApp().isSingleRegInStore();
+
         initViews();
     }
     private void defineDialogAndGridItemsSize(Window window){                                       //affect other versions if do via res options
@@ -220,8 +227,23 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
                 Toast.makeText(getContext(), R.string.on_hold_in_process_msg, Toast.LENGTH_LONG).show();
                 return;
             }
-            listener.onSwap2Order(saleOrderModel.getHoldName(), saleOrderModel.getHoldPhone(), saleOrderModel.getHoldStatus(), saleOrderModel.guid, saleOrderModel.getDefinedOnHoldGuid());
-            dismiss();
+
+            final SaleOrderModel fixedSaleOrderModel = saleOrderModel;
+            if(!singleRegInStore && !isOnline(getContext())) {
+                AlertDialogFragment.showConfirmationNoImage(getActivity(), R.string.offline_mode, getString(R.string.offline_mode_actions), new OnDialogClickListener() {
+                    @Override
+                    public boolean onClick() {
+                        listener.onSwap2Order(fixedSaleOrderModel.getHoldName(), fixedSaleOrderModel.getHoldPhone(),
+                                fixedSaleOrderModel.getHoldStatus(), fixedSaleOrderModel.guid, fixedSaleOrderModel.getDefinedOnHoldGuid());
+                        OnHoldListDialogFragment.this.dismiss();
+                        return true;
+                    }
+                });
+            } else if(singleRegInStore) {
+                listener.onSwap2Order(fixedSaleOrderModel.getHoldName(), fixedSaleOrderModel.getHoldPhone(),
+                        fixedSaleOrderModel.getHoldStatus(), fixedSaleOrderModel.guid, fixedSaleOrderModel.getDefinedOnHoldGuid());
+                dismiss();
+            }
         }
     }
 

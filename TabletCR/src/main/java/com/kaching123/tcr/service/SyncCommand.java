@@ -909,6 +909,8 @@ public class SyncCommand implements Runnable {
             ShopProviderExt.callMethod(service, Method.METHOD_DETACH_SYNC_DB, null, null);
         }
 
+        getApp().setSingleRegInStore(RegisterModel.isSingleRegInStoreLoadSync(service));
+
         registerHookListener.onFinish();
         employeePermissionsHookListener.onFinish();
 

@@ -494,9 +494,11 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
         MenuItem batchOutItem = menu.add(Menu.CATEGORY_ALTERNATIVE, Menu.NONE, getResources().getInteger(R.integer.menu_order_default), R.string.action_batchout_label);
         batchOutItem.setVisible(isInSettingPage());
 
-        offline = menu.add(Menu.FIRST, Menu.NONE, Menu.FIRST, R.string.offline_mode).setActionView(R.layout.offline_mode_menu_layout);
-        offline.setShowAsAction(SHOW_AS_ACTION_ALWAYS);
-        offline.setVisible(!isOnline(getApplicationContext()));
+        if (!getApp().isSingleRegInStore()) {
+            offline = menu.add(Menu.FIRST, Menu.NONE, Menu.FIRST, R.string.offline_mode).setActionView(R.layout.offline_mode_menu_layout);
+            offline.setShowAsAction(SHOW_AS_ACTION_ALWAYS);
+            offline.setVisible(!isOnline(getApplicationContext()));
+        }
 
         batchOutItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override

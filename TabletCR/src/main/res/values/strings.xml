@@ -2040,6 +2040,7 @@
 
     <string name="alert_dialog_title">Alert</string>
     <string name="offline_mode">Offline mode</string>
+    <string name="offline_mode_actions">Offline Device is offline. Completing this order may cause reporting issues.</string>
 
     <string name="detailed_report_activity_label">Detailed Report</string>
     <string name="no_sales_for_filter">No sales for this filter</string>

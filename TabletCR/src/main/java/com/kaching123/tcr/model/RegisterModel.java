@@ -1,9 +1,12 @@
 package com.kaching123.tcr.model;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.RegisterTable;
 
@@ -85,5 +88,15 @@ public class RegisterModel implements IValueModel {
         return this == o || (o != null && id == ((RegisterModel)o).id &&
                 registerSerial.equals(((RegisterModel)o).registerSerial) &&
                 title.equals(((RegisterModel)o).title));
+    }
+
+    public static boolean isSingleRegInStoreLoadSync(Context context){
+        Cursor c = ProviderAction.query(ShopProvider.contentUri(ShopStore.RegisterTable.URI_CONTENT))
+                .perform(context);
+        boolean result;
+        result = c.getCount() <= 1;
+        c.close();
+
+        return result;
     }
 }

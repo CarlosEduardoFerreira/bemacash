@@ -155,6 +155,7 @@ public class TcrApplication extends MultiDexApplication {
     public boolean requireSignatureOnTransactionsHigherThan = false;
     public boolean paxSignatureCanceledByCustomer = false;
     public boolean paxMachineHasTransactionSuccessfull = false;
+    private boolean isSingleRegInStore;
 
     public String currentIp;
 
@@ -223,6 +224,14 @@ public class TcrApplication extends MultiDexApplication {
 
     public synchronized void setCurrentIp(String currentIp) {
         this.currentIp = currentIp;
+    }
+
+    public boolean isSingleRegInStore() {
+        return isSingleRegInStore;
+    }
+
+    public void setSingleRegInStore(boolean singleRegInStore) {
+        isSingleRegInStore = singleRegInStore;
     }
 
     @Background
