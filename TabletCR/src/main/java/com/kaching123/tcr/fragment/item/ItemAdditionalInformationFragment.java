@@ -9,6 +9,7 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -136,7 +137,9 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
     @Override
     protected void setModel() {
         ItemExModel model = getModel();
+        Log.d("BemaCarl4","ItemAdditionalInformationFragment.setModel.model.eanCode: " + model.eanCode);
         eanUpc.setText(model.eanCode);
+        Log.d("BemaCarl4","ItemAdditionalInformationFragment.setModel.eanUpc.getText(): " + eanUpc.getText());
         productCode.setText(model.productCode);
         if (model.codeType != null)
             unitsType.setSelection(model.codeType.ordinal() + 1);
@@ -152,6 +155,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
         ItemModel model = getModel();
         if (!getModel().isReferenceItem()){
             model.eanCode = eanUpc.getText().toString();
+            Log.d("BemaCarl4","ItemAdditionalInformationFragment.collectData.model.eanCode: " + model.eanCode);
             model.productCode = productCode.getText().toString();
         }
         model.unitsLabelId = ((UnitLabelModel)unitsLabel.getSelectedItem()).getGuid();
@@ -254,6 +258,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
 
     @AfterTextChange
     protected void eanUpcAfterTextChanged(Editable s){
+        Log.d("BemaCarl4","ItemAdditionalInformationFragment.eanUpcAfterTextChanged.s.toString(): " + s.toString());
         if (s.length() > 0){
             getLoaderManager().restartLoader(EAN_LOADER_ID, null, new EanLoader());
         }else{
@@ -272,6 +277,9 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
 
     @Override
     public void onItemCodeTypeChosen(ItemCodeType codeType, String code) {
+        Log.d("BemaCarl4","ItemAdditionalInformationFragment.onItemCodeTypeChosen.codeType: " + codeType);
+        Log.d("BemaCarl4","ItemAdditionalInformationFragment.onItemCodeTypeChosen.code: " + code);
+        Log.d("BemaCarl4","ItemAdditionalInformationFragment.onItemCodeTypeChosen.ItemCodeType.EAN_UPC: " + ItemCodeType.EAN_UPC);
         if (ItemCodeType.EAN_UPC == codeType) {
             try {
                 if (Validator.isEanValid(code)) {
@@ -289,6 +297,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
                 Toast.makeText(getActivity(), getString(R.string.item_activity_alert_product_code_error, TcrApplication.PRODUCT_CODE_MAX_LEN), Toast.LENGTH_SHORT).show();
             }
         }
+        Log.d("BemaCarl4","ItemAdditionalInformationFragment.onItemCodeTypeChosen.eanUpc.getText(): " + eanUpc.getText());
     }
 
     @Override
