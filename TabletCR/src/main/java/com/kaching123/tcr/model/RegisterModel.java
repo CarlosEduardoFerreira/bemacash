@@ -92,6 +92,7 @@ public class RegisterModel implements IValueModel {
 
     public static boolean isSingleRegInStoreLoadSync(Context context){
         Cursor c = ProviderAction.query(ShopProvider.contentUri(ShopStore.RegisterTable.URI_CONTENT))
+                .where(RegisterTable.STATUS + " = ?", RegisterStatus.ACTIVE.ordinal())
                 .perform(context);
         boolean result;
         result = c.getCount() <= 1;
