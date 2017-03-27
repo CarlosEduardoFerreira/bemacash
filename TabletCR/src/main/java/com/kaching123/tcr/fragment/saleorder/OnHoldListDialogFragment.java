@@ -239,7 +239,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
                         return true;
                     }
                 });
-            } else if(singleRegInStore) {
+            } else {
                 listener.onSwap2Order(fixedSaleOrderModel.getHoldName(), fixedSaleOrderModel.getHoldPhone(),
                         fixedSaleOrderModel.getHoldStatus(), fixedSaleOrderModel.guid, fixedSaleOrderModel.getDefinedOnHoldGuid());
                 dismiss();
