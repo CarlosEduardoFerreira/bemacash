@@ -1989,6 +1989,7 @@
     <string name="adding" formatted="false">Adding %d/%d</string>
     <string name="no_variants">No variants added</string>
 
+    <string name="item_activity_age_verification">Age verification:</string>
     <string name="item_activity_reference_item">Reference Item:</string>
     <string name="name">Name</string>
     <string name="inventory_item_description">Item description</string>
@@ -2040,7 +2041,7 @@
 
     <string name="alert_dialog_title">Alert</string>
     <string name="offline_mode">Offline mode</string>
-    <string name="offline_mode_actions">Offline Device is offline. Completing this order may cause reporting issues.</string>
+    <string name="offline_mode_actions">Device is offline. Completing this order may cause reporting issues.</string>
 
     <string name="detailed_report_activity_label">Detailed Report</string>
     <string name="no_sales_for_filter">No sales for this filter</string>
