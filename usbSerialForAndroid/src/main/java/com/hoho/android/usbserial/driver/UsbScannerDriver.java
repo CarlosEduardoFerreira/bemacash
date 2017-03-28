@@ -50,7 +50,7 @@ public class UsbScannerDriver implements UsbSerialDriver {
 
     public UsbScannerDriver(UsbDevice device) {
         mDevice = device;
-        mPort = new CdcAcmSerialPort(device, 0);
+        mPort = new UsbScannerSerialPort(device, 0);
     }
 
     @Override
@@ -63,7 +63,11 @@ public class UsbScannerDriver implements UsbSerialDriver {
         return Collections.singletonList(mPort);
     }
 
-    class CdcAcmSerialPort extends CommonUsbSerialPort {
+    class UsbScannerSerialPort extends CommonUsbSerialPort {
+
+        private UsbInterface mControlInterface;
+        private UsbInterface mDataInterface;
+        private UsbEndpoint mControlEndpoint;
 
         private static final int USB_RECIP_INTERFACE = 0x01;
         private static final int USB_RT_ACM = UsbConstants.USB_TYPE_CLASS | USB_RECIP_INTERFACE;
@@ -79,7 +83,7 @@ public class UsbScannerDriver implements UsbSerialDriver {
         private boolean mRts = false;
         private boolean mDtr = false;
 
-        public CdcAcmSerialPort(UsbDevice device, int portNumber) {
+        public UsbScannerSerialPort(UsbDevice device, int portNumber) {
             super(device, portNumber);
             mEnableAsyncReads = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1);
         }
@@ -91,6 +95,51 @@ public class UsbScannerDriver implements UsbSerialDriver {
 
         @Override
         public void open(UsbDeviceConnection connection) throws IOException {
+            if (mConnection != null) {
+                throw new IOException("Already open");
+            }
+
+            mConnection = connection;
+            boolean opened = false;
+            try {
+                Log.d(TAG, "claiming interfaces, count=" + mDevice.getInterfaceCount());
+                mControlInterface = mDevice.getInterface(0);
+                Log.d(TAG, "Control iface=" + mControlInterface);
+                // class should be USB_CLASS_COMM
+
+                if (!mConnection.claimInterface(mControlInterface, true)) {
+                    throw new IOException("Could not claim control interface.");
+                }
+                mControlEndpoint = mControlInterface.getEndpoint(0);
+                Log.d(TAG, "Control endpoint direction: " + mControlEndpoint.getDirection());
+
+                Log.d(TAG, "Claiming data interface.");
+                mDataInterface = mDevice.getInterface(0);
+                Log.d(TAG, "data iface=" + mDataInterface);
+                // class should be USB_CLASS_CDC_DATA
+
+                if (!mConnection.claimInterface(mDataInterface, true)) {
+                    throw new IOException("Could not claim data interface.");
+                }
+                mReadEndpoint = mDataInterface.getEndpoint(0);
+                Log.d(TAG, "Read endpoint direction: " + mReadEndpoint.getDirection());
+                mWriteEndpoint = mDataInterface.getEndpoint(0);
+                Log.d(TAG, "Write endpoint direction: " + mWriteEndpoint.getDirection());
+                if (mEnableAsyncReads) {
+                    Log.d(TAG, "Async reads enabled");
+                } else {
+                    Log.d(TAG, "Async reads disabled.");
+                }
+                opened = true;
+            } finally {
+                if (!opened) {
+                    mConnection = null;
+                }
+            }
+        }
+
+        //@Override
+        public void openOld(UsbDeviceConnection connection) throws IOException {
             if (mConnection != null) {
                 throw new IOException("Already open");
             }

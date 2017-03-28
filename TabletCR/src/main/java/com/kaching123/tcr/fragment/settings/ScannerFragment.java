@@ -149,12 +149,9 @@ public class ScannerFragment extends SuperBaseFragment {
             
             Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterfaceCount(): " + device.getInterfaceCount());
             Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterface(0).getInterfaceClass(): " + device.getInterface(0).getInterfaceClass());
-
-            //if(device.getInterface(0).getInterfaceClass() == 2
-            //        || device.getInterface(0).getInterfaceClass() == 3
-            //            || device.getInterface(0).getInterfaceClass() == 255){
+            if(device.getInterface(0).getInterfaceClass() == 2 || device.getInterface(0).getInterfaceClass() == 3){
                 return port;
-            //}
+            }
         }
         return null;
     }
