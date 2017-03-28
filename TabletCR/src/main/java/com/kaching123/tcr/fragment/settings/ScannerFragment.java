@@ -143,17 +143,23 @@ public class ScannerFragment extends SuperBaseFragment {
                     driver, Integer.valueOf(ports.size()), ports.size() == 1 ? "" : "s"));
             result.addAll(ports);
         }
+        UsbSerialPort port2 = null;
         for(UsbSerialPort port: result){
             final UsbSerialDriver driver = port.getDriver();
             final UsbDevice device = driver.getDevice();
             
             Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterfaceCount(): " + device.getInterfaceCount());
-            Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterface(0).getInterfaceClass(): " + device.getInterface(0).getInterfaceClass());
+            port2 = port;
+            for (int i = 0; i < device.getInterfaceCount(); i++) {
+                Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterface.i: " + i);
+                Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterface(0).getInterfaceClass(): " + device.getInterface(i).getInterfaceClass());
+                Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.port: " + port);
+            }
             if(device.getInterface(0).getInterfaceClass() == 2 || device.getInterface(0).getInterfaceClass() == 3){
-                return port;
+                //return port;
             }
         }
-        return null;
+        return port2;
     }
 
     @OptionsItem
