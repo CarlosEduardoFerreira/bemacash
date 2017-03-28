@@ -139,27 +139,25 @@ public class ScannerFragment extends SuperBaseFragment {
         final List<UsbSerialPort> result = new ArrayList<UsbSerialPort>();
         for (final UsbSerialDriver driver : drivers) {
             final List<UsbSerialPort> ports = driver.getPorts();
-            Log.d(TAG, String.format("+ %s: %s port%s",
-                    driver, Integer.valueOf(ports.size()), ports.size() == 1 ? "" : "s"));
+            Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort: |driver|ports.size()|: |" + driver +"|"+ ports.size() +"|");
             result.addAll(ports);
         }
-        UsbSerialPort port2 = null;
+        UsbSerialPort usbSerialPort = null;
         for(UsbSerialPort port: result){
             final UsbSerialDriver driver = port.getDriver();
             final UsbDevice device = driver.getDevice();
             
             Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterfaceCount(): " + device.getInterfaceCount());
-            port2 = port;
             for (int i = 0; i < device.getInterfaceCount(); i++) {
                 Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterface.i: " + i);
                 Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterface(0).getInterfaceClass(): " + device.getInterface(i).getInterfaceClass());
                 Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.port: " + port);
             }
             if(device.getInterface(0).getInterfaceClass() == 2 || device.getInterface(0).getInterfaceClass() == 3){
-                //return port;
+                usbSerialPort = port;
             }
         }
-        return port2;
+        return usbSerialPort;
     }
 
     @OptionsItem

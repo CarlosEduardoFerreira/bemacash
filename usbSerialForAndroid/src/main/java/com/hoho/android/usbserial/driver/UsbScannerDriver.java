@@ -93,8 +93,8 @@ public class UsbScannerDriver implements UsbSerialDriver {
             return UsbScannerDriver.this;
         }
 
-        @Override
-        public void open(UsbDeviceConnection connection) throws IOException {
+        //@Override
+        public void openOld(UsbDeviceConnection connection) throws IOException {
             if (mConnection != null) {
                 throw new IOException("Already open");
             }
@@ -121,7 +121,7 @@ public class UsbScannerDriver implements UsbSerialDriver {
                 if (!mConnection.claimInterface(mDataInterface, true)) {
                     throw new IOException("Could not claim data interface.");
                 }
-                mReadEndpoint = mDataInterface.getEndpoint(0);
+                mReadEndpoint = mDataInterface.getEndpoint(1);
                 Log.d(TAG, "Read endpoint direction: " + mReadEndpoint.getDirection());
                 mWriteEndpoint = mDataInterface.getEndpoint(0);
                 Log.d(TAG, "Write endpoint direction: " + mWriteEndpoint.getDirection());
@@ -138,8 +138,8 @@ public class UsbScannerDriver implements UsbSerialDriver {
             }
         }
 
-        //@Override
-        public void openOld(UsbDeviceConnection connection) throws IOException {
+        @Override
+        public void open(UsbDeviceConnection connection) throws IOException {
             if (mConnection != null) {
                 throw new IOException("Already open");
             }
@@ -148,6 +148,8 @@ public class UsbScannerDriver implements UsbSerialDriver {
             boolean opened = false;
             try {
                 Log.d("BemaCarl4","UsbScannerDriver.open.mDevice.getInterfaceCount(): " + mDevice.getInterfaceCount());
+                mControlInterface = mDevice.getInterface(0);
+                mControlEndpoint = mControlInterface.getEndpoint(0);
                 for (int i = 0; i < mDevice.getInterfaceCount(); i++) {
                     Log.d("BemaCarl4","UsbScannerDriver.open.mDevice.getInterface("+i+"): " + mDevice.getInterface(i));
                     Log.d("BemaCarl4","UsbScannerDriver.open.mDevice.getInterface("+i+").getInterfaceClass: " + mDevice.getInterface(i).getInterfaceClass());
