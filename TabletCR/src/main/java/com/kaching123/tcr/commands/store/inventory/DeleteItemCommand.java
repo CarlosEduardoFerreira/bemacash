@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.function.ItemMatrixWrapFunction;
 import com.kaching123.tcr.function.VariantItemWrapFunction;
@@ -109,6 +110,8 @@ public class DeleteItemCommand extends AsyncCommand {
         }
 
         shiftOrderNums(getCategory(getContext(), itemGuid));
+
+        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
 
         return succeeded();
     }
