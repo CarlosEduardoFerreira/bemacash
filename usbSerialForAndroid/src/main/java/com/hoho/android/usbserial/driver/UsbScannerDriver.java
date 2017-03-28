@@ -63,6 +63,10 @@ public class UsbScannerDriver implements UsbSerialDriver {
         return Collections.singletonList(mPort);
     }
 
+    public UsbSerialPort getPort(){
+        return mPort;
+    }
+
     class UsbScannerSerialPort extends CommonUsbSerialPort {
 
         private UsbInterface mControlInterface;
@@ -85,6 +89,8 @@ public class UsbScannerDriver implements UsbSerialDriver {
 
         public UsbScannerSerialPort(UsbDevice device, int portNumber) {
             super(device, portNumber);
+            Log.d("BemaCarl4","UsbScannerDriver.UsbScannerSerialPort.device: " + device);
+            Log.d("BemaCarl4","UsbScannerDriver.UsbScannerSerialPort.portNumber: " + portNumber);
             mEnableAsyncReads = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1);
         }
 
@@ -93,53 +99,9 @@ public class UsbScannerDriver implements UsbSerialDriver {
             return UsbScannerDriver.this;
         }
 
-        //@Override
-        public void openOld(UsbDeviceConnection connection) throws IOException {
-            if (mConnection != null) {
-                throw new IOException("Already open");
-            }
-
-            mConnection = connection;
-            boolean opened = false;
-            try {
-                Log.d(TAG, "claiming interfaces, count=" + mDevice.getInterfaceCount());
-                mControlInterface = mDevice.getInterface(0);
-                Log.d(TAG, "Control iface=" + mControlInterface);
-                // class should be USB_CLASS_COMM
-
-                if (!mConnection.claimInterface(mControlInterface, true)) {
-                    throw new IOException("Could not claim control interface.");
-                }
-                mControlEndpoint = mControlInterface.getEndpoint(0);
-                Log.d(TAG, "Control endpoint direction: " + mControlEndpoint.getDirection());
-
-                Log.d(TAG, "Claiming data interface.");
-                mDataInterface = mDevice.getInterface(1);
-                Log.d(TAG, "data iface=" + mDataInterface);
-                // class should be USB_CLASS_CDC_DATA
-
-                if (!mConnection.claimInterface(mDataInterface, true)) {
-                    throw new IOException("Could not claim data interface.");
-                }
-                mReadEndpoint = mDataInterface.getEndpoint(1);
-                Log.d(TAG, "Read endpoint direction: " + mReadEndpoint.getDirection());
-                mWriteEndpoint = mDataInterface.getEndpoint(0);
-                Log.d(TAG, "Write endpoint direction: " + mWriteEndpoint.getDirection());
-                if (mEnableAsyncReads) {
-                    Log.d(TAG, "Async reads enabled");
-                } else {
-                    Log.d(TAG, "Async reads disabled.");
-                }
-                opened = true;
-            } finally {
-                if (!opened) {
-                    mConnection = null;
-                }
-            }
-        }
-
         @Override
         public void open(UsbDeviceConnection connection) throws IOException {
+            Log.d("BemaCarl4","UsbScannerDriver.open");
             if (mConnection != null) {
                 throw new IOException("Already open");
             }
@@ -148,15 +110,27 @@ public class UsbScannerDriver implements UsbSerialDriver {
             boolean opened = false;
             try {
                 Log.d("BemaCarl4","UsbScannerDriver.open.mDevice.getInterfaceCount(): " + mDevice.getInterfaceCount());
-                mControlInterface = mDevice.getInterface(0);
-                mControlEndpoint = mControlInterface.getEndpoint(0);
                 for (int i = 0; i < mDevice.getInterfaceCount(); i++) {
                     Log.d("BemaCarl4","UsbScannerDriver.open.mDevice.getInterface("+i+"): " + mDevice.getInterface(i));
                     Log.d("BemaCarl4","UsbScannerDriver.open.mDevice.getInterface("+i+").getInterfaceClass: " + mDevice.getInterface(i).getInterfaceClass());
                     if (connection.claimInterface(mDevice.getInterface(i), true)) {
-                        Log.d("BemaCarl4","UsbScannerDriver.open.connection.claimInterface.SUCCESS: " + mDevice.getInterface(i));
+                        if(i == 0){
+                            mControlInterface = mDevice.getInterface(0);
+                            Log.d("BemaCarl4","UsbScannerDriver.open.mControlInterface: " + mControlInterface);
+                            mControlEndpoint = mControlInterface.getEndpoint(0);
+                            Log.d("BemaCarl4","UsbScannerDriver.open.mControlEndpoint: " + mControlEndpoint);
+                        }
+                        if(i == 1){
+                            mDataInterface = mDevice.getInterface(1);
+                            Log.d("BemaCarl4","UsbScannerDriver.open.mDataInterface: " + mDataInterface);
+                            mReadEndpoint = mDataInterface.getEndpoint(1);
+                            Log.d("BemaCarl4","UsbScannerDriver.open.mReadEndpoint: " + mReadEndpoint);
+                            mWriteEndpoint = mDataInterface.getEndpoint(0);
+                            Log.d("BemaCarl4","UsbScannerDriver.open.mWriteEndpoint: " + mWriteEndpoint);
+                        }
+                        Log.d("BemaCarl4","UsbScannerDriver.open.connection.claimInterface."+i+".SUCCESS: " + mDevice.getInterface(i));
                     } else {
-                        Log.d("BemaCarl4","UsbScannerDriver.open.connection.claimInterface.ERROR: " + mDevice.getInterface(i));
+                        Log.d("BemaCarl4","UsbScannerDriver.open.connection.claimInterface."+i+".ERROR: " + mDevice.getInterface(i));
                     }
                 }
                 opened = true;

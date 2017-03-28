@@ -17,6 +17,7 @@ import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.TcrApplication;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,25 +53,33 @@ public class USBScannerService extends Service {
     }
 
     public UsbSerialPort getPort(){
-
-        mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+        Log.d("BemaCarl4","USBScannerService.getPort");
+        mUsbManager = (UsbManager) TcrApplication.get().getSystemService(Context.USB_SERVICE);
         final List<UsbSerialDriver> drivers =
                 UsbSerialProber.getDefaultProber().findAllDrivers(mUsbManager);
+        Log.d("BemaCarl4","USBScannerService.getPort.drivers: " + drivers.size());
         final List<UsbSerialPort> result = new ArrayList<UsbSerialPort>();
         for (final UsbSerialDriver driver : drivers) {
             final List<UsbSerialPort> ports = driver.getPorts();
-            Log.d(TAG, String.format("+ %s: %s port%s",
-                    driver, Integer.valueOf(ports.size()), ports.size() == 1 ? "" : "s"));
+            Log.d("BemaCarl4","USBScannerService.getPort: |driver|ports.size()|: |" + driver +"|"+ ports.size() +"|");
             result.addAll(ports);
         }
+        UsbSerialPort usbSerialPort = null;
         for(UsbSerialPort port: result){
             final UsbSerialDriver driver = port.getDriver();
             final UsbDevice device = driver.getDevice();
-            if(device.getInterface(0).getInterfaceClass() == 2){
-                return port;
+
+            Log.d("BemaCarl4","USBScannerService.getPort.device.getInterfaceCount(): " + device.getInterfaceCount());
+            for (int i = 0; i < device.getInterfaceCount(); i++) {
+                Log.d("BemaCarl4","USBScannerService.getPort.device.getInterface.i: " + i);
+                Log.d("BemaCarl4","USBScannerService.getPort.device.getInterface("+i+").getInterfaceClass(): " + device.getInterface(i).getInterfaceClass());
+                Log.d("BemaCarl4","USBScannerService.getPort.device.port: " + port);
+            }
+            if(device.getInterface(0).getInterfaceClass() == 2 || device.getInterface(0).getInterfaceClass() == 3){
+                usbSerialPort = port;
             }
         }
-        return null;
+        return usbSerialPort;
     }
 
     private Handler serviceHandler = new Handler() {
@@ -126,17 +135,21 @@ public class USBScannerService extends Service {
             Logger.e("No serial device.");
         } else {
             final UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-
+            Log.d("BemaCarl4","USBScannerService.startOpenConnection.usbManager: " + usbManager);
             UsbDeviceConnection connection = usbManager.openDevice(sPort.getDriver().getDevice());
+            Log.d("BemaCarl4","USBScannerService.startOpenConnection.connection: " + connection);
             if (connection == null) {
                 Logger.e("Opening device failed");
                 return;
             }
 
             try {
-                sPort.open(connection);
+                Log.d("BemaCarl4","USBScannerService.startOpenConnection.sPort.getDriver().getPorts().get(0): " + sPort.getDriver().getPorts().get(0));
+                sPort.getDriver().getPorts().get(0).open(connection);
+                //sPort.open(connection);
                 sPort.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
             } catch (IOException e) {
+                Log.d("BemaCarl4","USBScannerService.startOpenConnection.catch.e.getMessage(): " + e.getMessage());
                 Log.e(TAG, "Error setting up device: " + e.getMessage(), e);
                 try {
                     sPort.close();

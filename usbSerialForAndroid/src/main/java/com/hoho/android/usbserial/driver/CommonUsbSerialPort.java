@@ -23,6 +23,7 @@ package com.hoho.android.usbserial.driver;
 
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -61,9 +62,11 @@ abstract class CommonUsbSerialPort implements UsbSerialPort {
     
     @Override
     public String toString() {
-        return String.format("<%s device_name=%s device_id=%s port_number=%s>",
+        String portInfo = String.format("<%s device_name=%s device_id=%s port_number=%s>",
                 getClass().getSimpleName(), mDevice.getDeviceName(),
                 mDevice.getDeviceId(), mPortNumber);
+        Log.d("BemaCarl4","CommonUsbSerialPort.toString.portInfo: " + portInfo);
+        return portInfo;
     }
 
     /**

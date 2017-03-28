@@ -75,11 +75,13 @@ public class ScannerFragment extends SuperBaseFragment {
         String scannerName = getApp().getShopPref().scannerName().get();
         boolean scannerConfigured = !TextUtils.isEmpty(scannerAddress);
 
-        Log.d("BemaCarl4","ScannerFragment.setScanner.scannerAddress: " + scannerAddress);
-        Log.d("BemaCarl4","ScannerFragment.setScanner.scannerName: " + scannerName);
-        Log.d("BemaCarl4","ScannerFragment.setScanner.scannerConfigured: " + scannerConfigured);
+
 
         adapter.clear();
+        Log.d("BemaCarl4","ScannerFragment.setScanner.scannerConfigured: " + scannerConfigured);
+        Log.d("BemaCarl4","ScannerFragment.setScanner.scannerAddress: " + scannerAddress);
+        Log.d("BemaCarl4","ScannerFragment.setScanner.scannerName: " + scannerName);
+        Log.d("BemaCarl4","ScannerFragment.setScanner.USB_SCANNER_NAME: " + USB_SCANNER_NAME);
         if(scannerName.equalsIgnoreCase(USB_SCANNER_NAME)) {
             if(sPort == null) {
                 sPort = getPort();
@@ -105,6 +107,8 @@ public class ScannerFragment extends SuperBaseFragment {
                 }
             }
             final UsbDevice device = sPort.getDriver().getDevice();
+            Log.d("BemaCarl4","ScannerFragment.setScanner.device: " + device);
+            Log.d("BemaCarl4","ScannerFragment.setScanner.mUsbManager.hasPermission(device): " + mUsbManager.hasPermission(device));
             if (!mUsbManager.hasPermission(device)) {
                 PendingIntent mPermissionIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent("com.android.example.USB_PERMISSION"), 0);
                 mUsbManager.requestPermission(device, mPermissionIntent);
