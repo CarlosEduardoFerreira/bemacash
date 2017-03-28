@@ -4,26 +4,42 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
-    <RelativeLayout
-        android:layout_height="70dp"
+    <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:gravity="center"
-        android:background="@drawable/addon_background">
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_height="70dp"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:background="@drawable/addon_background">
+
+            <TextView
+                android:id="@+id/age_ver_field"
+                android:background="@color/edit_box_custom_bg"
+                android:textColor="@color/dashboard_module_text"
+                android:textColorHint="@color/dashboard_module_text"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLength="10"
+                android:hint="@string/date_mask"/>
+
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/age_ver_field"
-            android:background="@color/edit_box_custom_bg"
-            android:textColor="@color/dashboard_module_text"
-            android:textColorHint="@color/dashboard_module_text"
-            android:textSize="26sp"
-            android:textStyle="bold"
+            android:id="@+id/age_warning"
+            android:layout_marginTop="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLength="10"
-            android:hint="@string/date_mask"/>
+            android:textColor="@color/dlg_text_red"
+            android:textSize="16sp"
+            android:visibility="gone"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

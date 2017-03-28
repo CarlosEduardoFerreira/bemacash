@@ -2228,6 +2228,7 @@
     <string name="warning_new_msg">Error TransactionUtil setNewValues</string>
     <string name="nav_back_order_is_on_hold_msg">To navigate back, order must be put on hold, voided, or paid</string>
     <string name="date_mask">mm/dd/yyyy</string>
+    <string name="item_requires_age">This item requires age %d</string>
     <!-- local sync ends -->
 
 

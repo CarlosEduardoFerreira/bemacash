@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.DatePickerFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
@@ -42,9 +43,9 @@ public class AgeVerificationFragment extends StyledDialogFragment implements Loa
 
     private OnDialogClickListener listener;
     private ItemExModel itemExModel;
-    private int year, month, day;
 
     @ViewById protected TextView ageVerField;
+    @ViewById protected TextView ageWarning;
 
     public void setListener(OnDialogClickListener listener) {
         this.listener = listener;
@@ -53,21 +54,48 @@ public class AgeVerificationFragment extends StyledDialogFragment implements Loa
     DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            AgeVerificationFragment.this.year = year;
-            AgeVerificationFragment.this.month = monthOfYear;
-            AgeVerificationFragment.this.day = dayOfMonth;
-
+            int visualMonth = monthOfYear + 1;
             String day = String.valueOf(dayOfMonth);
-            String month = String.valueOf(monthOfYear);
+            String month = String.valueOf(visualMonth);
             if (dayOfMonth < 10) {
                 day = "0" + String.valueOf(dayOfMonth);
             }
-            if (monthOfYear < 10) {
-                month = "0" + String.valueOf(monthOfYear);
+            if (visualMonth < 10) {
+                month = "0" + String.valueOf(visualMonth);
             }
             ageVerField.setText(String.format(Locale.US, "%s/%s/%d", month, day, year));
+
+            checkConfirmAbility(year, monthOfYear, dayOfMonth);
         }
     };
+
+    private void checkConfirmAbility(int year, int monthOfYear, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        int curYear = calendar.get(Calendar.YEAR);
+        int curMonth = calendar.get(Calendar.MONTH);
+        int curDay = calendar.get(Calendar.DAY_OF_MONTH);
+        calendar.setTimeInMillis(0);
+        calendar.set(curYear, curMonth, curDay);
+
+        Calendar ageRestrictionForItem = Calendar.getInstance();
+        ageRestrictionForItem.setTimeInMillis(0);
+        ageRestrictionForItem.set(year, monthOfYear, dayOfMonth);
+
+        int diff = calendar.get(Calendar.YEAR) - ageRestrictionForItem.get(Calendar.YEAR);
+        if (ageRestrictionForItem.get(Calendar.MONTH) > calendar.get(Calendar.MONTH) ||
+                (calendar.get(Calendar.MONTH) == ageRestrictionForItem.get(Calendar.MONTH) && ageRestrictionForItem.get(Calendar.DATE) > calendar.get(Calendar.DATE))) {
+            diff--;
+        }
+
+        if (diff >= itemExModel.ageVerification) {
+            enablePositiveButtons(true);
+            ageWarning.setVisibility(View.GONE);
+        } else {
+            enablePositiveButtons(false);
+            ageWarning.setVisibility(View.VISIBLE);
+            ageWarning.setText(getString(R.string.item_requires_age, itemExModel.ageVerification));
+        }
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -84,6 +112,7 @@ public class AgeVerificationFragment extends StyledDialogFragment implements Loa
             }
         });
 
+        enablePositiveButtons(false);
     }
 
     @Override
