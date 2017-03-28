@@ -270,6 +270,8 @@ public class UpdateBlock {
         db.execSQL("ALTER TABLE sale_order ADD COLUMN hold_status INTEGER");
         db.execSQL("ALTER TABLE sale_order ADD COLUMN defined_on_hold_id TEXT REFERENCES defined_on_hold(id)");
         db.execSQL("ALTER TABLE sale_order ADD COLUMN on_register INTEGER");
+
+        db.execSQL("ALTER TABLE item ADD COLUMN age_verification INTEGER");
         // payment transaction
         //if(!checkIfColumnDBExist(db, "payment_transaction", "last_four")) {
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT");

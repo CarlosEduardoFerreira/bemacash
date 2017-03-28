@@ -95,6 +95,7 @@ public class ItemExModel extends ItemModel {
                 null,
                 false,
                 false,
+                0,
                 null);
         this.modifiersCount = 0;
         this.addonsCount = 0;
@@ -143,6 +144,7 @@ public class ItemExModel extends ItemModel {
                 null,
                 true, null, null, ItemRefType.Simple, null, false,
                 false,
+                0,
                 null);
         this.departmentGuid = null;
         if (result.taxAmount != null && result.itemTaxable)
@@ -200,7 +202,8 @@ public class ItemExModel extends ItemModel {
                        ItemRefType itemRefType,
                        BigDecimal loyaltyPoints,
                        boolean excludeFromLoyaltyPlan,
-                       boolean isEbtEligible) {
+                       boolean isEbtEligible,
+                       int ageVerification) {
         super(guid,
                 categoryId,
                 description,
@@ -243,6 +246,7 @@ public class ItemExModel extends ItemModel {
                 loyaltyPoints,
                 excludeFromLoyaltyPlan,
                 isEbtEligible,
+                ageVerification,
                 null);
         this.modifiersCount = modifiersCount;
         this.addonsCount = addonsCount;

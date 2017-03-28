@@ -528,7 +528,9 @@ public class ImportInventoryCommand extends PublicGroundyTask {
                 false,
                 null,
                 true,
-                null, referenceItemGuid, itemRefType, null, false, false, null);
+                null, referenceItemGuid, itemRefType, null, false, false,
+                0, //todo should be changed if import/export will be available
+                null);
         return item;
     }
 

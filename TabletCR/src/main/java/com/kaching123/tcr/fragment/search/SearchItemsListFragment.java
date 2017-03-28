@@ -196,7 +196,8 @@ public class SearchItemsListFragment extends Fragment implements IPriceLevelList
                 ItemTable.ITEM_REF_TYPE,
                 ItemTable.LOYALTY_POINTS,
                 ItemTable.EXCLUDE_FROM_LOYALTY_PLAN,
-                ItemTable.EBT_ELIGIBLE
+                ItemTable.EBT_ELIGIBLE,
+                ItemTable.AGE_VERIFICATION
         };
 
         @Override
@@ -249,7 +250,8 @@ public class SearchItemsListFragment extends Fragment implements IPriceLevelList
                     ItemRefType.valueOf(c.getInt(indexHolder.get(ItemTable.ITEM_REF_TYPE))),
                     _decimal(c, c.getColumnIndex(ItemTable.LOYALTY_POINTS), BigDecimal.ZERO),
                     _bool(c, c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)),
-                    _bool(c, c.getColumnIndex(ItemTable.EBT_ELIGIBLE)));
+                    _bool(c, c.getColumnIndex(ItemTable.EBT_ELIGIBLE)),
+                    c.getInt(indexHolder.get(ItemTable.AGE_VERIFICATION)));
         }
     }
 }

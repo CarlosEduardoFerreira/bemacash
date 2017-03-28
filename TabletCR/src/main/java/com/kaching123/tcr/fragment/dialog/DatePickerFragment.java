@@ -8,6 +8,8 @@ import android.widget.DatePicker;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+
+import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.SuperBaseDialogFragment;
 
 import java.util.Calendar;
@@ -30,8 +32,7 @@ public class DatePickerFragment extends SuperBaseDialogFragment implements DateP
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        return new DatePickerDialog(getActivity(), R.style.TransparentDiaolg ,this, year, month, day);
 
     }
 

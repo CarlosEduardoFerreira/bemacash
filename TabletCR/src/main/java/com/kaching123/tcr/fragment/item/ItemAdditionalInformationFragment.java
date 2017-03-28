@@ -9,6 +9,7 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -45,6 +46,7 @@ import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemMatrixByParentView;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.UnitLabelTable;
+import com.kaching123.tcr.util.StringUtils;
 import com.kaching123.tcr.util.Validator;
 
 import org.androidannotations.annotations.AfterTextChange;
@@ -76,6 +78,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
     @ViewById protected View buttonView;
     @ViewById protected CheckBox ebtEligible;
     @ViewById protected EditText bonusPoints;
+    @ViewById protected EditText ageVerification;
     @ViewById protected CheckBox excludeFromLoyaltyPlan;
     @ViewById protected CheckBox hasNotes;
 
@@ -141,6 +144,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
         eanUpc.setText(model.eanCode);
         Log.d("BemaCarl4","ItemAdditionalInformationFragment.setModel.eanUpc.getText(): " + eanUpc.getText());
         productCode.setText(model.productCode);
+        ageVerification.setText(model.ageVerification == 0 ? null : String.valueOf(model.ageVerification));
         if (model.codeType != null)
             unitsType.setSelection(model.codeType.ordinal() + 1);
         buttonView.getBackground().setLevel(model.btnView);
@@ -164,6 +168,8 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
         model.excludeFromLoyaltyPlan = excludeFromLoyaltyPlan.isChecked();
         model.isEbtEligible = ebtEligible.isChecked();
         model.hasNotes = hasNotes.isChecked();
+        String ageVer = ageVerification.getText().toString();
+        model.ageVerification = TextUtils.isEmpty(ageVer) ? 0 : Integer.valueOf(ageVer);
     }
 
     @Override

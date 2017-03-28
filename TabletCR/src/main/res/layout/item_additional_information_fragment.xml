@@ -105,6 +105,22 @@
                 android:layout_height="wrap_content"/>
         </TableRow>
 
+        <TableRow
+            android:id="@+id/age_verification_row"
+            android:minHeight="@dimen/table_row_height">
+            <TextView
+                style="@style/EditItem.Table.Label"
+                android:text="@string/item_activity_age_verification"/>
+
+            <EditText
+                android:id="@+id/age_verification"
+                style="@style/EditItem.Table.Edittext"
+                android:inputType="number"
+                android:maxLength="3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+
         <TableRow>
             <TextView
                 style="@style/EditItem.Table.Label"

@@ -17,8 +17,11 @@ import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand.BaseUpdateSaleItemAddonsCallback;
 import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.component.KeyboardView;
+import com.kaching123.tcr.fragment.dialog.DialogUtil;
+import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
+import com.kaching123.tcr.fragment.quickservice.AgeVerificationFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickCategoriesFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickItemsFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment;
@@ -214,7 +217,20 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
 
     @Override
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
+        if(model.ageVerification > 0) {
+            AgeVerificationFragment.show(QuickServiceActivity.this, model.getGuid(), new StyledDialogFragment.OnDialogClickListener() {
+                @Override
+                public boolean onClick() {
+                    continueAddingItem(model, price, quantity, unit);
+                    return true;
+                }
+            });
+        } else {
+            continueAddingItem(model, price, quantity, unit);
+        }
+    }
 
+    private void continueAddingItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit){
         if(!model.hasModificators() && !checkTracked(model)){
             return;
         } else if (model.isAComposisiton) {
@@ -231,8 +247,6 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
         } else {
             CollectModifiersCommand.start(this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
         }
-
-
     }
 
     public CollectModifiersCommand.BaseCollectModifiersCallback collectionCallback = new CollectModifiersCommand.BaseCollectModifiersCallback() {

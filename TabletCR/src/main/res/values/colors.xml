@@ -5,6 +5,8 @@
     <color name = "main_pages_bg_mint_color">#E5EEAF</color>
     <color name ="cashier_activity_background">#222222</color>
 
+    <color name ="edit_box_custom_bg">#191919</color>
+
     <color name ="refund_list_selected">#31abd9</color>
     <color name="list_item_block_pressed">#792DB1E2</color>
 

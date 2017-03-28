@@ -33,6 +33,7 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
             ItemChildTable.COST,
             ItemChildTable.MINIMUM_QTY,
             ItemChildTable.RECOMMENDED_QTY,
+            ItemChildTable.AGE_VERIFICATION,
             ItemChildTable.IS_DELETED
     };
 
@@ -94,7 +95,8 @@ public class ItemFromComposerChildViewExFunction extends ListConverterFunction<I
                 null,
                 null,
                 false,
-                false
+                false,
+                c.getInt(indexHolder.get(ItemChildTable.AGE_VERIFICATION))
         );
     }
 }

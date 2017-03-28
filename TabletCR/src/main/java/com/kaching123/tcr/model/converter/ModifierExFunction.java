@@ -91,7 +91,8 @@ public class ModifierExFunction implements Function<Cursor, ModifierExModel> {
                     null,
                     null,
                     false,
-                    false
+                    false,
+                    c.getInt(c.getColumnIndex(ShopSchema2.ModifierView2.ItemTable.AGE_VERIFICATION))
             );
         }
         String id = c.getString(c.getColumnIndex(ShopSchema2.ModifierView2.ModifierTable.MODIFIER_GUID));

@@ -77,6 +77,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
     private static final String LOYALTY_POINTS = "LOYALTY_POINTS";
     private static final String EXCLUDE_FROM_LOYALTY_PLAN = "EXCLUDE_FROM_LOYALTY_PLAN";
     private static final String EBT_ELIGIBLE = "EBT_ELIGIBLE";
+    private static final String AGE_VERIFICATION = "AGE_VERIFICATION";
 
     @Override
     public ItemModel toValues(JdbcJSONObject rs) throws JSONException {
@@ -123,6 +124,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
         if (!rs.has(ITEM_REF_TYPE)) ignoreFields.add(ShopStore.ItemTable.ITEM_REF_TYPE);
         if (!rs.has(LOYALTY_POINTS)) ignoreFields.add(ShopStore.ItemTable.LOYALTY_POINTS);
         if (!rs.has(EXCLUDE_FROM_LOYALTY_PLAN)) ignoreFields.add(ShopStore.ItemTable.EXCLUDE_FROM_LOYALTY_PLAN);
+        if (!rs.has(AGE_VERIFICATION)) ignoreFields.add(ShopStore.ItemTable.AGE_VERIFICATION);
         if (!rs.has(EBT_ELIGIBLE)) ignoreFields.add(ShopStore.ItemTable.EBT_ELIGIBLE);
 
         return new ItemModel(
@@ -168,6 +170,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                 rs.getBigDecimal(LOYALTY_POINTS),
                 rs.getBoolean(EXCLUDE_FROM_LOYALTY_PLAN),
                 rs.getBoolean(EBT_ELIGIBLE),
+                rs.getInt(AGE_VERIFICATION),
                 ignoreFields
                 );
     }
@@ -233,6 +236,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                     .put(ITEM_REF_TYPE, item.refType.ordinal())
                     .put(LOYALTY_POINTS, item.loyaltyPoints)
                     .put(EXCLUDE_FROM_LOYALTY_PLAN, item.excludeFromLoyaltyPlan)
+                    .put(AGE_VERIFICATION, item.ageVerification)
                     .put(EBT_ELIGIBLE, item.isEbtEligible);
 
         } catch (JSONException e) {
@@ -285,6 +289,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                 .add(LOYALTY_POINTS, _decimal(item.loyaltyPoints))
                 .add(EXCLUDE_FROM_LOYALTY_PLAN, item.excludeFromLoyaltyPlan)
                 .add(EBT_ELIGIBLE, item.isEbtEligible)
+                .add(AGE_VERIFICATION, item.ageVerification)
                 .build(JdbcFactory.getApiMethod(item));
     }
 
@@ -331,6 +336,7 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
                 .add(REFERENCE_ITEM_ID, item.referenceItemGuid)
                 .add(LOYALTY_POINTS, _decimal(item.loyaltyPoints))
                 .add(EXCLUDE_FROM_LOYALTY_PLAN, item.excludeFromLoyaltyPlan)
+                .add(AGE_VERIFICATION, item.ageVerification)
                 .add(EBT_ELIGIBLE, item.isEbtEligible)
                 .where(ID, item.guid)
                 .build(JdbcFactory.getApiMethod(item));

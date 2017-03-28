@@ -62,6 +62,7 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
             ItemTable.REFERENCE_ITEM_ID,
             ItemTable.ITEM_REF_TYPE,
             ItemTable.LOYALTY_POINTS,
+            ItemTable.AGE_VERIFICATION,
             ItemTable.EXCLUDE_FROM_LOYALTY_PLAN
     };
 
@@ -111,6 +112,7 @@ public class ItemFunction extends ListConverterFunction<ItemModel> {
                 _decimal(c.getString(indexHolder.get(ItemTable.LOYALTY_POINTS)), BigDecimal.ZERO),
                 _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)),
                 _bool(c, indexHolder.get(ItemTable.EBT_ELIGIBLE)),
+                c.getInt(indexHolder.get(ItemTable.AGE_VERIFICATION)),
                 null
                 );
     }

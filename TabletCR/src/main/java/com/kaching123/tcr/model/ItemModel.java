@@ -83,6 +83,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
     public BigDecimal loyaltyPoints;
     public boolean excludeFromLoyaltyPlan;
     public boolean isEbtEligible;
+    public int ageVerification;
 
     private List<String> mIgnoreFields;
 
@@ -136,6 +137,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                      BigDecimal loyaltyPoints,
                      boolean excludeFromLoyaltyPlan,
                      boolean isEbtEligible,
+                     int ageVerification,
                      List<String> ignoreFields) {
         super();
         this.guid = guid;
@@ -181,6 +183,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.loyaltyPoints = loyaltyPoints;
         this.excludeFromLoyaltyPlan = excludeFromLoyaltyPlan;
         this.isEbtEligible = isEbtEligible;
+        this.ageVerification = ageVerification;
 
         this.mIgnoreFields = ignoreFields;
     }
@@ -230,6 +233,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         this.loyaltyPoints = itemModel.loyaltyPoints;
         this.excludeFromLoyaltyPlan = itemModel.excludeFromLoyaltyPlan;
         this.isEbtEligible = itemModel.isEbtEligible;
+        this.ageVerification = itemModel.ageVerification;
     }
 
 
@@ -277,6 +281,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                 new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.LOYALTY_POINTS))),
                 c.getInt(c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)) == 1,
                 c.getInt(c.getColumnIndex(ItemTable.EBT_ELIGIBLE)) == 1,
+                c.getInt(c.getColumnIndex(ItemTable.AGE_VERIFICATION)),
                 null
         );
     }
@@ -348,6 +353,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
         if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.LOYALTY_POINTS)) values.put(ItemTable.LOYALTY_POINTS, _decimal(loyaltyPoints));
         if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)) values.put(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN, excludeFromLoyaltyPlan);
         if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.EBT_ELIGIBLE)) values.put(ItemTable.EBT_ELIGIBLE, isEbtEligible);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(ItemTable.AGE_VERIFICATION)) values.put(ItemTable.AGE_VERIFICATION, ageVerification);
         return values;
     }
 

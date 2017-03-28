@@ -93,6 +93,7 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
             HostComposerTable.ID,
             ItemTable.REFERENCE_ITEM_ID,
             ItemTable.ITEM_REF_TYPE,
+            ItemTable.AGE_VERIFICATION,
             ItemMatrixTable.PARENT_GUID
     };
 
@@ -155,8 +156,8 @@ public class ItemExFunction extends ListConverterFunction<ItemExModel> {
                 _itemRefType(c, indexHolder.get(ItemTable.ITEM_REF_TYPE)),
                 _decimal(c, indexHolder.get(ItemTable.LOYALTY_POINTS), BigDecimal.ZERO),
                 _bool(c, indexHolder.get(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)),
-                _bool(c, indexHolder.get(ItemTable.EBT_ELIGIBLE))
-                )
+                _bool(c, indexHolder.get(ItemTable.EBT_ELIGIBLE)),
+                c.getInt(indexHolder.get(ItemTable.AGE_VERIFICATION))                )
                 .setIsAComposer(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.HostComposerTable.ID)) != null)
                 .setIsAComposisiton(c.getString(indexHolder.get(ShopSchema2.ItemExtView2.ChildComposerTable.ID)) != null)
                 .setMatrixGuid(matrixGuid);

@@ -31,6 +31,7 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
             ItemHostTable.COST,
             ItemHostTable.MINIMUM_QTY,
             ItemHostTable.RECOMMENDED_QTY,
+            ItemHostTable.AGE_VERIFICATION,
             ItemHostTable.IS_DELETED
     };
 
@@ -79,7 +80,8 @@ public class ItemFromComposerHostViewExFunction extends ListConverterFunction<It
                 null,
                 0,
                 false,
-                false, null, false, null, null, null, null, false, false);
+                false, null, false, null, null, null, null, false, false,
+                c.getInt(indexHolder.get(ItemHostTable.AGE_VERIFICATION)));
     }
 
 

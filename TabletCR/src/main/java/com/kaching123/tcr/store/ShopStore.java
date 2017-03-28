@@ -614,6 +614,9 @@ public abstract class ShopStore {
         String LOYALTY_POINTS = "loyalty_points";
 
         @Column(type = Type.INTEGER)
+        String AGE_VERIFICATION = "age_verification";
+
+        @Column(type = Type.INTEGER)
         String EXCLUDE_FROM_LOYALTY_PLAN = "exclude_from_loyalty_plan";
 
         @Column(type = Type.INTEGER)

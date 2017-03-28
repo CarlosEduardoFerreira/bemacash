@@ -60,7 +60,8 @@ public class CategoryItemViewModel extends ItemExModel {
                                  ItemRefType itemRefType,
                                  BigDecimal loyaltyPoints,
                                  boolean excludeFromLoyaltyPlan,
-                                 boolean isEbtEligible) {
+                                 boolean isEbtEligible,
+                                 int ageVerification) {
         super(guid,
                 categoryId,
                 description,
@@ -109,7 +110,8 @@ public class CategoryItemViewModel extends ItemExModel {
                 itemRefType,
                 loyaltyPoints,
                 excludeFromLoyaltyPlan,
-                isEbtEligible);
+                isEbtEligible,
+                ageVerification);
         this.categoryName = categoryName;
     }
 

@@ -63,7 +63,8 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 0,
                 null,
                 0,
-                false, false, null, false, null, null, null, null, false, false);
+                false, false, null, false, null, null, null, null, false, false,
+                c.getInt(c.getColumnIndex(ItemHostTable.AGE_VERIFICATION)));
 
         String shortCut;
         try {
@@ -111,7 +112,8 @@ public class ComposerFunction implements Function<Cursor, ComposerExModel> {
                 0,
                 null,
                 0,
-                false, false, null, false, null, null, null, null, false, false);
+                false, false, null, false, null, null, null, null, false, false,
+                c.getInt(c.getColumnIndex(ItemHostTable.AGE_VERIFICATION)));
 
         return new ComposerExModel(
                 c.getString(c.getColumnIndex(ComposerTable.ID)),
