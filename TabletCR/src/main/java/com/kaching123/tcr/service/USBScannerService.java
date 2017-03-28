@@ -79,7 +79,7 @@ public class USBScannerService extends Service {
                 usbSerialPort = port;
             }
         }
-        return null;
+        return usbSerialPort;
     }
 
     private Handler serviceHandler = new Handler() {

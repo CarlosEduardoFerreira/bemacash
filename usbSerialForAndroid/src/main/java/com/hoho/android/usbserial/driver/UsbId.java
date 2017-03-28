@@ -31,6 +31,12 @@ package com.hoho.android.usbserial.driver;
  */
 public final class UsbId {
 
+    public static final int VENDOR_BEMA = 0x24EA;
+
+    public static final int D_7500_1 = 0x0187;
+    public static final int D_7500_2 = 0x0197;
+
+
     public static final int VENDOR_FTDI = 0x0403;
     public static final int FTDI_FT232R = 0x6001;
     public static final int FTDI_FT231X = 0x6015;
