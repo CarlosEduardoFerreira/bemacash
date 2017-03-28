@@ -197,6 +197,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     @Override
     public SingleSqlCommand updateSQL(SaleOrderModel order, IAppCommandContext appCommandContext) {
         return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
+                .add(CREATE_TIME, order.createTime)
                 .add(OPERATOR_ID, order.operatorGuid) //.add(OPERATOR_ID, TcrApplication.get().getOperatorGuid())
                 .add(SHIFT_ID, order.shiftGuid)
                 .add(CUSTOMER_ID, order.customerGuid)

@@ -75,10 +75,15 @@ public class ScannerFragment extends SuperBaseFragment {
         String scannerName = getApp().getShopPref().scannerName().get();
         boolean scannerConfigured = !TextUtils.isEmpty(scannerAddress);
 
+        Log.d("BemaCarl4","ScannerFragment.setScanner.scannerAddress: " + scannerAddress);
+        Log.d("BemaCarl4","ScannerFragment.setScanner.scannerName: " + scannerName);
+        Log.d("BemaCarl4","ScannerFragment.setScanner.scannerConfigured: " + scannerConfigured);
+
         adapter.clear();
         if(scannerName.equalsIgnoreCase(USB_SCANNER_NAME)) {
             if(sPort == null) {
                 sPort = getPort();
+                Log.d("BemaCarl4","ScannerFragment.setScanner.sPort: " + sPort);
                 if(sPort == null){
                     Logger.d("Port = "+sPort);
                     AlertDialogFragment.showAlert(
@@ -144,7 +149,9 @@ public class ScannerFragment extends SuperBaseFragment {
             
             Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterfaceCount(): " + device.getInterfaceCount());
             Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterface(0).getInterfaceClass(): " + device.getInterface(0).getInterfaceClass());
-            if(device.getInterface(0).getInterfaceClass() == 2 || device.getInterface(0).getInterfaceClass() == 3){
+            if(device.getInterface(0).getInterfaceClass() == 2
+                    || device.getInterface(0).getInterfaceClass() == 3
+                        || device.getInterface(0).getInterfaceClass() == 255){
                 return port;
             }
         }

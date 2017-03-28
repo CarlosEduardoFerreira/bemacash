@@ -9,6 +9,7 @@ import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
+import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -17,6 +18,7 @@ import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskResult;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by gdubina on 07/11/13.
@@ -55,6 +57,9 @@ public abstract class UpdateSaleOrderCommand extends AsyncCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         Log.d("BemaCarl6","UpdateSaleOrderCommand.createSqlCommand.order." + order.orderStatus);
+        if(order.orderStatus.equals(OrderStatus.COMPLETED)){
+            order.createTime = new Date();
+        }
         BatchSqlCommand batch = batchUpdate(order);
         batch.add(JdbcFactory.getConverter(order).updateSQL(order, getAppCommandContext()));
 
