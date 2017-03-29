@@ -151,8 +151,8 @@ public class USBScannerService extends Service {
 
             try {
                 Log.d("BemaCarl4","USBScannerService.startOpenConnection.sPort.getDriver().getPorts().get(0): " + sPort.getDriver().getPorts().get(0));
-                //sPort.getDriver().getPorts().get(0).open(connection);
-                sPort.open(connection);
+                sPort.getDriver().getPorts().get(0).open(connection);
+                //sPort.open(connection);
                 Log.d("BemaCarl4","USBScannerService.startOpenConnection.sPort1: " + sPort);
                 sPort.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
             } catch (IOException e) {

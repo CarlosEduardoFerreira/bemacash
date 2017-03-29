@@ -54,7 +54,7 @@ public class UsbScannerDriverUSA implements UsbSerialDriver {
 
     public UsbScannerDriverUSA(UsbDevice device) {
         mDevice = device;
-        mPort = new CdcAcmSerialPort(device, 0);
+        mPort = new UsbScannerSerialPort(device, 0);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class UsbScannerDriverUSA implements UsbSerialDriver {
         return Collections.singletonList(mPort);
     }
 
-    class CdcAcmSerialPort extends CommonUsbSerialPort {
+    class UsbScannerSerialPort extends CommonUsbSerialPort {
 
         private final boolean mEnableAsyncReads;
         private UsbInterface mControlInterface;
@@ -88,7 +88,7 @@ public class UsbScannerDriverUSA implements UsbSerialDriver {
         private static final int SET_CONTROL_LINE_STATE = 0x22;
         private static final int SEND_BREAK = 0x23;
 
-        public CdcAcmSerialPort(UsbDevice device, int portNumber) {
+        public UsbScannerSerialPort(UsbDevice device, int portNumber) {
             super(device, portNumber);
             mEnableAsyncReads = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1);
         }
