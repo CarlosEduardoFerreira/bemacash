@@ -89,7 +89,7 @@ public class USBScannerService extends Service {
                 return port;
             }else
             if(device.getInterface(0).getInterfaceClass() == 2){
-                //usbSerialPort = port;
+                usbSerialPort = port;
             }
         }
         return usbSerialPort;

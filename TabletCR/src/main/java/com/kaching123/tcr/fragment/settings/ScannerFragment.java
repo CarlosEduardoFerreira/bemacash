@@ -164,7 +164,7 @@ public class ScannerFragment extends SuperBaseFragment {
                 return port;
             }else
             if(device.getInterface(0).getInterfaceClass() == 2 || device.getInterface(0).getInterfaceClass() == 3){
-                //usbSerialPort = port;
+                usbSerialPort = port;
             }
         }
         return usbSerialPort;
