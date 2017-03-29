@@ -158,10 +158,15 @@ public class USBScannerService extends Service {
 
             try {
                 Log.d("BemaCarl4","USBScannerService.startOpenConnection.sPort.getDriver().getPorts().get(0): " + sPort.getDriver().getPorts().get(0));
-                sPort.getDriver().getPorts().get(0).open(connection);
-                //sPort.open(connection);
-                Log.d("BemaCarl4","USBScannerService.startOpenConnection.sPort1: " + sPort);
-                //sPort.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
+                int vid = sPort.getDriver().getDevice().getVendorId();
+                int pid = sPort.getDriver().getDevice().getProductId();
+                if(vid == 9450 && pid == 391) {
+                    sPort.getDriver().getPorts().get(0).open(connection);
+                }else {
+                    sPort.open(connection);
+                    Log.d("BemaCarl4", "USBScannerService.startOpenConnection.sPort1: " + sPort);
+                    sPort.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
+                }
             } catch (IOException e) {
                 Log.d("BemaCarl4","USBScannerService.startOpenConnection.catch.e.getMessage(): " + e.getMessage());
                 Log.e(TAG, "Error setting up device: " + e.getMessage(), e);
