@@ -18,14 +18,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bematechus.bemaUtils.PortInfo;
-import com.google.common.collect.Sets;
 import com.kaching123.display.USBDiplayPrinter;
 import com.kaching123.display.scale.BemaScale;
-import com.kaching123.pos.USBPrinter;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.DeviceModel;
@@ -40,7 +37,6 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -272,6 +268,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
             boolean isemu = isEmulate();
             Set<BluetoothDevice> bluetoothDevices = adapter.getBondedDevices();
             Set<DeviceModel> devices = null;
+            Log.d("BemaCarl4","FindDeviceFragment.doInBackground.mode: " + mode);
             switch (mode) {
                 case DISPLAY:
 
@@ -422,6 +419,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
             return devices;
         }
+
 
         private boolean checkUsb(String VID, String PID) {
             SysBusUsbManager mUsbManagerLinux = new SysBusUsbManager();

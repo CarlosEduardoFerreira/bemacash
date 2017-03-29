@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -320,21 +321,33 @@ public class SettingsActivity extends ScannerBaseActivity implements SyncSetting
     public void bindToScannerService() {
         Logger.d("ScannerBaseActivity: bindToScannerService()");
         boolean scannerConfigured = !TextUtils.isEmpty(getApp().getShopPref().scannerAddress().get());
+        Log.d("BemaCarl4","SettingsActivity.bindToScannerService.scannerConfigured: " + scannerConfigured);
 
         if (scannerConfigured) {
+            Log.d("BemaCarl4","SettingsActivity.bindToScannerService.scannerAddress().get(): " + getApp().getShopPref().scannerAddress().get());
+            Log.d("BemaCarl4","SettingsActivity.bindToScannerService.USB_SCANNER_ADDRESS: " + FindDeviceFragment.USB_SCANNER_ADDRESS);
+            Log.d("BemaCarl4","SettingsActivity.bindToScannerService.USB_SCANNER_ADDRESS: " + FindDeviceFragment.USB_HID_SCANNER_ADDRESS);
+            Log.d("BemaCarl4","SettingsActivity.bindToScannerService.USB_SCANNER_ADDRESS: " + FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS);
+
             if (getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_SCANNER_ADDRESS)) {
+                Log.d("BemaCarl4","SettingsActivity.bindToScannerService.scannerServiceConnection1: " + scannerServiceConnection);
                 setUSBScanner(true);
                 USBScannerService.bind(this, scannerServiceConnection);
-            }else if(getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_HID_SCANNER_ADDRESS))
+            }else if(getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.USB_HID_SCANNER_ADDRESS)) {
+                Log.d("BemaCarl4", "SettingsActivity.bindToScannerService.scannerServiceConnection2: " + scannerServiceConnection);
                 setUSBScanner(true);
-            else if(!getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS))
+            }else if(!getApp().getShopPref().scannerAddress().get().equalsIgnoreCase(FindDeviceFragment.SEARIL_PORT_SCANNER_ADDRESS)) {
+                Log.d("BemaCarl4","SettingsActivity.bindToScannerService.scannerServiceConnection3: " + scannerServiceConnection);
                 ScannerService.bind(this, scannerServiceConnection);
+            }
 
-        } else
-            Logger.d("ScannerBaseActivity: bindToScannerService(): failed - scanner is not configured!");
+        }else {
+            Log.d("BemaCarl4", "SettingsActivity.bindToScannerService: failed - scanner is not configured!");
+        }
     }
 
     public void unbindFromScannerService() {
+        Log.d("BemaCarl4", "SettingsActivity.unbindFromScannerService");
         Logger.d("ScannerBaseActivity: unbindFromScannerService()");
         if (scannerBinder != null) {
             scannerBinder.disconnectScanner();

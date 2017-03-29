@@ -57,6 +57,7 @@ public class UsbSerialProber {
 
         probeTable.addProduct(0x0202, 0x0B94, CdcAcmSerialDriver.class);
         probeTable.addProduct(0x0202, 0x00f4, CdcAcmSerialDriver.class);
+
         probeTable.addProduct(0x24EA, 0x0187, UsbScannerDriver.class);      //  Bematech D-7500 Scanner USA
 
         probeTable.addProduct(0x24EA, 0x0197, UsbScannerDriver.class);      //  Bematech D-7500 Scanner BR

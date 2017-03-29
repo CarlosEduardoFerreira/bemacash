@@ -39,14 +39,20 @@ public class USBScannerService extends Service {
     public boolean isConnected;
 
     public static void bind(Context context, ServiceConnection connection) {
+        Log.d("BemaCarl4","USBScannerService.bind");
+
         Intent intent = new Intent(context, USBScannerService.class);
+        Log.d("BemaCarl4","USBScannerService.bind.intent: " + intent);
+        Log.d("BemaCarl4","USBScannerService.bind.connection: " + connection);
+        Log.d("BemaCarl4","USBScannerService.bind.Context.BIND_AUTO_CREATE: " + Context.BIND_AUTO_CREATE);
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        sPort = getPort();
+        Log.d("BemaCarl4","USBScannerService.onCreate");
+        //sPort = getPort();
         isConnected = false;
         mExecutor = Executors.newSingleThreadExecutor();
         startOpenConnection();
@@ -75,7 +81,7 @@ public class USBScannerService extends Service {
                 Log.d("BemaCarl4","USBScannerService.getPort.device.getInterface("+i+").getInterfaceClass(): " + device.getInterface(i).getInterfaceClass());
                 Log.d("BemaCarl4","USBScannerService.getPort.device.port: " + port);
             }
-            if(device.getInterface(0).getInterfaceClass() == 2 || device.getInterface(0).getInterfaceClass() == 3){
+            if(device.getInterface(0).getInterfaceClass() == 2){
                 usbSerialPort = port;
             }
         }
@@ -147,7 +153,8 @@ public class USBScannerService extends Service {
                 Log.d("BemaCarl4","USBScannerService.startOpenConnection.sPort.getDriver().getPorts().get(0): " + sPort.getDriver().getPorts().get(0));
                 sPort.getDriver().getPorts().get(0).open(connection);
                 //sPort.open(connection);
-                sPort.setParameters(9600, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
+                Log.d("BemaCarl4","USBScannerService.startOpenConnection.sPort1: " + sPort);
+                //sPort.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
             } catch (IOException e) {
                 Log.d("BemaCarl4","USBScannerService.startOpenConnection.catch.e.getMessage(): " + e.getMessage());
                 Log.e(TAG, "Error setting up device: " + e.getMessage(), e);
@@ -159,6 +166,7 @@ public class USBScannerService extends Service {
                 sPort = null;
                 return;
             }
+            Log.d("BemaCarl4","USBScannerService.startOpenConnection.sPort2: " + sPort);
         }
         onDeviceStateChange();
         isConnected = true;
