@@ -782,7 +782,7 @@
     <string name="departments_delete_dialog_title">Delete department</string>
     <string name="departments_delete_dialog_message">Are you sure you want to delete department \'%s\'?</string>
     <string name="departments_toast_success_message">Department \'%s\' was successfully deleted</string>
-    <string name="departments_toast_failed_message" formatted="false">Failed to delete department \'%s\'. It has %d items</string>
+    <string name="departments_toast_failed_message" formatted="false">Failed to delete department \'%s\'. It has %d categories</string>
     <string name="search_items_wait_dialog_message">Searching for items...</string>
     <string name="department_dialog_name_hint">Name</string>
     <string name="login_login_hint">Login</string>

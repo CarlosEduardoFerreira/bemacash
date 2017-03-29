@@ -54,36 +54,38 @@ public class DeleteDepartmentCommand extends AsyncCommand {
     protected TaskResult doCommand() {
         model = (DepartmentModel) getArgs().getSerializable(ARG_DEPARTMENT_MODEL);
 
-        int count = getItemsCount(model.guid);
+        int count = getCategoriesCount(model.guid);
         if (count > 0) {
             return failed().add(EXTRA_DEPARTMENT_NAME, model.title).add(EXTRA_ITEMS_COUNT, count).add(EXTRA_DEPARTMENT_GUID, model.guid);
         }
 
-        subResult = new DeleteCategoriesCommand().sync(getContext(), model.guid, getAppCommandContext());
-        if (subResult == null)
-            return failed().add(EXTRA_DEPARTMENT_NAME, model.title).add(EXTRA_ITEMS_COUNT, count).add(EXTRA_DEPARTMENT_GUID, model.guid);
+//        subResult = new DeleteCategoriesCommand().sync(getContext(), model.guid, getAppCommandContext());
+//        if (subResult == null)
+//            return failed().add(EXTRA_DEPARTMENT_NAME, model.title).add(EXTRA_ITEMS_COUNT, count).add(EXTRA_DEPARTMENT_GUID, model.guid);
 
         return succeeded().add(EXTRA_DEPARTMENT_NAME, model.title);
     }
 
-    private int getItemsCount(String departmentGuid) {
-        int count = 0;
+    private int getCategoriesCount(String departmentGuid) {
+        int count;
         Cursor categoryCursor = ProviderAction.query(URI_CATEGORIES)
                 .projection(CategoryTable.GUID)
                 .where(CategoryTable.DEPARTMENT_GUID + " = ?", departmentGuid)
                 .perform(getContext());
 
-        if (categoryCursor.moveToFirst()) {
-            do {
-                Cursor itemCursor = ProviderAction.query(URI_ITEMS)
-                        .projection(ItemTable.CATEGORY_ID)
-                        .where(ItemTable.CATEGORY_ID + " = ?", categoryCursor.getString(0))
-                        .perform(getContext());
+        count = categoryCursor.getCount();
 
-                count += itemCursor.getCount();
-                itemCursor.close();
-            } while (categoryCursor.moveToNext());
-        }
+//        if (categoryCursor.moveToFirst()) {
+//            do {
+//                Cursor itemCursor = ProviderAction.query(URI_ITEMS)
+//                        .projection(ItemTable.CATEGORY_ID)
+//                        .where(ItemTable.CATEGORY_ID + " = ?", categoryCursor.getString(0))
+//                        .perform(getContext());
+//
+//                count += itemCursor.getCount();
+//                itemCursor.close();
+//            } while (categoryCursor.moveToNext());
+//        }
         categoryCursor.close();
         return count;
     }
@@ -92,8 +94,8 @@ public class DeleteDepartmentCommand extends AsyncCommand {
     protected ArrayList<ContentProviderOperation> createDbOperations() {
         ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 
-        if (subResult.getLocalDbOperations() != null)
-            operations.addAll(subResult.getLocalDbOperations());
+//        if (subResult.getLocalDbOperations() != null)
+//            operations.addAll(subResult.getLocalDbOperations());
 
         operations.add(ContentProviderOperation.newUpdate(ShopProvider.getContentUri(DepartmentTable.URI_CONTENT))
                 .withValues(ShopStore.DELETE_VALUES)
@@ -109,9 +111,9 @@ public class DeleteDepartmentCommand extends AsyncCommand {
 
         BatchSqlCommand sql = batchDelete(model);
 
-        if (subResult.getSqlCmd() != null) {
-            sql.add(subResult.getSqlCmd());
-        }
+//        if (subResult.getSqlCmd() != null) {
+//            sql.add(subResult.getSqlCmd());
+//        }
 
         DepartmentJdbcConverter departmentJdbcConverter = (DepartmentJdbcConverter)JdbcFactory.getConverter(DepartmentTable.TABLE_NAME);
         ISqlCommand iSqlDepartment = departmentJdbcConverter.deleteSQL(model, getAppCommandContext());
