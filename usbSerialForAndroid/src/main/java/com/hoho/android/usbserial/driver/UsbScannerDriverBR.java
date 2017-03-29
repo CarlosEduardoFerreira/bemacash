@@ -41,14 +41,14 @@ import java.util.Map;
  * Developed by Carlos
  */
 
-public class UsbScannerDriver implements UsbSerialDriver {
+public class UsbScannerDriverBR implements UsbSerialDriver {
 
-    private final String TAG = UsbScannerDriver.class.getSimpleName();
+    private final String TAG = UsbScannerDriverBR.class.getSimpleName();
 
     private final UsbDevice mDevice;
     private final UsbSerialPort mPort;
 
-    public UsbScannerDriver(UsbDevice device) {
+    public UsbScannerDriverBR(UsbDevice device) {
         mDevice = device;
         mPort = new UsbScannerSerialPort(device, 0);
     }
@@ -96,7 +96,7 @@ public class UsbScannerDriver implements UsbSerialDriver {
 
         @Override
         public UsbSerialDriver getDriver() {
-            return UsbScannerDriver.this;
+            return UsbScannerDriverBR.this;
         }
 
         @Override
@@ -326,7 +326,6 @@ public class UsbScannerDriver implements UsbSerialDriver {
         final Map<Integer, int[]> supportedDevices = new LinkedHashMap<Integer, int[]>();
         supportedDevices.put(Integer.valueOf(com.hoho.android.usbserial.driver.UsbId.VENDOR_BEMA),
                 new int[] {
-                        com.hoho.android.usbserial.driver.UsbId.D_7500_1,
                         com.hoho.android.usbserial.driver.UsbId.D_7500_2
                 });
         return supportedDevices;
