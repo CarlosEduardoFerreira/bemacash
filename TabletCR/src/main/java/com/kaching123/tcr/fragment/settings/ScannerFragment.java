@@ -156,15 +156,15 @@ public class ScannerFragment extends SuperBaseFragment {
                 Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterface("+i+").getInterfaceClass(): " + device.getInterface(i).getInterfaceClass());
                 Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.port: " + port);
             }
-            int vid = port.getDriver().getDevice().getProductId();
+            int vid = port.getDriver().getDevice().getVendorId();
             int pid = port.getDriver().getDevice().getProductId();
             Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.vid: " + vid);
             Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.pid: " + pid);
-            //if(vid == 9450 && pid == 391) {
-            //    return port;
-            //}else
+            if(vid == 9450 && pid == 391) {
+                return port;
+            }else
             if(device.getInterface(0).getInterfaceClass() == 2 || device.getInterface(0).getInterfaceClass() == 3){
-                usbSerialPort = port;
+                //usbSerialPort = port;
             }
         }
         return usbSerialPort;
