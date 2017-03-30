@@ -10,16 +10,11 @@ import android.text.TextUtils;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand;
-import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand.EndUncompletedTransactionsResult;
 import com.kaching123.tcr.commands.rest.RestCommand;
 import com.kaching123.tcr.commands.rest.sync.DBVersionCheckCommand;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
-import com.kaching123.tcr.commands.support.SendLogCommand;
 import com.kaching123.tcr.notification.NotificationHelper;
-import com.kaching123.tcr.pref.ShopPref_;
-import com.kaching123.tcr.service.SyncCommand.SyncLockedException;
 import com.kaching123.tcr.service.v1.UploadTaskV1;
 import com.kaching123.tcr.service.v2.UploadTaskV2;
 import com.kaching123.tcr.store.ShopProvider;
@@ -108,6 +103,67 @@ public class UploadTask implements Runnable {
 
     private ExecuteResult execute(final boolean fireEvents, final boolean lockOnTrainingMode) {
         synchronized (UploadTask.class) {
+
+            Logger.d("UploadTask EXECUTE");
+
+            if (!Util.isNetworkAvailable(context)) {
+                Logger.e("UploadTask error: NO CONNECTION");
+                onUploadFailure(fireEvents);
+                return new ExecuteResult(false, false);
+            }
+
+            NotificationHelper.addUploadNotification(context);
+
+            boolean errorsOccurred = false;
+            String errorMessage = null;
+            boolean isV1CommandsSent = TcrApplication.get().getShopPref().isV1CommandsSent().getOr(false);
+            if (lockOnTrainingMode) {
+                TcrApplication.get().lockOnTrainingMode();
+            }
+            try {
+                ContentResolver cr = context.getContentResolver();
+                if (!isV1CommandsSent) {
+                    Logger.d("Send V1 commands");
+                    errorsOccurred = !uploadTaskV1Adapter.webApiUpload(cr);
+                    isV1CommandsSent = !errorsOccurred && uploadTaskV1Adapter.getV1CommandsCount(cr) == 0;
+                    TcrApplication.get().getShopPref().isV1CommandsSent().put(isV1CommandsSent);
+                }
+                if (isV1CommandsSent) {
+                    errorsOccurred = !uploadTaskV2Adapter.webApiUpload(cr, context);
+                }
+                cr.delete(URI_SQL_COMMAND_NO_NOTIFY, SqlCommandTable.IS_SENT + " = ?", new String[]{"1"});
+            } catch (Exception e) {
+                Logger.e("UploadTask error", e);
+                errorsOccurred = true;
+
+            } finally {
+                if (lockOnTrainingMode) {
+                    TcrApplication.get().unlockOnTrainingMode();
+                }
+            }
+
+            if (errorsOccurred) {
+                if (TextUtils.isEmpty(errorMessage)) {
+                    NotificationHelper.showUploadErrorNotification(context);
+
+                } else {
+                    NotificationHelper.showUploadErrorNotification(context, errorMessage);
+                }
+                onUploadFailure(fireEvents);
+
+            } else {
+                NotificationHelper.removeUploadNotification(context);
+                onUploadSuccess(fireEvents);
+            }
+
+            Logger.d("UploadTask END");
+            return new ExecuteResult(!errorsOccurred, false);
+        }
+    }
+
+    /*
+    private ExecuteResult execute(final boolean fireEvents, final boolean lockOnTrainingMode) {
+        synchronized (UploadTask.class) {
             Logger.d("UploadTask EXECUTE");
 
             if (fireEvents)
@@ -186,6 +242,7 @@ public class UploadTask implements Runnable {
             return new ExecuteResult(!errorsOccurred, hadInvalidUploadTransaction);
         }
     }
+    /**/
 
     private void sendSyncSuccessful() {
         TcrApplication app = TcrApplication.get();
