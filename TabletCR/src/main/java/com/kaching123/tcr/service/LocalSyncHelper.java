@@ -102,9 +102,9 @@ public class LocalSyncHelper {
     private static final int RELOAD_INTERVAL = 1000;            // Reload command interval if it needs
     private static final int RELOAD_STOCK_INTERVAL = 10000;     // Reload Stock (items movement)
 
-    private static final int CHECK_COMMANDS_INTERVAL = 2000;    // Request commands from others tablets
-    private static final int RUN_COMMAND_INTERVAL = 100;        // Execute commands on Local Database
-    private static final int FORCE_SYNC_INTERVAL = 30000;       // Interval to force notify others tablets the commands it has
+    private static final int CHECK_COMMANDS_INTERVAL = 1000;    // Request commands from others tablets // 500
+    private static final int RUN_COMMAND_INTERVAL = 200;        // Execute commands on Local Database // 100
+    private static final int FORCE_SYNC_INTERVAL = 20000;       // Interval to force notify others tablets the commands it has // 30000
 
     public static String LOCAL_SYNC_NEED_COLLECT_DATA = "LOCAL_SYNC_NEED_COLLECT_DATA";
     public static String LOCAL_SYNC_FAILED = "LOCAL_SYNC_FAILED";
