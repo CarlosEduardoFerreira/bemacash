@@ -31,7 +31,7 @@ import java.util.List;
 public class UploadTaskV2 {
 
     protected static final Uri URI_SQL_COMMAND_NO_NOTIFY = ShopProvider.contentUriNoNotify(SqlCommandTable.URI_CONTENT);
-    public static final int BATCH_SIZE = 10;
+    public static final int BATCH_SIZE = 100;
     public static final String CMD_START_TRANSACTION = "start_transaction";
     public static final String CMD_END_TRANSACTION = "end_transaction";
     public static final String CMD_START_EMPLOYEE = "start_employee";
