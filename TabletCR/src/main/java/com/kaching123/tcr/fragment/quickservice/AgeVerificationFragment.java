@@ -182,10 +182,10 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
                     enablePositiveButton(false, disabledBtnColor);
                 }
 
-                if(s.length() == 0) {
-                    ddAgeField.requestFocusFromTouch();
-                    return;
-                }
+//                if(s.length() == 0) {
+//                    ddAgeField.requestFocusFromTouch();
+//                    return;
+//                }
 
                 if (s.length() == 4) {
                     keyboard.setEnterEnabled(true);
@@ -219,7 +219,7 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
                 if (s.length() == 0) {
                     keyboard.setEnterEnabled(false);
                     enablePositiveButton(false, disabledBtnColor);
-                    mmAgeField.requestFocusFromTouch();
+//                    mmAgeField.requestFocusFromTouch();
                 }
                 if (s.length() == 1) {
                     keyboard.setEnterEnabled(true);
