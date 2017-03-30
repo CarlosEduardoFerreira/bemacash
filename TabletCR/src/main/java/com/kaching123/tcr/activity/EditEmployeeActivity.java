@@ -411,63 +411,63 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         presedChanged = presedValue != preset.getSelectedItemId();
 
         if(!initEmployeeModel.firstName.equals(firstName.getText().toString())) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.firstName"); return true;
         }
         if(!initEmployeeModel.lastName.equals(lastName.getText().toString())) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.lastName"); return true;
         }
         if(!initEmployeeModel.login.equals(login.getText().toString())) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.login"); return true;
         }
         if(initEmployeeModel.email != null)
         if(!initEmployeeModel.email.equals(email.getText().toString())) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.email"); return true;
         }
         if(initEmployeeModel.phone != null)
         if(!initEmployeeModel.phone.equals(phone.getText().toString())) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.phone"); return true;
         }
         if(initEmployeeModel.street != null)
         if(!initEmployeeModel.street.equals(street.getText().toString())) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.street"); return true;
         }
         if(initEmployeeModel.complementary != null)
         if(!initEmployeeModel.complementary.equals(complementary.getText().toString())) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.complementary"); return true;
         }
         if(initEmployeeModel.city != null)
         if(!initEmployeeModel.city.equals(city.getText().toString())) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.city"); return true;
         }
         if(initEmployeeModel.state != null)
         if(!initEmployeeModel.state.equals(state.getText().toString())) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.state"); return true;
         }
         if(initEmployeeModel.country != null)
         if(!initEmployeeModel.country.equals(country.getText().toString())) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.country"); return true;
         }
         if(initEmployeeModel.zip != null)
         if(!initEmployeeModel.zip.equals(zip.getText().toString())) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.zip"); return true;
         }
         if(!hRate1.equals(hRate2)) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.hRate"); return true;
         }
         if(initEmployeeModel.tipsEligible != tipsEligible.isChecked()) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.tipsEligible"); return true;
         }
         if(initEmployeeModel.commissionEligible != commissionsEligible.isChecked()) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.commissionsEligible"); return true;
         }
         if(!commission1.equals(commission2)) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.commissions"); return true;
         }
         if(statusChanged) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.statusChanged"); return true;
         }
         if(presedChanged) {
-            return true;
+            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.presedChanged"); return true;
         }
 
         return false;
@@ -477,10 +477,20 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
     private boolean permissionsHasChanges(){
         if(customPermissionInitial!=null && customPermissionsBase!=null) {
             for (Permission a : customPermissionInitial) {
-                if (!customPermissionsBase.contains(a)) return true;
+                boolean hasOnBase = customPermissionsBase.contains(a);
+                if (!hasOnBase){
+                    Log.d("BemaCarl3","EditEmployeeActivity.permissionsHasChanges.hasOnBase: " + hasOnBase);
+                    Log.d("BemaCarl3","EditEmployeeActivity.permissionsHasChanges.a.getId(): " + a.getId());
+                    return true;
+                }
             }
             for (Permission b : customPermissionsBase) {
-                if (!customPermissionInitial.contains(b)) return true;
+                boolean hasOnInitial = customPermissionInitial.contains(b);
+                if (!hasOnInitial){
+                    Log.d("BemaCarl3","EditEmployeeActivity.permissionsHasChanges.hasOnInitial: " + hasOnInitial);
+                    Log.d("BemaCarl3","EditEmployeeActivity.permissionsHasChanges.b.getId(): " + b.getId());
+                    return true;
+                }
             }
         }
         return false;
