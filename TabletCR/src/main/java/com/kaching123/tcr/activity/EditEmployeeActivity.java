@@ -423,9 +423,12 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         if(!initEmployeeModel.email.equals(email.getText().toString())) {
             Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.email"); return true;
         }
-        if(initEmployeeModel.phone != null)
-        if(!initEmployeeModel.phone.equals(phone.getText().toString())) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.phone"); return true;
+        if(initEmployeeModel.phone != null) {
+            String phoneOnlyNumbers = phone.getText().toString().replaceAll("[^0-9]", "");
+            if (!initEmployeeModel.phone.equals(phoneOnlyNumbers)) {
+                Log.d("BemaCarl3", "EditEmployeeActivity.employeeHasChanges.phone: |" + initEmployeeModel.phone + "|" + phoneOnlyNumbers + "|");
+                return true;
+            }
         }
         if(initEmployeeModel.street != null)
         if(!initEmployeeModel.street.equals(street.getText().toString())) {
