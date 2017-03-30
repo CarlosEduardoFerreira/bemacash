@@ -14,12 +14,10 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
-import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.edit.KeyboardDialogFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.converter.ItemExFunction;
 import com.kaching123.tcr.store.ShopSchema2;
-import com.kaching123.tcr.util.BemaKeyboard;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
@@ -52,13 +50,14 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
     @ViewById protected CustomEditBox ddAgeField;
     @ViewById protected CustomEditBox yyyyAgeField;
     @ViewById protected TextView ageWarning;
+    @ViewById protected TextView firstSlash;
+    @ViewById protected TextView secondSlash;
 
-    private BemaKeyboard bemaKeyboard;
-    private OnDialogClickListener listener;
+    private OnDialogClickListener confirmListener;
     private ItemExModel itemExModel;
 
-    public void setListener(OnDialogClickListener listener) {
-        this.listener = listener;
+    public void setConfirmListener(OnDialogClickListener listener) {
+        this.confirmListener = listener;
     }
 
     private void checkConfirmAbility(int year, int monthOfYear, int dayOfMonth) {
@@ -111,9 +110,58 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
         enablePositiveButtons(false);
         keyboard.setDotEnabled(false);
 
-        yyyyAgeField.setOnFocusChangeListener(focusChangeListener);
-        ddAgeField.setOnFocusChangeListener(focusChangeListener);
-        mmAgeField.setOnFocusChangeListener(focusChangeListener);
+
+        mmAgeField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    firstSlash.setTextColor(getResources().getColor(R.color.mint_color));
+                    secondSlash.setTextColor(getResources().getColor(R.color.dashboard_module_text));
+                    if (mmAgeField.getText().length() == 0) {
+                        keyboard.setEnterEnabled(false);
+                    }
+                } else {
+                    String month = mmAgeField.getText().toString();
+                    if(month.length() == 1 && month.charAt(0) == '0') {
+                        mmAgeField.setText(month.concat("1"));
+                    } else if (month.length() == 1) {
+                        mmAgeField.setText("0".concat(month));
+                    }
+                }
+            }
+        });
+        ddAgeField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    firstSlash.setTextColor(getResources().getColor(R.color.mint_color));
+                    secondSlash.setTextColor(getResources().getColor(R.color.mint_color));
+                    if (((CustomEditBox)v).getText().length() == 0) {
+                        keyboard.setEnterEnabled(false);
+                    } else {
+                        String day = ddAgeField.getText().toString();
+                        if(day.length() == 1 && day.charAt(0) == '0') {
+                            ddAgeField.setText(day.concat("1"));
+                        } else if (day.length() == 1) {
+                            ddAgeField.setText("0".concat(day));
+                        }
+                    }
+                }
+            }
+        });
+        yyyyAgeField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    firstSlash.setTextColor(getResources().getColor(R.color.dashboard_module_text));
+                    secondSlash.setTextColor(getResources().getColor(R.color.mint_color));
+                    if (((CustomEditBox)v).getText().length() == 0) {
+                        keyboard.setEnterEnabled(false);
+                    }
+                }
+            }
+        });
+
 
         yyyyAgeField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -133,6 +181,12 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
                     keyboard.setEnterEnabled(false);
                     enablePositiveButton(false, disabledBtnColor);
                 }
+
+                if(s.length() == 0) {
+                    ddAgeField.requestFocusFromTouch();
+                    return;
+                }
+
                 if (s.length() == 4) {
                     keyboard.setEnterEnabled(true);
                     validateInput();
@@ -165,6 +219,7 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
                 if (s.length() == 0) {
                     keyboard.setEnterEnabled(false);
                     enablePositiveButton(false, disabledBtnColor);
+                    mmAgeField.requestFocusFromTouch();
                 }
                 if (s.length() == 1) {
                     keyboard.setEnterEnabled(true);
@@ -249,9 +304,9 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
             @Override
             public boolean onChanged(String text) {
                 if (text.length() == 1 && text.charAt(0) == '0') {
-                    mmAgeField.setText(text.concat("1"));
+                    ddAgeField.setText(text.concat("1"));
                 } else if (text.length() == 1) {
-                    mmAgeField.setText("0".concat(text));
+                    ddAgeField.setText("0".concat(text));
                 }
                 yyyyAgeField.requestFocusFromTouch();
                 return false;
@@ -310,17 +365,6 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
         }
     }
 
-    View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-            if(hasFocus) {
-                if (((CustomEditBox)v).getText().length() == 0) {
-                    keyboard.setEnterEnabled(false);
-                }
-            }
-        }
-    };
-
     @Override
     protected int getDialogContentLayout() {
         return R.layout.age_verification_dialog_fragment;
@@ -343,7 +387,7 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
 
     @Override
     protected OnDialogClickListener getPositiveButtonListener() {
-        return listener;
+        return confirmListener;
     }
 
     @Override
@@ -368,6 +412,6 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
     }
 
     public static void show(FragmentActivity context, String orderGuid, OnDialogClickListener listener){
-        DialogUtil.show(context, DIALOG_NAME, AgeVerificationFragment_.builder().orderGuid(orderGuid).build()).setListener(listener);
+        DialogUtil.show(context, DIALOG_NAME, AgeVerificationFragment_.builder().orderGuid(orderGuid).build()).setConfirmListener(listener);
     }
 }

@@ -24,11 +24,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:maxLength="2"
-                android:inputType="numberDecimal|numberSigned"
                 android:nextFocusForward="@+id/dd_age_field"
                 android:hint="@string/date_mask_mm" />
 
             <TextView
+                android:id="@+id/first_slash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/dashboard_module_text"
@@ -47,11 +47,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:maxLength="2"
-                android:inputType="numberDecimal|numberSigned"
                 android:nextFocusForward="@+id/yyyy_age_field"
                 android:hint="@string/date_mask_dd" />
 
             <TextView
+                android:id="@+id/second_slash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/dashboard_module_text"
@@ -69,12 +69,9 @@
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:inputType="numberDecimal|numberSigned"
                 android:maxLength="4"
                 android:imeOptions="actionDone"
                 android:hint="@string/date_mask_yyyy" />
-
-
         </LinearLayout>
 
         <TextView
@@ -85,13 +82,4 @@
             android:textColor="@color/dlg_text_red"
             android:textSize="16sp"
             android:visibility="gone"/>
-
-    <!--<android.inputmethodservice.KeyboardView-->
-        <!--android:id="@+id/keyboardview"-->
-        <!--android:layout_width="445dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:visibility="visible"-->
-        <!--android:keyTextColor="#FFFFFF"-->
-        <!--android:padding="10dp"/>-->
-
 </LinearLayout>
