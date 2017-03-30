@@ -346,6 +346,7 @@ public class UsbScannerDriver implements UsbSerialDriver {
         final Map<Integer, int[]> supportedDevices = new LinkedHashMap<Integer, int[]>();
         supportedDevices.put(com.hoho.android.usbserial.driver.UsbId.VENDOR_BEMA,
                 new int[] {
+                        com.hoho.android.usbserial.driver.UsbId.D_7500_1,
                         com.hoho.android.usbserial.driver.UsbId.D_7500_2
                 });
         return supportedDevices;
