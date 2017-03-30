@@ -123,10 +123,13 @@ public class UsbScannerDriver implements UsbSerialDriver {
                             mDataInterface = mDevice.getInterface(0);
                             Log.d("BemaCarl4","UsbScannerDriver.open.mDataInterface."+i+": " + mDataInterface);
 
-                            Log.d("BemaCarl4","UsbScannerDriver.open.mDataInterface.getEndpointCount()."+i+": " + mDataInterface.getEndpointCount());
+                            int endPointsQty = mDataInterface.getEndpointCount();
+                            Log.d("BemaCarl4","UsbScannerDriver.open."+i+".endPointsQty: " + endPointsQty);
+
+                            int dir_1_ep = endPointsQty == 1 ? 0 : 1;
 
                             int direction_0 = mDataInterface.getEndpoint(0).getDirection();
-                            int direction_1 = mDataInterface.getEndpoint(1).getDirection();
+                            int direction_1 = mDataInterface.getEndpoint(dir_1_ep).getDirection();
                             int readIndex = direction_0 == 128 ? 0 : 1;
                             int writIndex = direction_1 ==   0 ? 1 : 0;
 
@@ -144,8 +147,13 @@ public class UsbScannerDriver implements UsbSerialDriver {
                             mDataInterface = mDevice.getInterface(1);
                             Log.d("BemaCarl4","UsbScannerDriver.open.mDataInterface."+i+": " + mDataInterface);
 
+                            int endPointsQty = mDataInterface.getEndpointCount();
+                            Log.d("BemaCarl4","UsbScannerDriver.open."+i+".endPointsQty: " + endPointsQty);
+
+                            int dir_1_ep = endPointsQty == 1 ? 0 : 1;
+
                             int direction_0 = mDataInterface.getEndpoint(0).getDirection();
-                            int direction_1 = mDataInterface.getEndpoint(1).getDirection();
+                            int direction_1 = mDataInterface.getEndpoint(dir_1_ep).getDirection();
                             int readIndex = direction_0 == 128 ? 0 : 1;
                             int writIndex = direction_1 ==   0 ? 1 : 0;
 
