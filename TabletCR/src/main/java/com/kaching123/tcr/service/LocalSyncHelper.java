@@ -102,7 +102,7 @@ public class LocalSyncHelper {
     private static final int RELOAD_INTERVAL = 1000;
     private static final int RELOAD_STOCK_INTERVAL = 10000;
 
-    private static final int CHECK_COMMANDS_INTERVAL = 500;
+    private static final int CHECK_COMMANDS_INTERVAL = 2000;
     private static final int RUN_COMMAND_INTERVAL = 100;
     private static final int FORCE_SYNC_INTERVAL = 30000;
 
