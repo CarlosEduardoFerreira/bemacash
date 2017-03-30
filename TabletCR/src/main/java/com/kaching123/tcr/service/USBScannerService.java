@@ -60,9 +60,8 @@ public class USBScannerService extends Service {
 
     public UsbSerialPort getPort(){
         Log.d("BemaCarl4","USBScannerService.getPort");
-        mUsbManager = (UsbManager) TcrApplication.get().getSystemService(Context.USB_SERVICE);
-        final List<UsbSerialDriver> drivers =
-                UsbSerialProber.getDefaultProber().findAllDrivers(mUsbManager);
+        mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+        final List<UsbSerialDriver> drivers = UsbSerialProber.getDefaultProber().findAllDrivers(mUsbManager);
         Log.d("BemaCarl4","USBScannerService.getPort.drivers: " + drivers.size());
         final List<UsbSerialPort> result = new ArrayList<UsbSerialPort>();
         for (final UsbSerialDriver driver : drivers) {
@@ -85,7 +84,7 @@ public class USBScannerService extends Service {
             int pid = port.getDriver().getDevice().getProductId();
             Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.vid: " + vid);
             Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.pid: " + pid);
-            if(vid == 9450 && pid == 391) {
+            if( vid == 9450 && (pid == 391) )  {
                 return port;
             }else
             if(device.getInterface(0).getInterfaceClass() == 2){
@@ -160,12 +159,12 @@ public class USBScannerService extends Service {
                 Log.d("BemaCarl4","USBScannerService.startOpenConnection.sPort.getDriver().getPorts().get(0): " + sPort.getDriver().getPorts().get(0));
                 int vid = sPort.getDriver().getDevice().getVendorId();
                 int pid = sPort.getDriver().getDevice().getProductId();
-                if(vid == 9450 && pid == 391) {
+                if( vid == 9450 && (pid == 391))  {
                     sPort.getDriver().getPorts().get(0).open(connection);
-                }else {
-                    sPort.open(connection);
+                }else{
                     Log.d("BemaCarl4", "USBScannerService.startOpenConnection.sPort1: " + sPort);
-                    sPort.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
+                    sPort.open(connection);
+                    //sPort.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
                 }
             } catch (IOException e) {
                 Log.d("BemaCarl4","USBScannerService.startOpenConnection.catch.e.getMessage(): " + e.getMessage());

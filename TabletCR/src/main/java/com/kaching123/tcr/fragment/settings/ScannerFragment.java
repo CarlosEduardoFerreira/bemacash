@@ -22,6 +22,7 @@ import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.fragment.SuperBaseFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
@@ -135,14 +136,14 @@ public class ScannerFragment extends SuperBaseFragment {
     }
 
     public UsbSerialPort getPort(){
-        Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort");
+        Log.d("BemaCarl4","ScannerFragment.getPort");
         mUsbManager = (UsbManager) getActivity().getSystemService(Context.USB_SERVICE);
         final List<UsbSerialDriver> drivers = UsbSerialProber.getDefaultProber().findAllDrivers(mUsbManager);
-        Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.drivers: " + drivers.size());
+        Log.d("BemaCarl4","ScannerFragment.getPort.drivers: " + drivers.size());
         final List<UsbSerialPort> result = new ArrayList<UsbSerialPort>();
         for (final UsbSerialDriver driver : drivers) {
             final List<UsbSerialPort> ports = driver.getPorts();
-            Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort: |driver|ports.size()|: |" + driver +"|"+ ports.size() +"|");
+            Log.d("BemaCarl4","ScannerFragment.getPort: |driver|ports.size()|: |" + driver +"|"+ ports.size() +"|");
             result.addAll(ports);
         }
         UsbSerialPort usbSerialPort = null;
@@ -150,17 +151,17 @@ public class ScannerFragment extends SuperBaseFragment {
             final UsbSerialDriver driver = port.getDriver();
             final UsbDevice device = driver.getDevice();
             
-            Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterfaceCount(): " + device.getInterfaceCount());
+            Log.d("BemaCarl4","ScannerFragment.getPort.device.getInterfaceCount(): " + device.getInterfaceCount());
             for (int i = 0; i < device.getInterfaceCount(); i++) {
-                Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterface.i: " + i);
-                Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.getInterface("+i+").getInterfaceClass(): " + device.getInterface(i).getInterfaceClass());
-                Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.device.port: " + port);
+                Log.d("BemaCarl4","ScannerFragment.getPort.device.getInterface.i: " + i);
+                Log.d("BemaCarl4","ScannerFragment.getPort.device.getInterface("+i+").getInterfaceClass(): " + device.getInterface(i).getInterfaceClass());
+                Log.d("BemaCarl4","ScannerFragment.getPort.device.port: " + port);
             }
             int vid = port.getDriver().getDevice().getVendorId();
             int pid = port.getDriver().getDevice().getProductId();
-            Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.vid: " + vid);
-            Log.d("BemaCarl4","ScannerService.ScannerFragment.getPort.pid: " + pid);
-            if(vid == 9450 && pid == 391) {
+            Log.d("BemaCarl4","ScannerFragment.getPort.vid: " + vid);
+            Log.d("BemaCarl4","ScannerFragment.getPort.pid: " + pid);
+            if( vid == 9450 && (pid == 391 || pid == 407) )  {
                 return port;
             }else
             if(device.getInterface(0).getInterfaceClass() == 2 || device.getInterface(0).getInterfaceClass() == 3){

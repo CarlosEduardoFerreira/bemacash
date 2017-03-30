@@ -41,14 +41,14 @@ import java.util.Map;
  * Developed by Carlos
  */
 
-public class UsbScannerDriverBR implements UsbSerialDriver {
+public class UsbScannerDriver implements UsbSerialDriver {
 
-    private final String TAG = UsbScannerDriverBR.class.getSimpleName();
+    private final String TAG = UsbScannerDriver.class.getSimpleName();
 
     private final UsbDevice mDevice;
     private final UsbSerialPort mPort;
 
-    public UsbScannerDriverBR(UsbDevice device) {
+    public UsbScannerDriver(UsbDevice device) {
         mDevice = device;
         mPort = new UsbScannerSerialPort(device, 0);
     }
@@ -61,10 +61,6 @@ public class UsbScannerDriverBR implements UsbSerialDriver {
     @Override
     public List<UsbSerialPort> getPorts() {
         return Collections.singletonList(mPort);
-    }
-
-    public UsbSerialPort getPort(){
-        return mPort;
     }
 
     class UsbScannerSerialPort extends CommonUsbSerialPort {
@@ -96,11 +92,15 @@ public class UsbScannerDriverBR implements UsbSerialDriver {
 
         @Override
         public UsbSerialDriver getDriver() {
-            return UsbScannerDriverBR.this;
+            return UsbScannerDriver.this;
         }
 
         @Override
         public void open(UsbDeviceConnection connection) throws IOException {
+
+            setReadBufferSize(8*1024);
+            setWriteBufferSize(8*1024);
+
             Log.d("BemaCarl4","UsbScannerDriver.open");
             if (mConnection != null) {
                 throw new IOException("Already open");
@@ -119,24 +119,44 @@ public class UsbScannerDriverBR implements UsbSerialDriver {
                             Log.d("BemaCarl4","UsbScannerDriver.open.mControlInterface."+i+": " + mControlInterface);
                             mControlEndpoint = mControlInterface.getEndpoint(0);
                             Log.d("BemaCarl4","UsbScannerDriver.open.mControlEndpoint."+i+": " + mControlEndpoint);
+
                             mDataInterface = mDevice.getInterface(0);
                             Log.d("BemaCarl4","UsbScannerDriver.open.mDataInterface."+i+": " + mDataInterface);
 
                             Log.d("BemaCarl4","UsbScannerDriver.open.mDataInterface.getEndpointCount()."+i+": " + mDataInterface.getEndpointCount());
 
-                            mReadEndpoint = mDataInterface.getEndpoint(0);
+                            int direction_0 = mDataInterface.getEndpoint(0).getDirection();
+                            int direction_1 = mDataInterface.getEndpoint(1).getDirection();
+                            int readIndex = direction_0 == 128 ? 0 : 1;
+                            int writIndex = direction_1 ==   0 ? 1 : 0;
+
+                            Log.d("BemaCarl4","UsbScannerDriver.open."+i+".direction_0: " + direction_0);
+                            Log.d("BemaCarl4","UsbScannerDriver.open."+i+".direction_1: " + direction_1);
+                            Log.d("BemaCarl4","UsbScannerDriver.open."+i+".readIndex: " + readIndex);
+                            Log.d("BemaCarl4","UsbScannerDriver.open."+i+".writIndex: " + writIndex);
+
+                            mReadEndpoint = mDataInterface.getEndpoint(readIndex);
                             Log.d("BemaCarl4","UsbScannerDriver.open.mReadEndpoint."+i+": " + mReadEndpoint);
-                            Log.d("BemaCarl4","UsbScannerDriver.open.mReadEndpoint.getDirection()."+i+": " + mReadEndpoint.getDirection());
-                            mWriteEndpoint = mDataInterface.getEndpoint(1);
+                            mWriteEndpoint = mDataInterface.getEndpoint(writIndex);
                             Log.d("BemaCarl4","UsbScannerDriver.open.mWriteEndpoint."+i+": " + mWriteEndpoint);
-                            Log.d("BemaCarl4","UsbScannerDriver.open.mWriteEndpoint.getDirection()."+i+": " + mWriteEndpoint.getDirection());
                         }
                         if(i == 1){
                             mDataInterface = mDevice.getInterface(1);
                             Log.d("BemaCarl4","UsbScannerDriver.open.mDataInterface."+i+": " + mDataInterface);
-                            mReadEndpoint = mDataInterface.getEndpoint(0);
+
+                            int direction_0 = mDataInterface.getEndpoint(0).getDirection();
+                            int direction_1 = mDataInterface.getEndpoint(1).getDirection();
+                            int readIndex = direction_0 == 128 ? 0 : 1;
+                            int writIndex = direction_1 ==   0 ? 1 : 0;
+
+                            Log.d("BemaCarl4","UsbScannerDriver.open."+i+".direction_0: " + direction_0);
+                            Log.d("BemaCarl4","UsbScannerDriver.open."+i+".direction_1: " + direction_1);
+                            Log.d("BemaCarl4","UsbScannerDriver.open."+i+".readIndex: " + readIndex);
+                            Log.d("BemaCarl4","UsbScannerDriver.open."+i+".writIndex: " + writIndex);
+
+                            mReadEndpoint = mDataInterface.getEndpoint(readIndex);
                             Log.d("BemaCarl4","UsbScannerDriver.open.mReadEndpoint."+i+" " + mReadEndpoint);
-                            mWriteEndpoint = mDataInterface.getEndpoint(1);
+                            mWriteEndpoint = mDataInterface.getEndpoint(writIndex);
                             Log.d("BemaCarl4","UsbScannerDriver.open.mWriteEndpoint."+i+": " + mWriteEndpoint);
                         }
                         Log.d("BemaCarl4","UsbScannerDriver.open.connection.claimInterface."+i+".SUCCESS: " + mDevice.getInterface(i));
@@ -324,7 +344,7 @@ public class UsbScannerDriverBR implements UsbSerialDriver {
 
     public static Map<Integer, int[]> getSupportedDevices() {
         final Map<Integer, int[]> supportedDevices = new LinkedHashMap<Integer, int[]>();
-        supportedDevices.put(Integer.valueOf(com.hoho.android.usbserial.driver.UsbId.VENDOR_BEMA),
+        supportedDevices.put(com.hoho.android.usbserial.driver.UsbId.VENDOR_BEMA,
                 new int[] {
                         com.hoho.android.usbserial.driver.UsbId.D_7500_2
                 });
