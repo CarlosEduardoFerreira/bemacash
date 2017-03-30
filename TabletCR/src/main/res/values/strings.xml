@@ -2227,8 +2227,14 @@
     <string name="item_activity_sales_permitted_near_end" formatted = "false">After this sale, you will break %s percent of yearly transction amount. Are you sure you want to proceed?</string>
     <string name="warning_new_msg">Error TransactionUtil setNewValues</string>
     <string name="nav_back_order_is_on_hold_msg">To navigate back, order must be put on hold, voided, or paid</string>
-    <string name="date_mask">mm/dd/yyyy</string>
+    <string name="date_mask_mm">mm</string>
+    <string name="date_mask_dd">dd</string>
+    <string name="date_mask_yyyy">yyyy</string>
+    <string name="slash">/</string>
     <string name="item_requires_age">This item requires age %d</string>
+    <string name="wrong_year_format">Year format is wrong should be from 1900 to 2099</string>
+    <string name="wrong_month_format">Month format is wrong should be from 1 to 12</string>
+    <string name="wrong_day_format">Day format is wrong should be from 1 to 31</string>
     <!-- local sync ends -->
 
 

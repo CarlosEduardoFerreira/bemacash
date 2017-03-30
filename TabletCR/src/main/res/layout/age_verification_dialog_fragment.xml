@@ -1,35 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:gravity="center">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:orientation="vertical">
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_height="70dp"
             android:layout_width="match_parent"
             android:gravity="center"
-            android:background="@drawable/addon_background">
+            android:background="@drawable/addon_background"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/age_ver_field"
+            <com.kaching123.tcr.component.CustomEditBox
+                android:id="@+id/mm_age_field"
                 android:background="@color/edit_box_custom_bg"
                 android:textColor="@color/dashboard_module_text"
                 android:textColorHint="@color/dashboard_module_text"
                 android:textSize="26sp"
                 android:textStyle="bold"
+                android:layout_width="54dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxLength="2"
+                android:inputType="numberDecimal|numberSigned"
+                android:nextFocusForward="@+id/dd_age_field"
+                android:hint="@string/date_mask_mm" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLength="10"
-                android:hint="@string/date_mask"/>
+                android:textColor="@color/dashboard_module_text"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:text="@string/slash"/>
 
-        </RelativeLayout>
+            <com.kaching123.tcr.component.CustomEditBox
+                android:id="@+id/dd_age_field"
+                android:background="@color/edit_box_custom_bg"
+                android:textColor="@color/dashboard_module_text"
+                android:textColorHint="@color/dashboard_module_text"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:layout_width="46dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxLength="2"
+                android:inputType="numberDecimal|numberSigned"
+                android:nextFocusForward="@+id/yyyy_age_field"
+                android:hint="@string/date_mask_dd" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dashboard_module_text"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:text="@string/slash"/>
+
+            <com.kaching123.tcr.component.CustomEditBox
+                android:id="@+id/yyyy_age_field"
+                android:background="@color/edit_box_custom_bg"
+                android:textColor="@color/dashboard_module_text"
+                android:textColorHint="@color/dashboard_module_text"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:inputType="numberDecimal|numberSigned"
+                android:maxLength="4"
+                android:imeOptions="actionDone"
+                android:hint="@string/date_mask_yyyy" />
+
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/age_warning"
@@ -40,6 +86,12 @@
             android:textSize="16sp"
             android:visibility="gone"/>
 
-    </LinearLayout>
+    <!--<android.inputmethodservice.KeyboardView-->
+        <!--android:id="@+id/keyboardview"-->
+        <!--android:layout_width="445dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:visibility="visible"-->
+        <!--android:keyTextColor="#FFFFFF"-->
+        <!--android:padding="10dp"/>-->
 
 </LinearLayout>

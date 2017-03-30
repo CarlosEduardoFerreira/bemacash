@@ -1,75 +1,68 @@
 package com.kaching123.tcr.fragment.quickservice;
 
-import android.app.DatePickerDialog;
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.fragment.UiHelper;
-import com.kaching123.tcr.fragment.dialog.DatePickerFragment;
+import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+import com.kaching123.tcr.fragment.edit.KeyboardDialogFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.converter.ItemExFunction;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.util.BemaKeyboard;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.Calendar;
-import java.util.Locale;
+import java.util.regex.Pattern;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 
 /**
  * Created by mboychenko on 3/28/2017.
  */
 
 @EFragment
-public class AgeVerificationFragment extends StyledDialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AgeVerificationFragment extends KeyboardDialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String DIALOG_NAME = "AgeVerificationFragment";
+
+    private final Pattern YEAR_REGEXP = Pattern.compile("(19|20)\\d\\d");
+    private final Pattern DAY_REGEXP = Pattern.compile("0?[1-9]|[12][0-9]|3[01]");
+    private final Pattern MONTH_REGEXP = Pattern.compile("0?[1-9]|1[012]");
 
     @FragmentArg
     protected String orderGuid;
 
+    @ViewById protected CustomEditBox mmAgeField;
+    @ViewById protected CustomEditBox ddAgeField;
+    @ViewById protected CustomEditBox yyyyAgeField;
+    @ViewById protected TextView ageWarning;
+
+    private BemaKeyboard bemaKeyboard;
     private OnDialogClickListener listener;
     private ItemExModel itemExModel;
-
-    @ViewById protected TextView ageVerField;
-    @ViewById protected TextView ageWarning;
 
     public void setListener(OnDialogClickListener listener) {
         this.listener = listener;
     }
 
-    DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            int visualMonth = monthOfYear + 1;
-            String day = String.valueOf(dayOfMonth);
-            String month = String.valueOf(visualMonth);
-            if (dayOfMonth < 10) {
-                day = "0" + String.valueOf(dayOfMonth);
-            }
-            if (visualMonth < 10) {
-                month = "0" + String.valueOf(visualMonth);
-            }
-            ageVerField.setText(String.format(Locale.US, "%s/%s/%d", month, day, year));
-
-            checkConfirmAbility(year, monthOfYear, dayOfMonth);
-        }
-    };
-
     private void checkConfirmAbility(int year, int monthOfYear, int dayOfMonth) {
+        monthOfYear--;                                                                              //calendar use 0-based month value
         Calendar calendar = Calendar.getInstance();
         int curYear = calendar.get(Calendar.YEAR);
         int curMonth = calendar.get(Calendar.MONTH);
@@ -82,16 +75,17 @@ public class AgeVerificationFragment extends StyledDialogFragment implements Loa
         ageRestrictionForItem.set(year, monthOfYear, dayOfMonth);
 
         int diff = calendar.get(Calendar.YEAR) - ageRestrictionForItem.get(Calendar.YEAR);
-        if (ageRestrictionForItem.get(Calendar.MONTH) > calendar.get(Calendar.MONTH) ||
-                (calendar.get(Calendar.MONTH) == ageRestrictionForItem.get(Calendar.MONTH) && ageRestrictionForItem.get(Calendar.DATE) > calendar.get(Calendar.DATE))) {
+        if (ageRestrictionForItem.get(Calendar.MONTH) > calendar.get(Calendar.MONTH)
+                || (calendar.get(Calendar.MONTH) == ageRestrictionForItem.get(Calendar.MONTH)
+                        && ageRestrictionForItem.get(Calendar.DATE) > calendar.get(Calendar.DATE))) {
             diff--;
         }
 
         if (diff >= itemExModel.ageVerification) {
-            enablePositiveButtons(true);
-            ageWarning.setVisibility(View.GONE);
+            enablePositiveButton(true, greenBtnColor);
+            ageWarning.setVisibility(GONE);
         } else {
-            enablePositiveButtons(false);
+            enablePositiveButton(false, disabledBtnColor);
             ageWarning.setVisibility(View.VISIBLE);
             ageWarning.setText(getString(R.string.item_requires_age, itemExModel.ageVerification));
         }
@@ -102,18 +96,230 @@ public class AgeVerificationFragment extends StyledDialogFragment implements Loa
         super.onActivityCreated(savedInstanceState);
         getDialog().getWindow().setLayout(getResources()
                         .getDimensionPixelOffset(R.dimen.age_ver_dlg_width),
-                getResources().getDimensionPixelOffset(R.dimen.age_ver_dlg_heigth));
+                getDialog().getWindow().getAttributes().height);
         getLoaderManager().restartLoader(0, null, this);
 
-        ageVerField.setOnClickListener(new View.OnClickListener() {
+        CustomEditBox[] ageViews = new CustomEditBox[] {mmAgeField, ddAgeField, yyyyAgeField};
+        for (CustomEditBox ageView : ageViews) {
+            ageView.setKeyboardSupportConteiner(AgeVerificationFragment.this);
+        }
+
+        initViews();
+    }
+
+    private void initViews() {
+        enablePositiveButtons(false);
+        keyboard.setDotEnabled(false);
+
+        yyyyAgeField.setOnFocusChangeListener(focusChangeListener);
+        ddAgeField.setOnFocusChangeListener(focusChangeListener);
+        mmAgeField.setOnFocusChangeListener(focusChangeListener);
+
+        yyyyAgeField.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                DatePickerFragment.show(getActivity(), Calendar.getInstance(), dateSetListener);
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                checkWarningVisibility();
+                if (s.length() < 4) {
+                    keyboard.setEnterEnabled(false);
+                    enablePositiveButton(false, disabledBtnColor);
+                }
+                if (s.length() == 4) {
+                    keyboard.setEnterEnabled(true);
+                    validateInput();
+                }
+                if (s.length() == 1 && (s.charAt(0) != '1' && s.charAt(0) != '2')) {
+                    yyyyAgeField.clear();
+                } else if (s.length()== 2) {
+                    if (s.charAt(0) == '1' && s.charAt(1) != '9') {
+                        yyyyAgeField.setText(String.valueOf(s.charAt(0)));
+                    } else if (s.charAt(0) == '2' && s.charAt(1) != '0') {
+                        yyyyAgeField.setText(String.valueOf(s.charAt(0)));
+                    }
+                } else if (s.length() > 4) {
+                    yyyyAgeField.setText(String.valueOf(s.subSequence(0,3)));
+                }
+            }
+        });
+        ddAgeField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                checkWarningVisibility();
+                if (s.length() == 0) {
+                    keyboard.setEnterEnabled(false);
+                    enablePositiveButton(false, disabledBtnColor);
+                }
+                if (s.length() == 1) {
+                    keyboard.setEnterEnabled(true);
+                    needRefresh();
+                }
+                if (s.length() == 2) {
+                    if(s.charAt(0) != '0' && s.charAt(0) != '1' && s.charAt(0) != '2' && s.charAt(0) != '3') {
+                        ddAgeField.setText(String.valueOf(s.charAt(0)));
+                        return;
+                    }
+                    if(s.charAt(0) == '0' && s.charAt(1) == '0') {
+                        ddAgeField.setText(String.valueOf(s.charAt(0)));
+                        return;
+                    }
+                    if (s.charAt(0) == '3' && (s.charAt(1) != '0' && s.charAt(1) != '1')) {
+                        ddAgeField.setText(String.valueOf(s.charAt(0)));
+                        return;
+                    }
+                    yyyyAgeField.requestFocusFromTouch();
+                    needRefresh();
+                } else if (s.length() > 2) {
+                    ddAgeField.setText(String.valueOf(s.subSequence(0, 1)));
+                    yyyyAgeField.requestFocusFromTouch();
+                }
+            }
+        });
+        mmAgeField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                checkWarningVisibility();
+                if (s.length() == 0) {
+                    keyboard.setEnterEnabled(false);
+                    enablePositiveButton(false, disabledBtnColor);
+                }
+                if (s.length() == 1) {
+                    keyboard.setEnterEnabled(true);
+                    needRefresh();
+                }
+                if (s.length() == 2) {
+                    if(s.charAt(0) == '0' && s.charAt(1) == '0') {
+                        mmAgeField.setText(String.valueOf(s.charAt(0)));
+                        return;
+                    }
+                    if (s.charAt(0) == '1' && (s.charAt(1) != '0' && s.charAt(1) != '1' && s.charAt(1) != '2')) {
+                        mmAgeField.setText(String.valueOf(s.charAt(0)));
+                        return;
+                    }
+                    if (s.charAt(0) != '0' && s.charAt(0) != '1') {
+                        mmAgeField.setText(String.valueOf(s.charAt(0)));
+                        return;
+                    }
+                    ddAgeField.requestFocusFromTouch();
+                    needRefresh();
+                } else if (s.length()> 2) {
+                    mmAgeField.setText(String.valueOf(s.subSequence(0, 1)));
+                    ddAgeField.requestFocusFromTouch();
+                }
             }
         });
 
-        enablePositiveButtons(false);
+        mmAgeField.setEditListener(new CustomEditBox.IEditListener() {
+            @Override
+            public boolean onChanged(String text) {
+                if (text.length() == 1 && text.charAt(0) == '0') {
+                    mmAgeField.setText(text.concat("1"));
+                } else if (text.length() == 1) {
+                    mmAgeField.setText("0".concat(text));
+                }
+                ddAgeField.requestFocusFromTouch();
+                return false;
+            }
+        });
+        ddAgeField.setEditListener(new CustomEditBox.IEditListener() {
+            @Override
+            public boolean onChanged(String text) {
+                if (text.length() == 1 && text.charAt(0) == '0') {
+                    mmAgeField.setText(text.concat("1"));
+                } else if (text.length() == 1) {
+                    mmAgeField.setText("0".concat(text));
+                }
+                yyyyAgeField.requestFocusFromTouch();
+                return false;
+            }
+        });
+
+        yyyyAgeField.setEditListener(new CustomEditBox.IEditListener() {
+            @Override
+            public boolean onChanged(String text) {
+                validateInput();
+                return false;
+            }
+        });
     }
+
+    private void needRefresh() {
+        String month = mmAgeField.getText().toString();
+        String day = ddAgeField.getText().toString();
+        String year = yyyyAgeField.getText().toString();
+        if (YEAR_REGEXP.matcher(year).matches() && MONTH_REGEXP.matcher(month).matches() &&
+                DAY_REGEXP.matcher(day).matches()) {
+            validateInput(true);
+        }
+    }
+
+    private void validateInput(){
+        validateInput(false);
+    }
+    private void validateInput(boolean skipRegCheck) {
+        String month = mmAgeField.getText().toString();
+        String day = ddAgeField.getText().toString();
+        String year = yyyyAgeField.getText().toString();
+        if(!skipRegCheck) {
+            if (!YEAR_REGEXP.matcher(year).matches()) {
+                ageWarning.setText(R.string.wrong_year_format);
+                return;
+            }
+
+            if (!MONTH_REGEXP.matcher(month).matches()) {
+                ageWarning.setText(R.string.wrong_month_format);
+                return;
+            }
+
+            if (!DAY_REGEXP.matcher(day).matches()) {
+                ageWarning.setText(R.string.wrong_day_format);
+                return;
+            }
+        }
+        checkConfirmAbility(Integer.valueOf(year), Integer.valueOf(month), Integer.valueOf(day));
+    }
+
+    private void checkWarningVisibility(){
+        if (ageWarning.getVisibility() == VISIBLE && ageWarning.getText().length() > 0) {
+            ageWarning.setText("");
+            ageWarning.setVisibility(GONE);
+        }
+    }
+
+    View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if(hasFocus) {
+                if (((CustomEditBox)v).getText().length() == 0) {
+                    keyboard.setEnterEnabled(false);
+                }
+            }
+        }
+    };
 
     @Override
     protected int getDialogContentLayout() {
