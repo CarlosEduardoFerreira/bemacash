@@ -39,7 +39,7 @@ public class AtomicUpload {
 
         context = TcrApplication.get().getApplicationContext();
 
-        if(hasInternetConnection()) {
+        if(hasInternetConnection(context)) {
 
             if (type.equals(UploadType.LOCAL) || type.equals(UploadType.BOTH)) {
                 Log.d("BemaCarl7", "AtomicUpload.upload.type|sql1: " + type + "|" + sql.toJson());
@@ -64,7 +64,7 @@ public class AtomicUpload {
 
     }
 
-    public boolean hasInternetConnection(){
+    public boolean hasInternetConnection(Context context){
 
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 

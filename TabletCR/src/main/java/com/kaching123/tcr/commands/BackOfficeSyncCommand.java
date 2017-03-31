@@ -22,7 +22,7 @@ public class BackOfficeSyncCommand {
     public void adjustSyncTime(){
 
         Integer localSyncDefTime = mContext.getResources().getInteger(R.integer.sync_time_entries_def_val);
-        boolean gotIt = new AtomicUpload().hasInternetConnection();
+        boolean gotIt = new AtomicUpload().hasInternetConnection(mContext);
         if(gotIt && OfflineCommandsService.localSync) {
             localSyncDefTime = mContext.getResources().getInteger(R.integer.local_sync_time_def_val);
         }
