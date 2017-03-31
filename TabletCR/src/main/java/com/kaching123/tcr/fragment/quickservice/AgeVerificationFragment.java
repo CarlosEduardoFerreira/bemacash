@@ -53,11 +53,12 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
     @ViewById protected TextView firstSlash;
     @ViewById protected TextView secondSlash;
 
-    private OnDialogClickListener confirmListener;
+    private AgeVerifiedListener ageVerifiedListener;
     private ItemExModel itemExModel;
+    private int customerAge;
 
-    public void setConfirmListener(OnDialogClickListener listener) {
-        this.confirmListener = listener;
+    public void setConfirmListener(AgeVerifiedListener listener) {
+        this.ageVerifiedListener = listener;
     }
 
     private void checkConfirmAbility(int year, int monthOfYear, int dayOfMonth) {
@@ -81,12 +82,14 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
         }
 
         if (diff >= itemExModel.ageVerification) {
+            customerAge = diff;
             enablePositiveButton(true, greenBtnColor);
             ageWarning.setVisibility(GONE);
         } else {
+            customerAge = 0;
             enablePositiveButton(false, disabledBtnColor);
             ageWarning.setVisibility(View.VISIBLE);
-            ageWarning.setText(getString(R.string.item_requires_age, itemExModel.ageVerification));
+            ageWarning.setText(getString(R.string.age_verification_customer_must_be_older, itemExModel.ageVerification));
         }
     }
 
@@ -336,6 +339,7 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
         validateInput(false);
     }
     private void validateInput(boolean skipRegCheck) {
+        customerAge = 0;
         String month = mmAgeField.getText().toString();
         String day = ddAgeField.getText().toString();
         String year = yyyyAgeField.getText().toString();
@@ -387,7 +391,17 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
 
     @Override
     protected OnDialogClickListener getPositiveButtonListener() {
-        return confirmListener;
+        return new OnDialogClickListener() {
+            @Override
+            public boolean onClick() {
+                ageVerifiedListener.onAgeVerified(customerAge);
+                return true;
+            }
+        };
+    }
+
+    public interface AgeVerifiedListener {
+        void onAgeVerified(int customerAge);
     }
 
     @Override
@@ -411,7 +425,7 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-    public static void show(FragmentActivity context, String orderGuid, OnDialogClickListener listener){
+    public static void show(FragmentActivity context, String orderGuid, AgeVerifiedListener listener){
         DialogUtil.show(context, DIALOG_NAME, AgeVerificationFragment_.builder().orderGuid(orderGuid).build()).setConfirmListener(listener);
     }
 }

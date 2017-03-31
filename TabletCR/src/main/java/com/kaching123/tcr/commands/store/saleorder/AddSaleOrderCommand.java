@@ -38,6 +38,7 @@ public class AddSaleOrderCommand extends AsyncCommand {
     private static final Uri URI_ORDER = ShopProvider.contentUri(SaleOrderTable.URI_CONTENT);
 
     public static final String ARG_ORDER = "arg_order";
+    public static final String ARG_AGE = "arg_age";
     public static final String ARG_SKIP_NOTIFY = "arg_skip_notify";
 
     private static final String EXTRA_GUID = "EXTRA_GUID";
@@ -45,15 +46,18 @@ public class AddSaleOrderCommand extends AsyncCommand {
     private SaleOrderModel order;
 
     private boolean skipNotify;
+    private int customerAgeVerified;
 
     @Override
     protected TaskResult doCommand() {
         Logger.d("AddSaleOrderCommand doCommand");
         order = (SaleOrderModel) getArgs().getSerializable(ARG_ORDER);
         skipNotify = getBooleanArg(ARG_SKIP_NOTIFY);
-        if (order == null)
+        customerAgeVerified = getIntArg(ARG_AGE, 0);
+        if (order == null) {
             order = AddItem2SaleOrderCommand.createSaleOrder(getContext(), getAppCommandContext().getRegisterId(),
-                    getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), OrderType.SALE);
+                    getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), OrderType.SALE, customerAgeVerified);
+        }
 
         return succeeded().add(EXTRA_GUID, order.guid);
     }
@@ -115,12 +119,17 @@ public class AddSaleOrderCommand extends AsyncCommand {
                 KitchenPrintStatus.PRINT,
                 PrintOrderToKdsCommand.KDSSendStatus.PRINT,
                 false,
-                transactionFee
+                transactionFee,
+                0
         );
     }
 
     public static void start(Context context, SaleOrderModel order, boolean skipNotify, BaseAddSaleOrderCommandCallback callback) {
         create(AddSaleOrderCommand.class).arg(ARG_ORDER, order).arg(ARG_SKIP_NOTIFY, skipNotify).callback(callback).queueUsing(context);
+    }
+
+    public static void start(Context context, SaleOrderModel order, boolean skipNotify, int ageVerified, BaseAddSaleOrderCommandCallback callback) {
+        create(AddSaleOrderCommand.class).arg(ARG_ORDER, order).arg(ARG_AGE, ageVerified).arg(ARG_SKIP_NOTIFY, skipNotify).callback(callback).queueUsing(context);
     }
 
     /**

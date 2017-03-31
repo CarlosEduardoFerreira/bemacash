@@ -179,7 +179,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
         return AddSaleOrderCommand.createSaleOrder(getContext(), getAppCommandContext().getRegisterId(), getAppCommandContext().getEmployeeGuid(), getAppCommandContext().getShiftGuid(), null, OrderType.SALE, BigDecimal.ZERO);
     }
 
-    public static SaleOrderModel createSaleOrder(Context context, long registerId, String operatorGuid, String shiftGuid, OrderType type) {
+    public static SaleOrderModel createSaleOrder(Context context, long registerId, String operatorGuid, String shiftGuid, OrderType type, int customerAge) {
 
         Integer seq = ProviderAction
                 .query(URI_ORDER)
@@ -218,7 +218,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
                 PrintOrderToKdsCommand.KDSSendStatus.PRINT,
                 BigDecimal.ZERO,
                 false,
-                0,
+                customerAge,
                 null
                 );
 

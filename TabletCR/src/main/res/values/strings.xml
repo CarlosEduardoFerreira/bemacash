@@ -2235,6 +2235,7 @@
     <string name="wrong_year_format">Year format is wrong should be from 1900 to 2099</string>
     <string name="wrong_month_format">Month format is wrong should be from 1 to 12</string>
     <string name="wrong_day_format">Day format is wrong should be from 1 to 31</string>
+    <string name="age_verification_customer_must_be_older" formatted = "false">Must be %d years old to purchase this item</string>
     <!-- local sync ends -->
 
 

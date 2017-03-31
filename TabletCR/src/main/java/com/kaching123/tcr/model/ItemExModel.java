@@ -35,6 +35,7 @@ public class ItemExModel extends ItemModel {
     public int modifiersCount;
     public int addonsCount;
     public int optionalCount;
+    public int tmpAgeVerified;
 
     public String departmentGuid;
     public BigDecimal tax;
@@ -256,6 +257,14 @@ public class ItemExModel extends ItemModel {
         this.tax2 = tax2;
         this.shortCut = shortCut;
 
+    }
+
+    public int getTmpAgeVerified() {
+        return tmpAgeVerified;
+    }
+
+    public void setTmpAgeVerified(int tmpAgeVerified) {
+        this.tmpAgeVerified = tmpAgeVerified;
     }
 
     public ItemExModel setMatrixGuid(String matrixGuid) {

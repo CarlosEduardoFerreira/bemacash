@@ -258,6 +258,14 @@ public class SaleOrderModel implements Serializable, IValueModel {
 
     }
 
+    public void setAgeVerified(int ageVerified) {
+        this.ageVerified = ageVerified;
+    }
+
+    public int getAgeVerified() {
+        return ageVerified;
+    }
+
     public boolean isOrderOnRegister() {
         return orderOnRegister;
     }

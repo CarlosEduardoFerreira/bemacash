@@ -300,6 +300,13 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 .build(JdbcFactory.getApiMethod(order));
     }
 
+    public SingleSqlCommand updateAgeVerified(SaleOrderModel order, IAppCommandContext appCommandContext) {
+        return _update(SALE_ORDER_TABLE_NAME, appCommandContext)
+                .add(AGE_VERIFIED, order.ageVerified)
+                .where(ID, order.guid)
+                .build(JdbcFactory.getApiMethod(order));
+    }
+
 
 
 

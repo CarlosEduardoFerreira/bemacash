@@ -15,6 +15,8 @@ import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand;
 import com.kaching123.tcr.commands.store.saleorder.ItemsNegativeStockTrackingCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand.BaseUpdateSaleItemAddonsCallback;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderAgeVeridiedCommand;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderCommand;
 import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.component.KeyboardView;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
@@ -29,6 +31,7 @@ import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment.OnCancelList
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.PlanOptions;
+import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.service.UploadTask;
 import com.kaching123.tcr.service.v2.UploadTaskV2;
@@ -217,12 +220,26 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
 
     @Override
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
+        final SaleOrderModel saleOrderModel = getSaleOrderModel();
+        if(model.ageVerification > 0 && saleOrderModel != null && saleOrderModel.getAgeVerified() > 0) {
+            if (saleOrderModel.getAgeVerified() >= model.ageVerification) {
+                continueAddingItem(model, price, quantity, unit);
+            } else {
+                Toast.makeText(QuickServiceActivity.this, getString(R.string.age_verification_customer_must_be_older, model.ageVerification), Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
         if(model.ageVerification > 0) {
-            AgeVerificationFragment.show(QuickServiceActivity.this, model.getGuid(), new StyledDialogFragment.OnDialogClickListener() {
+            AgeVerificationFragment.show(QuickServiceActivity.this, model.getGuid(), new AgeVerificationFragment.AgeVerifiedListener() {
                 @Override
-                public boolean onClick() {
+                public void onAgeVerified(int customerAge) {
+                    if(saleOrderModel != null) {
+                        saleOrderModel.setAgeVerified(customerAge);
+                        UpdateSaleOrderAgeVeridiedCommand.start(QuickServiceActivity.this, saleOrderModel.getGuid(), customerAge);
+                    } else {
+                        model.setTmpAgeVerified(customerAge);
+                    }
                     continueAddingItem(model, price, quantity, unit);
-                    return true;
                 }
             });
         } else {

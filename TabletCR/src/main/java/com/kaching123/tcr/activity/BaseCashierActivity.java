@@ -285,6 +285,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
 
     private String orderGuid;
+
+    protected SaleOrderModel getSaleOrderModel() {
+        return saleOrderModel;
+    }
+
     private SaleOrderModel saleOrderModel;
     private String orderTitle;
     private OrdersStatInfo ordersCount;
@@ -343,6 +348,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private List<Integer> priceLevels = Collections.EMPTY_LIST;
     private List<DiscountBundle> discountBundles = Collections.EMPTY_LIST;
     private boolean hasPrefixes;
+    protected int ageVerified;
 
 
     @Override
@@ -1651,9 +1657,13 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         addItemModel(model, modifierGiud, addonsGuids, optionalGuids, price, quantity, false, unit);
     }
 
-    private void generateOrderId() {
+    private void generateOrderId(ItemExModel firstItemInOrder) {
         if (!creatingOrder) {
-            AddSaleOrderCommand.start(this, null, true, addOrderCallback);
+            if(firstItemInOrder != null && firstItemInOrder.getTmpAgeVerified() != 0) {
+                AddSaleOrderCommand.start(this, null, true, firstItemInOrder.getTmpAgeVerified(), addOrderCallback);
+            } else {
+                AddSaleOrderCommand.start(this, null, true, addOrderCallback);
+            }
             creatingOrder = true;
         }
     }
@@ -1791,7 +1801,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         if (this.orderGuid == null) {
             waitList.add(new SaleOrderItemModelWrapper(itemModel, modifierGiud, addonsGuids, optionalGuids, unit));
-            generateOrderId();
+            generateOrderId(model);
             isOrderGuid = false;
         }
         if (isPrepaidItemStart || isGiftCardReload) {
