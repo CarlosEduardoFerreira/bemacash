@@ -101,7 +101,8 @@ public class AddReturnOrderCommand extends AsyncCommand {
                 KitchenPrintStatus.PRINT,
                 PrintOrderToKdsCommand.KDSSendStatus.PRINT,
                 false,
-                BigDecimal.ZERO
+                BigDecimal.ZERO,
+                0
         );
 
         return succeeded();

@@ -57,6 +57,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
     private static final String TRANSACTION_FEE = "TRANSACTION_FEE";
 
     private static final String ON_REGISTER = "ON_REGISTER";
+    private static final String AGE_VERIFIED = "AGE_VERIFIED";
 
     @Override
     public SaleOrderModel toValues(JdbcJSONObject rs) throws JSONException {
@@ -83,6 +84,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
         if (!rs.has(KDS_SEND_STATUS)) ignoreFields.add(ShopStore.SaleOrderTable.KDS_SEND_STATUS);
         if (!rs.has(TRANSACTION_FEE)) ignoreFields.add(ShopStore.SaleOrderTable.TRANSACTION_FEE);
         if (!rs.has(ON_REGISTER)) ignoreFields.add(ShopStore.SaleOrderTable.ON_REGISTER);
+        if (!rs.has(AGE_VERIFIED)) ignoreFields.add(ShopStore.SaleOrderTable.AGE_VERIFIED);
 
         return new SaleOrderModel(
                 rs.getString(ID),
@@ -110,6 +112,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 _enum(PrintOrderToKdsCommand.KDSSendStatus.class, rs.getString(KDS_SEND_STATUS), PrintOrderToKdsCommand.KDSSendStatus.PRINT),
                 rs.getBigDecimal(TRANSACTION_FEE),
                 rs.getBoolean(ON_REGISTER),
+                rs.getInt(AGE_VERIFIED),
                 ignoreFields);
     }
 
@@ -159,7 +162,8 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                     .put(KITCHEN_PRINT_STATUS, order.kitchenPrintStatus)
                     .put(KDS_SEND_STATUS, order.kdsSendStatus)
                     .put(ON_REGISTER, order.orderOnRegister)
-                    .put(TRANSACTION_FEE, order.transactionFee);
+                    .put(TRANSACTION_FEE, order.transactionFee)
+                    .put(AGE_VERIFIED, order.ageVerified);
         } catch (JSONException e) {
             Logger.e("JSONException", e);
         }
@@ -191,6 +195,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 .add(KITCHEN_PRINT_STATUS, order.kitchenPrintStatus)
                 .add(TRANSACTION_FEE, order.transactionFee)
                 .add(ON_REGISTER, order.orderOnRegister)
+                .add(AGE_VERIFIED, order.ageVerified)
                 .build(JdbcFactory.getApiMethod(order));
     }
 
@@ -217,6 +222,7 @@ public class SaleOrdersJdbcConverter extends JdbcConverter<SaleOrderModel> {
                 .add(KITCHEN_PRINT_STATUS, order.kitchenPrintStatus)
                 .add(TRANSACTION_FEE, order.transactionFee)
                 .add(ON_REGISTER, order.orderOnRegister)
+                .add(AGE_VERIFIED, order.ageVerified)
                 .where(ID, order.guid)
                 .build(JdbcFactory.getApiMethod(order));
     }

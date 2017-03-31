@@ -218,6 +218,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
                 PrintOrderToKdsCommand.KDSSendStatus.PRINT,
                 BigDecimal.ZERO,
                 false,
+                0,
                 null
                 );
 

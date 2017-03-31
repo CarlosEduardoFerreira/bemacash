@@ -75,6 +75,8 @@ public class SaleOrderModel implements Serializable, IValueModel {
 
     public BigDecimal transactionFee;
 
+    public int ageVerified;
+
     private List<String> mIgnoreFields;
 
     public SaleOrderModel(String guid) {
@@ -108,7 +110,8 @@ public class SaleOrderModel implements Serializable, IValueModel {
                 _kdsSendStatus(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.KDS_SEND_STATUS)),
                 _decimal(c, c.getColumnIndex(SaleOrderView2.SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO),
                 _bool(c, c.getColumnIndex(SaleOrderTable.ON_REGISTER)),
-                null
+               c.getInt(c.getColumnIndex(SaleOrderView2.SaleOrderTable.AGE_VERIFIED)),
+               null
         );
     }
 
@@ -138,6 +141,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
                 _kdsSendStatus(c, c.getColumnIndex(SaleOrderTable.KDS_SEND_STATUS)),
                 _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE), BigDecimal.ZERO),
                 _bool(c, c.getColumnIndex(SaleOrderTable.ON_REGISTER)),
+                c.getInt(c.getColumnIndex(SaleOrderTable.AGE_VERIFIED)),
                 null
         );
     }
@@ -166,8 +170,9 @@ public class SaleOrderModel implements Serializable, IValueModel {
             KitchenPrintStatus kitchenPrintStatus,
             KDSSendStatus kdsSendStatus,
             boolean orderOnRegister,
-            BigDecimal transactionFee) {
-        this(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, definedOnHoldGuid, holdPhone, holdStatus, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentGuid, type, false, kitchenPrintStatus, kdsSendStatus, transactionFee, orderOnRegister, null);
+            BigDecimal transactionFee,
+            int ageVerified) {
+        this(guid, createTime, operatorGuid, shiftGuid, customerGuid, discount, discountType, orderStatus, holdName, definedOnHoldGuid, holdPhone, holdStatus, taxable, tmpTotalPrice, tmpTotalTax, tmpTotalDiscount, printSeqNum, registerId, parentGuid, type, false, kitchenPrintStatus, kdsSendStatus, transactionFee, orderOnRegister, ageVerified, null);
     }
 
     public SaleOrderModel(
@@ -196,6 +201,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
             KDSSendStatus kdsSendStatus,
             BigDecimal transactionFee,
             boolean onRegister,
+            int ageVerified,
             List<String> ignoreFields) {
 
         super();
@@ -232,6 +238,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
         this.kdsSendStatus = kdsSendStatus;
         this.transactionFee = transactionFee;
         this.orderOnRegister = onRegister;
+        this.ageVerified = ageVerified;
         this.mIgnoreFields = ignoreFields;
     }
 
@@ -333,6 +340,7 @@ public class SaleOrderModel implements Serializable, IValueModel {
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.KDS_SEND_STATUS)) values.put(SaleOrderTable.KDS_SEND_STATUS, kdsSendStatus.ordinal());
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.TRANSACTION_FEE)) values.put(SaleOrderTable.TRANSACTION_FEE, _decimal(transactionFee));
         if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.ON_REGISTER)) values.put(SaleOrderTable.ON_REGISTER, orderOnRegister);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(SaleOrderTable.AGE_VERIFIED)) values.put(SaleOrderTable.AGE_VERIFIED, ageVerified);
 
         return values;
     }

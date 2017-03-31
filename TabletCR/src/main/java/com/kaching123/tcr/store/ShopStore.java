@@ -909,6 +909,9 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER, defVal = "0")
         String ON_REGISTER = "on_register";
 
+        @Column(type = Column.Type.INTEGER, defVal = "0")
+        String AGE_VERIFIED = "age_verified";
+
     }
 
     public static final String TRIGGER_NAME_UNLINK_OLD_REFUND_UNITS = "trigger_unlink_old_refund_units";
