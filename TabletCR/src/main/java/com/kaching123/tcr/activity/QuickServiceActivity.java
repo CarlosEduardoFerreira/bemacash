@@ -224,6 +224,7 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
         if(model.ageVerification > 0 && saleOrderModel != null && saleOrderModel.getAgeVerified() > 0) {
             if (saleOrderModel.getAgeVerified() >= model.ageVerification) {
                 continueAddingItem(model, price, quantity, unit);
+                return;
             } else {
                 Toast.makeText(QuickServiceActivity.this, getString(R.string.age_verification_customer_must_be_older, model.ageVerification), Toast.LENGTH_LONG).show();
                 return;
