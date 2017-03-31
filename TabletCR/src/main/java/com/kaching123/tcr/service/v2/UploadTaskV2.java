@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder.UploadCommand;
@@ -56,6 +57,11 @@ public class UploadTaskV2 {
     }
 
     public boolean webApiUpload(ContentResolver cr, Context context) throws TransactionNotFinalizedException, SyncCommand.SyncLockedException {
+
+        if(!new AtomicUpload().hasInternetConnection()){
+            return false;
+        }
+
         if (TcrApplication.get().isTrainingMode())
             return true;
 
@@ -135,6 +141,11 @@ public class UploadTaskV2 {
     }
 
     public boolean employeeUpload(ContentResolver cr, Context context) throws SyncCommand.SyncLockedException {
+
+        if(!new AtomicUpload().hasInternetConnection()){
+            return false;
+        }
+
         if (TcrApplication.get().isTrainingMode())
             return true;
 

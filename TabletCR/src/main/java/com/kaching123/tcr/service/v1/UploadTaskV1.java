@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.rest.sync.v1.SingleSqlCommandV1;
 import com.kaching123.tcr.commands.rest.sync.v1.SyncApiV1;
 import com.kaching123.tcr.commands.rest.sync.v1.SyncUploadRequestBuilderV1;
@@ -35,6 +36,12 @@ public class UploadTaskV1 {
     }
 
     public boolean webApiUpload(ContentResolver cr) {
+
+        if(!new AtomicUpload().hasInternetConnection()){
+            return false;
+        }
+
+
         if (TcrApplication.get().isTrainingMode())
             return true;
 

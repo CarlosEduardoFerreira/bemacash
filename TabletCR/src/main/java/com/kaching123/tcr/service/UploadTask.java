@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.BackOfficeSyncCommand;
 import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand;
 import com.kaching123.tcr.commands.rest.RestCommand;
@@ -105,17 +107,22 @@ public class UploadTask implements Runnable {
 
     private ExecuteResult execute(final boolean fireEvents, final boolean lockOnTrainingMode) {
         synchronized (UploadTask.class) {
-
+            Log.d("BemaCarl10","UploadTask.execute --------------- Start --------------- ");
             Logger.d("UploadTask EXECUTE");
 
-            if (!Util.isNetworkAvailable(context)) {
-
+            if(!new AtomicUpload().hasInternetConnection()){
                 new BackOfficeSyncCommand().adjustSyncTime();
-
+                onUploadFailure(fireEvents);
+                return new ExecuteResult(false, false);
+            }
+            /*
+            if (!Util.isNetworkAvailable(context)) {
+                Log.d("BemaCarl10","UploadTask.execute: if (!Util.isNetworkAvailable(context)) {");
                 Logger.e("UploadTask error: NO CONNECTION");
                 onUploadFailure(fireEvents);
                 return new ExecuteResult(false, false);
             }
+            /**/
 
             if (fireEvents)
                 fireStartEvent(context);
@@ -185,6 +192,7 @@ public class UploadTask implements Runnable {
             }
 
             Logger.d("UploadTask END");
+            Log.d("BemaCarl10","UploadTask.execute --------------- End  --------------- ");
             return new ExecuteResult(!errorsOccurred, false);
         }
     }

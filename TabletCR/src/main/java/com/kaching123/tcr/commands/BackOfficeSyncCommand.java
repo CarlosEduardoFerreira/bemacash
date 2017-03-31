@@ -21,12 +21,17 @@ public class BackOfficeSyncCommand {
 
     public void adjustSyncTime(){
 
-        Integer localSyncDefTime = mContext.getResources().getInteger(R.integer.sync_time_entries_def_val);
-        boolean gotIt = new AtomicUpload().hasInternetConnection(mContext);
+        Integer syncTimeDefault     = mContext.getResources().getInteger(R.integer.sync_time_entries_def_val);
+        Integer syncTimeActual      = TcrApplication.get().getShopPref().syncPeriod().get();
+        Integer syncTimeLocalSync   = mContext.getResources().getInteger(R.integer.local_sync_time_def_val);
+
+        Integer newTime = syncTimeActual.equals(syncTimeLocalSync) ? syncTimeDefault : syncTimeActual ;
+
+        boolean gotIt = new AtomicUpload().hasInternetConnection();
         if(gotIt && OfflineCommandsService.localSync) {
-            localSyncDefTime = mContext.getResources().getInteger(R.integer.local_sync_time_def_val);
+            newTime = mContext.getResources().getInteger(R.integer.local_sync_time_def_val);
         }
-        int mins = Integer.parseInt(localSyncDefTime.toString());
+        int mins = Integer.parseInt(newTime.toString());
         Log.d("BemaCarl8", "BackOfficeSyncCommand.adjustSyncTime.mins: " + mins);
         TcrApplication.get().getShopPref().syncPeriod().put(mins);
         OfflineCommandsService.scheduleSyncAction(mContext);

@@ -11,6 +11,7 @@ import android.util.Log;
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand;
 import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand.EndUncompletedTransactionsResult;
 import com.kaching123.tcr.commands.rest.sync.AuthResponse;
@@ -296,6 +297,11 @@ public class LoginCommand extends GroundyTask {
     }
 
     private RemoteLoginResult webLogin(String registerSerial, String userName, String password) {
+
+        if(!new AtomicUpload().hasInternetConnection()){
+            return null;
+        }
+
         TcrApplication app = TcrApplication.get();
         SyncApi api = app.getRestAdapter().create(SyncApi.class);
         try {
