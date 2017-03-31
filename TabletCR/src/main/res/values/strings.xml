@@ -2116,7 +2116,7 @@
     <string name="defined_on_hold_busy">This place already has on hold order, please choose another place</string>
     <string name="on_hold_empty_place">Place has no order</string>
     <string name="grand_write_settings_permission_button_text">OK</string>
-    <string name="grand_write_settings_permission_text_view_content">App have no permission to write system settings. \nPlease grand this permission and press back.</string>
+    <string name="grand_write_settings_permission_text_view_content">Bemacash needs write permission. \nPlease grant this permission and press back.</string>
     <string name="on_hold_in_process_msg">You can\'t get this order. Order in process</string>
 
     <!-- local sync starts -->
