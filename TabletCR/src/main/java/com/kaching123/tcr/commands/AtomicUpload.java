@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.OfflineCommandsService;
@@ -96,7 +97,8 @@ public class AtomicUpload {
 
 
     public boolean hasInternetConnection(){
-        HttpGet httpGet = new HttpGet("http://www.google.com");
+        String servidorBemacash = mContext.getResources().getString(R.string.api_server_url);
+        HttpGet httpGet = new HttpGet(servidorBemacash);
         HttpParams httpParameters = new BasicHttpParams();
         int timeoutConnection = 2000;
         HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
