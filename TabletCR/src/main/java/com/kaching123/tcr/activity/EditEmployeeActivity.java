@@ -400,15 +400,17 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         DecimalFormat formatar = new DecimalFormat("###,###,###,###,###.##");
         formatar.setMinimumFractionDigits(2);
 
-        BigDecimal hR = hourlyRate.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(hourlyRate.getText().toString());
-        String hRate1 = formatar.format(initEmployeeModel.hRate);
-        String hRate2 = formatar.format(hR);
+        BigDecimal hR1 = initEmployeeModel.hRate == null ? BigDecimal.ZERO : initEmployeeModel.hRate;
+        BigDecimal hR2 = hourlyRate.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(hourlyRate.getText().toString());
+        String hRate1 = formatar.format(hR1);
+        String hRate2 = formatar.format(hR2);
 
         statusChanged = statusValue != status.getSelectedItemId();
 
-        BigDecimal co = commissions.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(commissions.getText().toString());
-        String commission1 = formatar.format(initEmployeeModel.commission);
-        String commission2 = formatar.format(co);
+        BigDecimal co1 = initEmployeeModel.commission  == null ? BigDecimal.ZERO : initEmployeeModel.commission;
+        BigDecimal co2 = commissions.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(commissions.getText().toString());
+        String commission1 = formatar.format(co1);
+        String commission2 = formatar.format(co2);
 
         presedChanged = presedValue != preset.getSelectedItemId();
 
