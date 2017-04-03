@@ -400,13 +400,15 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         DecimalFormat formatar = new DecimalFormat("###,###,###,###,###.##");
         formatar.setMinimumFractionDigits(2);
 
+        BigDecimal hR = hourlyRate.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(hourlyRate.getText().toString());
         String hRate1 = formatar.format(initEmployeeModel.hRate);
-        String hRate2 = formatar.format(new BigDecimal(hourlyRate.getText().toString()));
+        String hRate2 = formatar.format(hR);
 
         statusChanged = statusValue != status.getSelectedItemId();
 
+        BigDecimal co = commissions.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(commissions.getText().toString());
         String commission1 = formatar.format(initEmployeeModel.commission);
-        String commission2 = formatar.format(new BigDecimal(commissions.getText().toString()));
+        String commission2 = formatar.format(co);
 
         presedChanged = presedValue != preset.getSelectedItemId();
 
@@ -455,7 +457,8 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
             Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.zip"); return true;
         }
         if(!hRate1.equals(hRate2)) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.hRate"); return true;
+            Log.d("BemaCarl3", "EditEmployeeActivity.employeeHasChanges.hourlyRate: |" + hRate1 + "|" + hRate2 + "|");
+            return true;
         }
         if(initEmployeeModel.tipsEligible != tipsEligible.isChecked()) {
             Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.tipsEligible"); return true;

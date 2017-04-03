@@ -16,7 +16,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ActionProvider;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -449,8 +451,11 @@ public class SuperBaseActivity extends SerialPortScannerBaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra(LocalSyncHelper.MESSAGE);
-            Toast.makeText(SuperBaseActivity.this, message, Toast.LENGTH_LONG).show();
+            Toast toast = Toast.makeText(SuperBaseActivity.this, message, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.TOP| Gravity.CENTER_HORIZONTAL, 0, 0);
+            toast.show();
             Logger.d(message);
+            Log.d("BemaCarl","SuperBaseActivity.localSyncReceiver.onReceive.message: " + message);
         }
     };
 
