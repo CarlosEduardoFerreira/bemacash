@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
@@ -266,6 +267,7 @@ public class AddItem2SaleOrderCommand extends AsyncCommand {
         if (editUnitResult != null)
             batch.add(editUnitResult.getSqlCmd());
         batch.add(updateSaleOrderKitchenPrintStatusResult.getSqlCmd());
+        Log.d("BemaCarl6","AddItem2SaleOrderCommand.createSqlCommand.item.itemGuid: " + item.itemGuid);
         return batch;
     }
 

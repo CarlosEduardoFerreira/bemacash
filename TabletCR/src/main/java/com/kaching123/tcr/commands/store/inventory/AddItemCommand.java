@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.kaching123.tcr.InventoryHelper;
 import com.kaching123.tcr.Logger;
@@ -87,6 +88,7 @@ public class AddItemCommand extends AsyncCommand {
             batch.add(JdbcFactory.getConverter(movementModel)
                     .insertSQL(movementModel, getAppCommandContext()));
         }
+        Log.d("BemaCarl6","AddItemCommand.createSqlCommand.item.description." + item.description);
         new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
         return batch;
     }

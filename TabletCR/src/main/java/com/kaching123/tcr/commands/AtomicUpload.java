@@ -98,6 +98,7 @@ public class AtomicUpload {
 
     public boolean hasInternetConnection(){
         String servidorBemacash = mContext.getResources().getString(R.string.api_server_url);
+        Log.d("BemaCarl7", "AtomicUpload.hasInternetConnection.servidorBemacash: " + servidorBemacash);
         HttpGet httpGet = new HttpGet(servidorBemacash);
         HttpParams httpParameters = new BasicHttpParams();
         int timeoutConnection = 2000;

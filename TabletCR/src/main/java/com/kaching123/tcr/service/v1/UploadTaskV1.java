@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
@@ -37,6 +38,7 @@ public class UploadTaskV1 {
 
     public boolean webApiUpload(ContentResolver cr) {
 
+        Log.d("BemaCarl","UploadTaskV1.webApiUpload.cr: " + cr);
         if(!new AtomicUpload().hasInternetConnection()){
             return false;
         }
@@ -84,6 +86,9 @@ public class UploadTaskV1 {
     }
 
     private boolean try2Upload(SyncApiV1 api, ContentResolver cr, ArrayList<UploadCommandV1> commands) {
+
+        Log.d("BemaCarl","UploadTaskV1.try2Upload.cr: " + cr);
+
         TcrApplication app = TcrApplication.get();
         EmployeeModel employeeModel = app.getOperator();
         if (employeeModel == null) {

@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.model.ApplicationVersion;
@@ -67,7 +68,9 @@ public class Util {
 
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+        boolean conn = cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+        Log.d("BemaCarl7", "Util.isNetworkAvailable.conn: " + conn);
+        return conn;
     }
 
     public static int toInt(String text, int def) {

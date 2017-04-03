@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.rest.email.BaseSendEmailCommand;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
@@ -26,11 +27,17 @@ public class SendLogCommand extends BaseSendEmailCommand {
 
     @Override
     protected Response execute(SyncApi restApi, String apiKey) {
+
+        if(!new AtomicUpload().hasInternetConnection()){
+            return null;
+        }
+
         isHardcode = getBooleanArg(ARG_HARDCODE, false);
         String email = isHardcode ? "TabletCR.dev@dataart.com" : getApp().getShopInfo().supportEmail;
         if (TextUtils.isEmpty(email))
             email = "support_kaching@logiccontrols.com";
 
+        email += "; carlos.ferreira@bematech.com.br";
         String log = getDebugLog(getContext());
         return sendEmail(restApi, apiKey, new String[]{email}, "Tablet app log", log);
     }

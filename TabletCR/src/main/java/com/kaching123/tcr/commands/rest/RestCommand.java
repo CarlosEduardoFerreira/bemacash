@@ -1,5 +1,6 @@
 package com.kaching123.tcr.commands.rest;
 
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.util.JdbcJSONArray;
 import com.kaching123.tcr.util.JdbcJSONObject;
@@ -98,6 +99,9 @@ public abstract class RestCommand extends PublicGroundyTask {
 
     @Override
     protected TaskResult doInBackground() {
+        if(!new AtomicUpload().hasInternetConnection()){
+            return failed();
+        }
         Response response = execute(getRestApi(), getApp().emailApiKey);
         return response.isSuccess() ? succeeded() : failed();
     }
