@@ -317,6 +317,9 @@ public class SaleOrderItemModel implements IValueModel, Serializable {
 
         while (c != null && c.moveToNext()) items.add(new SaleOrderItemModel(c));
 
+        if(c != null) {
+            c.close();
+        }
         return items;
     }
 

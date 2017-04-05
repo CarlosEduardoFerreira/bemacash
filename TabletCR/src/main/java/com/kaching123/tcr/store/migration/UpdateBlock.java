@@ -273,6 +273,8 @@ public class UpdateBlock {
         db.execSQL("ALTER TABLE sale_order ADD COLUMN age_verified INTEGER");
 
         db.execSQL("ALTER TABLE item ADD COLUMN age_verification INTEGER");
+
+        db.execSQL("ALTER TABLE item_movement ADD COLUMN order_guid TEXT");
         // payment transaction
         //if(!checkIfColumnDBExist(db, "payment_transaction", "last_four")) {
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT");

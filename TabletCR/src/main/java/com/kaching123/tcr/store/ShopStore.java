@@ -667,6 +667,9 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String ITEM_GUID = "item_guid";
 
+        @Column(type = Column.Type.TEXT)
+        String ORDER_GUID = "order_guid";
+
         @NotNull
         @Column(type = Column.Type.TEXT)
         String QTY = "qty";
@@ -4592,15 +4595,15 @@ public abstract class ShopStore {
 
                         + SELECT + ITEM_GUID + coma + QUANTITY + coma + "\'ITEM_MODIFIER_ITEM\'" + AS + SOURCE + FROM + "("
                         + SELECT + T1 + dot + SaleItemTable.SALE_ITEM_GUID + coma + SaleItemTable.ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma + SaleItemTable.QUANTITY + multiply + MOD_QTY + AS + QUANTITY
-                        + coma + MOD_ID + AS + ITEM_GUID + FROM + SaleItemTable.TABLE_NAME + space + T1
+                        + coma + MOD_ID + AS + ITEM_GUID +  coma + IBemaSyncTable.IS_DELETED + FROM + SaleItemTable.TABLE_NAME + space + T1
                         + JOIN + "(" + SELECT + SaleAddonTable.ITEM_GUID + coma + SaleAddonTable.CHILD_ITEM_ID + AS + MOD_ID + coma + SaleAddonTable.CHILD_ITEM_QTY + AS + MOD_QTY + FROM + SaleAddonTable.TABLE_NAME + ")" + T2
                         + ON + T2 + dot + SaleAddonTable.ITEM_GUID + equals + T1 + dot + SaleItemTable.SALE_ITEM_GUID + AND + MOD_ID + IS + NOT + NULL
-                        + WHERE + T1 + dot + SaleItemTable.ORDER_GUID + " = ?)" + TT1 + UNION + ALL
+                        + WHERE + T1 + dot + IBemaSyncTable.IS_DELETED + " = 0" + AND + T1 + dot + SaleItemTable.ORDER_GUID + " = ?)" + TT1 + UNION + ALL
 
 
                         + SELECT + ITEM_GUID + coma + QUANTITY + coma + "\'ITEM\'" + AS + SOURCE + FROM + "("
-                        + SELECT + SaleItemTable.ITEM_GUID + AS + ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma + SaleItemTable.QUANTITY + AS + QUANTITY + FROM + SaleItemTable.TABLE_NAME + space + T1
-                        + WHERE + T1 + dot + SaleItemTable.ORDER_GUID + " = ?)" + TT2 + UNION + ALL
+                        + SELECT + SaleItemTable.ITEM_GUID + AS + ITEM_GUID + coma + SaleItemTable.ORDER_GUID + coma + SaleItemTable.QUANTITY + AS + QUANTITY + coma + IBemaSyncTable.IS_DELETED + FROM + SaleItemTable.TABLE_NAME + space + T1
+                        + WHERE + T1 + dot + IBemaSyncTable.IS_DELETED + " = 0" + AND + T1 + dot + SaleItemTable.ORDER_GUID + " = ?)" + TT2 + UNION + ALL
 
 
                         + SELECT + ITEM_GUID + coma + QUANTITY + coma + "\'ITEM_COMPOSER_ITEM\'" + AS + SOURCE + FROM + "("

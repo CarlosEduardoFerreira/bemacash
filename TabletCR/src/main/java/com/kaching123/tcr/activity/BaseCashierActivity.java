@@ -84,6 +84,7 @@ import com.kaching123.tcr.commands.store.saleorder.RevertSuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand.BaseSuccessOrderCommandCallback;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderItemMovementsCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderOnRegisterCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand.TaxCallback;
@@ -1385,25 +1386,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         OnHoldListDialogFragment.show(this, this.orderGuid, this.orderTitle, OnHoldListDialogFragment.HoldOnAction.GET_ORDER, new IHoldListener() {
             @Override
             public void onSwap2Order(final String holdName, final String holdPhone, final OnHoldStatus status, final String nextOrderGuid, final String definedOnHoldGuid) {
-                ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, nextOrderGuid, ItemsNegativeStockTrackingCommand.ItemType.HOLD_ON,
-                        new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
-                            @Override
-                            protected void handleSuccess(boolean result) {
-                                if(!result){
-                                    Toast.makeText(BaseCashierActivity.this, R.string.item_qty_lower_zero_holdon, Toast.LENGTH_SHORT).show();
-                                    HoldOrderCommand.start(BaseCashierActivity.this, new BaseHoldOrderCallback() {
-                                        @Override
-                                        protected void onSuccess() {
-                                            updateHoldButton();
-                                            supportInvalidateOptionsMenu();
-                                        }
-                                    }, nextOrderGuid, holdName, holdPhone, definedOnHoldGuid, status, HoldOrderCommand.HoldOnAction.REMOVE);
-                                    return;
-                                }
-                                UpdateSaleOrderOnRegisterCommand.start(getApplicationContext(), nextOrderGuid, true);
-                                setOrderGuid(nextOrderGuid, true);
-                            }
-                        });
+                UpdateSaleOrderOnRegisterCommand.start(getApplicationContext(), nextOrderGuid, true);
+                setOrderGuid(nextOrderGuid, true);
             }
         });
     }
@@ -2306,6 +2290,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         if (!TextUtils.isEmpty(orderGuid)) {
             UpdateSaleOrderOnRegisterCommand.start(getApplicationContext(), orderGuid, false);
             HoldOrderCommand.start(BaseCashierActivity.this, holdOrderCallback, orderGuid, holdName, holdPhone, definedOnHoldGuid, status, HoldOrderCommand.HoldOnAction.ADD);
+            UpdateSaleOrderItemMovementsCommand.start(BaseCashierActivity.this, orderGuid);
         }
         setOrderGuid(nextOrderGuid, true);
     }

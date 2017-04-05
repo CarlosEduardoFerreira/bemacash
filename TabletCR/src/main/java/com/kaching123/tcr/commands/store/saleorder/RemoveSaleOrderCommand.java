@@ -37,6 +37,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
+import static com.kaching123.tcr.model.ContentValuesUtil._orderStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._sum;
 
 public class RemoveSaleOrderCommand extends AsyncCommand {
@@ -53,6 +54,7 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
 
     private String orderId;
     private String orderName;
+    private OrderStatus orderStatus;
     private OrderType orderType;
     private String prepaidOrderGuid;
     private boolean skipPrint;
@@ -76,6 +78,13 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
             }
         }
 
+        if (orderStatus == OrderStatus.HOLDON) {
+            TaskResult result = new UpdateSaleOrderItemMovementsCommand().startSync(getContext(), orderId, true, getAppCommandContext());
+            if (isFailed(result)) {
+                return failed();
+            }
+        }
+
         if (!removeItems()) {
             return failed();
         }
@@ -96,13 +105,14 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
 
     private void loadOrderInfo(){
         Cursor orderCursor = ProviderAction.query(URI_ORDER)
-                .projection(SaleOrderTable.DEFINED_ON_HOLD_ID, SaleOrderTable.HOLD_NAME)
+                .projection(SaleOrderTable.DEFINED_ON_HOLD_ID, SaleOrderTable.HOLD_NAME, SaleOrderTable.STATUS)
                 .where(SaleOrderTable.GUID + " = ?", orderId)
                 .perform(getContext());
         try {
             if (orderCursor.moveToFirst()) {
                 String definedOnHoldGuid = orderCursor.getString(0);
                 orderName = orderCursor.getString(1);
+                orderStatus =  _orderStatus(orderCursor, orderCursor.getColumnIndex(ShopStore.SaleOrderTable.STATUS));
                 if (!TextUtils.isEmpty(definedOnHoldGuid)) {
                     loadDefinedOnHoldName(definedOnHoldGuid);
                 }
