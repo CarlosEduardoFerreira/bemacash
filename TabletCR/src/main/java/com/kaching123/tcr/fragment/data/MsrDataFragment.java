@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.commands.AtomicUpload;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -81,6 +82,12 @@ public class MsrDataFragment extends Fragment {
 
         @Override
         protected String doInBackground(Void... params) {
+
+            if(!new AtomicUpload().hasInternetConnection()){
+                state = State.DISCONNECTED;
+                return null;
+            }
+
             Logger.d("[MSR] doInBackground %s", getActivity());
             try{
                 myUniMagReader = new uniMagReader(uniMagReaderCallback, getActivity());

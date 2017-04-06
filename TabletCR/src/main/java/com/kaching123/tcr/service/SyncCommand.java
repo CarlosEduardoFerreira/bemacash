@@ -15,6 +15,7 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackSetAutomaticBatchCloseCommand;
 import com.kaching123.tcr.commands.payment.blackstone.payment.BlackUpdateAutomaticHourToCloseBatchCommand;
 import com.kaching123.tcr.commands.payment.pax.blackstone.PaxBlackstoneMIDownloadCommand;
@@ -206,6 +207,11 @@ public class SyncCommand implements Runnable {
 
     @Override
     public void run() {
+
+        if(!new AtomicUpload().hasInternetConnection()){
+            return;
+        }
+
         Logger.d("SyncCommand start");
         if (!getApp().isUserLogin()) {
             Logger.d("SyncCommand end: NO USER");

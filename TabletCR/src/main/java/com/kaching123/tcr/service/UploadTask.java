@@ -6,20 +6,19 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.AtomicUpload;
+import com.kaching123.tcr.commands.BackOfficeSyncCommand;
 import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand;
-import com.kaching123.tcr.commands.local.EndUncompletedTransactionsCommand.EndUncompletedTransactionsResult;
 import com.kaching123.tcr.commands.rest.RestCommand;
 import com.kaching123.tcr.commands.rest.sync.DBVersionCheckCommand;
 import com.kaching123.tcr.commands.rest.sync.SyncApi;
 import com.kaching123.tcr.commands.rest.sync.SyncUploadRequestBuilder;
-import com.kaching123.tcr.commands.support.SendLogCommand;
 import com.kaching123.tcr.notification.NotificationHelper;
-import com.kaching123.tcr.pref.ShopPref_;
-import com.kaching123.tcr.service.SyncCommand.SyncLockedException;
 import com.kaching123.tcr.service.v1.UploadTaskV1;
 import com.kaching123.tcr.service.v2.UploadTaskV2;
 import com.kaching123.tcr.store.ShopProvider;
@@ -108,14 +107,29 @@ public class UploadTask implements Runnable {
 
     private ExecuteResult execute(final boolean fireEvents, final boolean lockOnTrainingMode) {
         synchronized (UploadTask.class) {
+            Log.d("BemaCarl10","UploadTask.execute --------------- Start --------------- ");
             Logger.d("UploadTask EXECUTE");
+
+            if(!new AtomicUpload().hasInternetConnection()){
+                new BackOfficeSyncCommand().adjustSyncTime();
+                onUploadFailure(fireEvents);
+                return new ExecuteResult(false, false);
+            }
+            /*
+            if (!Util.isNetworkAvailable(context)) {
+                Log.d("BemaCarl10","UploadTask.execute: if (!Util.isNetworkAvailable(context)) {");
+                Logger.e("UploadTask error: NO CONNECTION");
+                onUploadFailure(fireEvents);
+                return new ExecuteResult(false, false);
+            }
+            /**/
 
             if (fireEvents)
                 fireStartEvent(context);
 
             boolean hadInvalidUploadTransaction = false;
             if (isManual) {
-                EndUncompletedTransactionsResult result = new EndUncompletedTransactionsCommand().sync(context);
+                EndUncompletedTransactionsCommand.EndUncompletedTransactionsResult result = new EndUncompletedTransactionsCommand().sync(context);
                 if (hadInvalidUploadTransaction = result.hadInvalidUploadTransaction) {
                     Logger.e("UploadTask: manual upload, had invalid upload transactions");
                     if (fireEvents)
@@ -123,27 +137,21 @@ public class UploadTask implements Runnable {
                 }
             }
 
-            if (!Util.isNetworkAvailable(context)) {
-                Logger.e("UploadTask error: NO CONNECTION");
-                onUploadFailure(fireEvents);
-                return new ExecuteResult(false, hadInvalidUploadTransaction);
-            }
-
             NotificationHelper.addUploadNotification(context);
 
-            ShopPref_ pref = TcrApplication.get().getShopPref();
             boolean errorsOccurred = false;
             String errorMessage = null;
-            boolean isV1CommandsSent = pref.isV1CommandsSent().getOr(false);
-            if (lockOnTrainingMode)
+            boolean isV1CommandsSent = TcrApplication.get().getShopPref().isV1CommandsSent().getOr(false);
+            if (lockOnTrainingMode) {
                 TcrApplication.get().lockOnTrainingMode();
+            }
             try {
                 ContentResolver cr = context.getContentResolver();
                 if (!isV1CommandsSent) {
                     Logger.d("Send V1 commands");
                     errorsOccurred = !uploadTaskV1Adapter.webApiUpload(cr);
                     isV1CommandsSent = !errorsOccurred && uploadTaskV1Adapter.getV1CommandsCount(cr) == 0;
-                    pref.isV1CommandsSent().put(isV1CommandsSent);
+                    TcrApplication.get().getShopPref().isV1CommandsSent().put(isV1CommandsSent);
                 }
                 if (isV1CommandsSent) {
                     errorsOccurred = !uploadTaskV2Adapter.webApiUpload(cr, context);
@@ -158,32 +166,34 @@ public class UploadTask implements Runnable {
                 if (fireEvents)
                     fireCompleteEvent(context, false);
                 return new ExecuteResult(false, hadInvalidUploadTransaction);
-            } catch (SyncLockedException e) {
-                Logger.e("UploadTask: sync is currently locked", e);
-                errorsOccurred = true;
-                errorMessage = context.getString(R.string.error_message_sync_locked);
             } catch (Exception e) {
                 Logger.e("UploadTask error", e);
                 errorsOccurred = true;
+
             } finally {
-                if (lockOnTrainingMode)
+                if (lockOnTrainingMode) {
                     TcrApplication.get().unlockOnTrainingMode();
+                }
             }
 
             if (errorsOccurred) {
-                if (TextUtils.isEmpty(errorMessage))
+                if (TextUtils.isEmpty(errorMessage)) {
                     NotificationHelper.showUploadErrorNotification(context);
-                else
+
+                } else {
                     NotificationHelper.showUploadErrorNotification(context, errorMessage);
+                }
                 onUploadFailure(fireEvents);
-                SendLogCommand.start(context);
+
             } else {
                 NotificationHelper.removeUploadNotification(context);
                 onUploadSuccess(fireEvents);
                 sendSyncSuccessful();
             }
+
             Logger.d("UploadTask END");
-            return new ExecuteResult(!errorsOccurred, hadInvalidUploadTransaction);
+            Log.d("BemaCarl10","UploadTask.execute --------------- End  --------------- ");
+            return new ExecuteResult(!errorsOccurred, false);
         }
     }
 

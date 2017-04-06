@@ -36,22 +36,19 @@ public class UpdateSaleOrderOnRegisterCommand extends UpdateSaleOrderCommand {
                 .where(ShopStore.SaleOrderTable.GUID + " = ?", guid)
                 .where(ShopStore.SaleOrderTable.STATUS + " = ?", OrderStatus.HOLDON.ordinal())
                 .perform(getContext());
-        try {
-            if(c.getCount() > 0) {
-                SaleOrderModel order = null;
-                if (c.moveToFirst()) {
-                    order = new SaleOrderModel(c);
-                }
-                if (order == null)
-                    return null;
 
-                order.setOrderOnRegister(onRegister);
-                return order;
-            }
-            return null;
-        } finally {
-            c.close();
+        SaleOrderModel order = null;
+        if (c.moveToFirst()) {
+            order = new SaleOrderModel(c);
         }
+        c.close();
+
+        if (order == null)
+            return null;
+
+        order.setOrderOnRegister(onRegister);
+        return order;
+
     }
 
     public static void start(Context context, String orderGuid, boolean onRegister) {

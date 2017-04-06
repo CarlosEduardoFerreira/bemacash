@@ -76,9 +76,9 @@ public class AddSaleOrderCommand extends AsyncCommand {
         Log.d("BemaCarl6","AddSaleOrderCommand.createSqlCommand.order." + order.orderStatus);
         BatchSqlCommand batch = batchInsert(order);
         batch.add(JdbcFactory.getConverter(order).insertSQL(order, getAppCommandContext()));
-
-        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
-
+        if(!order.orderStatus.equals(OrderStatus.ACTIVE)) {
+            new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+        }
         return batch;
     }
 

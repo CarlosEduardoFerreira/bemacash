@@ -32,6 +32,8 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.DashboardActivity;
+import com.kaching123.tcr.commands.AtomicUpload;
+import com.kaching123.tcr.commands.BackOfficeSyncCommand;
 import com.kaching123.tcr.model.ApplicationVersion;
 import com.kaching123.tcr.service.LocalSyncHelper;
 import com.kaching123.tcr.service.OfflineCommandsService;
@@ -236,13 +238,8 @@ public class BroadcastDiscoverer extends Thread {
                                     LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
 
                                     Log.d("BemaCarl","BroadcastDiscover.listenForResponses------------ SetSyncTime Start  ------------");
-                                    //new SetupSyncTime().setLocalSyncTime();
                                     OfflineCommandsService.localSync = true;
-                                    Integer LocalSyncDefTime = mContext.getResources().getInteger(R.integer.local_sync_time_def_val);
-                                    int mins = Integer.parseInt(LocalSyncDefTime.toString());
-                                    Log.d("BemaCarl","BroadcastDiscover.listenForResponses.mins: " + mins);
-                                    app.getShopPref().syncPeriod().put(mins);
-                                    OfflineCommandsService.scheduleSyncAction(mContext);
+                                    new BackOfficeSyncCommand().adjustSyncTime();
                                     Log.d("BemaCarl","BroadcastDiscover.listenForResponses------------ SetSyncTime End   ------------");
                                 }
 
