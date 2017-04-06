@@ -2190,7 +2190,7 @@
     <string name="tickets_valid_day" formatted="false">%s Day</string>
     <string name="tickets_valid_days" formatted="false">%s Days</string>
     <string name="open_shift_description">Description</string>
-    <string name="new_bema_found">New Bemacash found: %s</string>
+    <string name="new_bema_found">Sync Locally Bemacash: %s</string>
     <string name="ticket_emission">Emissão: %s</string>
     <string name="ticket_order">Order n. %s</string>
     <string name="disable_local_sync">Disable local sync</string>
@@ -2206,7 +2206,7 @@
     <string name="pwd_incorrect">Password incorrect!</string>
     <string name="you_have_table_max">You have reached the maximum tables number</string>
     <string name="server_hour">Server hour</string>
-    <string name="bemacashs">Bemacashs</string>
+    <string name="bemacashs">Bemacash</string>
     <string name="missing_data">Missing data</string>
     <string name="local_sync_device_status">Status</string>
     <string name="local_sync_device_status_online">Online</string>
@@ -2236,6 +2236,26 @@
     <string name="wrong_month_format">Month format is wrong should be from 1 to 12</string>
     <string name="wrong_day_format">Day format is wrong should be from 1 to 31</string>
     <string name="age_verification_customer_must_be_older" formatted = "false">Must be %d years old to purchase this item</string>
+
+    <string name="gc_confirmation_dlg_title">Lost data determinator</string>
+    <string name="gc_confirmation_dlg_title_seq">Force FM number increase</string>
+
+    <string name="gc_confirmation_dlg_msg">Warning! You are about to perform the local data loss check. This won\'t impact anything! Upon the start of procedure, make sure you have synchronized successfully. Should you receive positive result, you might attempt step 2 - data recovery. Would you like to proceed?</string>
+    <string name="gc_confirmation_dlg_msg_push">We have found some lost data. Would you like to proceed pushing it to the server?</string>
+    <string name="gc_confirmation_dlg_msg_seq">Warning! You are about to perform the order number increase</string>
+
+    <string name="wait_processing">Processing...</string>
+    <string name="cashier_action_gc">Force upload</string>
+    <string name="action_force_sync">Force sync</string>
+    <string name="cashier_action_backup">Sent data backup</string>
+    <string name="show_bemacashs">Show local Bemacashs</string>
+    <string name="local_bemacashs">Status Local Sync</string>
+    <string name="cashier_action_seqc">SEQ - action</string>
+
+    <string name="clear_local_sync_data">Clear Missing</string>
+        <string name="clear_local_sync_data_confirm">Are you sure you want clear all missing data of the local sync?\n\nOnly do this if you are sure all Bemacashs are synchronized.</string>
+
+
     <!-- local sync ends -->
 
 

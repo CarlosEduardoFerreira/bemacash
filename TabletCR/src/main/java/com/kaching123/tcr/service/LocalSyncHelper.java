@@ -159,8 +159,8 @@ public class LocalSyncHelper {
         TcrApplication.get().getLanDevices().remove(new BroadcastInfo(serial));
     }
 
-    public static void setWifiSocketService(WifiSocketService wifiSocketService) {
-        LocalSyncHelper.wifiSocketService = wifiSocketService;
+    public void setWifiSocketService(WifiSocketService wifiSocketService) {
+        this.wifiSocketService = wifiSocketService;
 
         sqlHelper = new SqlHelper(wifiSocketService);
         mItemMovementHelper = new RecalcItemMovementTable(wifiSocketService, sqlHelper);
@@ -232,16 +232,16 @@ public class LocalSyncHelper {
 
                 if (!runningCommandsSerial.contains(commandRunner.request.serial)) runningCommandsSerial.add(commandRunner.request.serial);
 
-                List<String> commandWithSuccess = new ArrayList<>();
+                List<Integer> commandWithSuccess = new ArrayList<>();
                 commandRunner.request.commandsSend = sortCommandsMap(commandRunner.request.commandsSend);
 
                 SQLiteDatabase db = sqlHelper.getWritableDatabase();
                 db.beginTransaction();
                 try {
-                    for (String guid : commandRunner.request.commandsSend.keySet()) {
-                        RunCommandsMsg.SqlCommand command = commandRunner.request.commandsSend.get(guid);
+                    for (Integer id : commandRunner.request.commandsSend.keySet()) {
+                        RunCommandsMsg.SqlCommand command = commandRunner.request.commandsSend.get(id);
                         if (runCommand(db, command)) {
-                            commandWithSuccess.add(guid);
+                            commandWithSuccess.add(id);
                         } else {
                             checkRetryCommands(commandRunner, commandWithSuccess);
                         }
@@ -303,8 +303,8 @@ public class LocalSyncHelper {
         }
     }
 
-    private static void checkRetryCommands(CommandRequest commandRequest, List<String> commandWithSuccess){
-        for (String command : commandWithSuccess){
+    private static void checkRetryCommands(CommandRequest commandRequest, List<Integer> commandWithSuccess){
+        for (Integer command : commandWithSuccess){
             commandRequest.request.commandsSend.remove(command);
         }
 
@@ -670,8 +670,8 @@ public class LocalSyncHelper {
 
 
 
-    private static Map<String, RunCommandsMsg.SqlCommand> sortCommandsMap(Map<String, RunCommandsMsg.SqlCommand> commandsSend) {
-        List<String> mapKeys = new ArrayList<>(commandsSend.keySet());
+    private static Map<Integer, RunCommandsMsg.SqlCommand> sortCommandsMap(Map<Integer, RunCommandsMsg.SqlCommand> commandsSend) {
+        List<Integer> mapKeys = new ArrayList<>(commandsSend.keySet());
         List<RunCommandsMsg.SqlCommand> mapValues = new ArrayList<>(commandsSend.values());
         Collections.sort(mapValues, new Comparator<RunCommandsMsg.SqlCommand>() {
             @Override
@@ -681,13 +681,13 @@ public class LocalSyncHelper {
         });
         Collections.sort(mapKeys);
 
-        LinkedHashMap<String, RunCommandsMsg.SqlCommand> sortedMap = new LinkedHashMap<>();
+        LinkedHashMap<Integer, RunCommandsMsg.SqlCommand> sortedMap = new LinkedHashMap<>();
 
         for (RunCommandsMsg.SqlCommand val : mapValues) {
-            Iterator<String> keyIt = mapKeys.iterator();
+            Iterator<Integer> keyIt = mapKeys.iterator();
 
             while (keyIt.hasNext()) {
-                String key = keyIt.next();
+                Integer key = keyIt.next();
                 RunCommandsMsg.SqlCommand comp1 = commandsSend.get(key);
 
                 if (comp1.equals(val)) {
@@ -766,15 +766,41 @@ public class LocalSyncHelper {
         commandsRequest.add(new CommandRequest(socket, request));
     }
 
+    private WifiSocketService getWifiSocketService() {
+        return wifiSocketService;
+    }
+
     public void workRequestCommands(String serial, Socket socket) {
-        final Map<String, RunCommandsMsg.SqlCommand> commands = new HashMap<>();
+        final Map<Integer, RunCommandsMsg.SqlCommand> commands = new HashMap<>();
+        try {
+                Cursor c = ProviderAction.query(ShopProvider.contentUri(ShopStore.SqlCommandHostQuery.URI_CONTENT))
+                        .where("", serial, GET_COMMANDS_BATCH_SIZE)
+                        .perform(getWifiSocketService());
+            while (c != null && c.moveToNext()) {
+                Integer id = c.getInt(0);
+                commands.put(id, new RunCommandsMsg.SqlCommand(id, c.getString(1)));
+            }
+            if (commands.size() > 0) {
+                RunCommandsMsg requestSend = new RunCommandsMsg(TcrApplication.get().getRegisterSerial(), commands);
+                getWifiSocketService().sendMsg(socket, requestSend.toJson());
+
+            } else {
+                getWifiSocketService().sendMsg(socket, new RunCallBack().toJson());
+            }
+
+        } catch (Exception e) {
+            Logger.e(TAG_HEIGHT, e);
+        }
+
+        /*
+        final Map<Integer, RunCommandsMsg.SqlCommand> commands = new HashMap<>();
         try{
             Cursor c = ProviderAction.query(ShopProvider.contentUri(ShopStore.SqlCommandHostQuery.URI_CONTENT))
                     .where("", serial, GET_COMMANDS_BATCH_SIZE)
                     .perform(wifiSocketService);
 
             while (c != null && c.moveToNext()) {
-                commands.put(c.getString(0), new RunCommandsMsg.SqlCommand(c.getInt(2), c.getString(1)));
+                commands.put(c.getInt(0), new RunCommandsMsg.SqlCommand(c.getInt(2), c.getString(1)));
             }
             RunCommandsMsg requestSend = new RunCommandsMsg(TcrApplication.get().getRegisterSerial(), commands);
             wifiSocketService.sendMsg(socket, requestSend.toJson());
@@ -782,6 +808,7 @@ public class LocalSyncHelper {
         } catch (Exception e) {
             Logger.e(TAG_HEIGHT, e);
         }
+        /**/
     }
 
     public static void notifyChanges() {
@@ -802,10 +829,10 @@ public class LocalSyncHelper {
 
     public boolean workCallBack(RunCallBack request, ContentResolver cr, Socket socket) {
         if (request != null && request.commandWithSuccess != null) {
-            for (String guid : request.commandWithSuccess) {
+            for (Integer id : request.commandWithSuccess) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(ShopStore.SqlCommandClientTable.CLIENT_SERIAL, request.serial);
-                contentValues.put(ShopStore.SqlCommandClientTable.COMMAND_GUID, guid);
+                contentValues.put(ShopStore.SqlCommandClientTable.COMMAND_ID, id);
                 cr.insert(ShopProvider.contentUriNoNotify(ShopStore.SqlCommandClientTable.URI_CONTENT), contentValues);
             }
 

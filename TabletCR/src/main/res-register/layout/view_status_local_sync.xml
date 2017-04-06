@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="24dp"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:text="@string/server_hour"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textColor="@color/colorAccentNormal4"/>
+
+    <TextView
+        android:id="@+id/tv_server_hour"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="01-27-2017 18:58:63"
+        android:textSize="16sp"
+        android:paddingLeft="20dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimaryText"
+        android:layout_width="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:text="@string/local_sync_device_status"
+            android:textStyle="bold"
+            android:layout_width="80dp"
+            android:textColor="@color/colorAccentNormal4"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="@string/bemacashs"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            android:layout_width="270dp"
+            android:textColor="@color/colorAccentNormal4"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="@string/missing_data"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/colorAccentNormal4"
+            android:layout_width="100dp"
+            android:gravity="end"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/no_devices"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_marginTop="4dp"
+            android:layout_height="wrap_content"/>
+
+    </FrameLayout>
+
+
+</LinearLayout>

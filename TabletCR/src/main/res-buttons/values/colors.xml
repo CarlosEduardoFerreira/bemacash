@@ -48,4 +48,41 @@
     <color name="text_yellow_pressed">#584b00</color>
     <color name="text_yellow_disabled">#66ffd800</color>
 
+
+    <color name="red">#B71C1C</color>
+    <color name="blue">#056881</color>
+    <color name="green">#4CAF50</color>
+    <color name="orange">#F35C19</color>
+
+    <color name="colorControlNormal">#FF78909C</color>
+    <color name="colorSwitchThumbNormal">#FF78909C</color>
+
+    <color name="selected_item">#e0e0e0</color>
+
+    <color name="colorPrimaryDark">#BF311A</color>
+    <color name="colorPrimary">@color/orange</color>
+    <color name="colorPrimaryAlpha">#8CF35C19</color>
+    <color name="colorAccentNormal">#2798CC</color>
+    <color name="colorAccentNormal1">#CFCF2A</color>
+    <color name="colorAccentNormal2">#A8CE29</color>
+    <color name="colorAccentNormal3">#29C2CE</color>
+    <color name="colorAccentNormal4">#2798CC</color>
+    <color name="colorControlActivated">@color/colorPrimary</color>
+
+    <color name="mdtp_accent_color">@color/colorAccentNormal</color>
+    <color name="mdtp_accent_color_dark">@color/colorAccentNormal</color>
+
+    <array name="progress_colors">
+        <item>#FF3F8AF8</item>
+        <item>#FFD8433C</item>
+        <item>#FFF2AF3A</item>
+        <item>#FF279B5E</item>
+    </array>
+
+    <array name="in_colors">
+        <item>#FFB5D4FF</item>
+        <item>#FFDEEAFC</item>
+        <item>#FFFAFFFE</item>
+    </array>
+
 </resources>

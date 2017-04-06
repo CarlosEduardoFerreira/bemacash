@@ -71,7 +71,7 @@ public class WifiSocketService extends Service {
 
         if (!started && TcrApplication.get().getShopPref().enabledLocalSync().get()) {
             started = true;
-            LocalSyncHelper.setWifiSocketService(this);
+            LocalSyncHelper.getInstance().setWifiSocketService(this);
 
             new Thread() {
                 @Override

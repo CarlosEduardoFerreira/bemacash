@@ -44,7 +44,7 @@ import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptionsResponse;
 import com.kaching123.tcr.model.RegisterModel;
-import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
+import com.kaching123.tcr.model.RegisterStatus;
 import com.kaching123.tcr.model.payment.blackstone.payment.User;
 import com.kaching123.tcr.model.payment.blackstone.payment.request.AutomaticBatchCloseRequest;
 import com.kaching123.tcr.model.payment.blackstone.prepaid.Broker;

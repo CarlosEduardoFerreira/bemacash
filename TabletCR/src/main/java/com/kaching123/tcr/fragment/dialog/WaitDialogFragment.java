@@ -67,11 +67,19 @@ public class WaitDialogFragment extends StyledDialogFragment {
         return null;
     }
 
+    private static boolean on;
+
+    public synchronized static boolean isShowing(){
+        return on;
+    }
+
     public static void show(FragmentActivity activity, String msg) {
+        on = true;
         DialogUtil.show(activity, DIALOG_NAME, WaitDialogFragment_.builder().msg(msg).build());
     }
 
     public static void hide(FragmentActivity activity) {
         DialogUtil.hide(activity, DIALOG_NAME);
+        on = false;
     }
 }

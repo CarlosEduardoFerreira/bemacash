@@ -1583,4 +1583,22 @@
         <item name="android:textColor">@color/on_hold_status_color_selector</item>
         <item name="android:textSize">28sp</item>
     </style>
+
+
+    <style name="DialogTheme.WithoutMinWidth">
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+    </style>
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccentNormal</item>
+        <item name="colorControlActivated">@color/colorAccentNormal</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+
+        <item name="android:textSelectHandleLeft">@drawable/fly_text_select_handle_left</item>
+        <item name="android:textSelectHandleRight">@drawable/fly_text_select_handle_right</item>
+        <item name="android:textSelectHandle">@drawable/fly_text_select_handle_middle</item>
+    </style>
+
 </resources>

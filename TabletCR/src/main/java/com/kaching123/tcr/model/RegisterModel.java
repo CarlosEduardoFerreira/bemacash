@@ -79,10 +79,6 @@ public class RegisterModel implements IValueModel {
         return String.valueOf(id);
     }
 
-    public enum RegisterStatus {
-        ACTIVE, INACTIVE, PAUSED, BLOCKED, PENDING
-    }
-
     @Override
     public boolean equals(Object o) {
         return this == o || (o != null && id == ((RegisterModel)o).id &&

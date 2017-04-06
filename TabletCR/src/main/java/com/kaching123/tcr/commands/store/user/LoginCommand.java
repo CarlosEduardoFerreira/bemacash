@@ -23,7 +23,7 @@ import com.kaching123.tcr.model.EmployeePermissionsModel;
 import com.kaching123.tcr.model.EmployeeStatus;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.Permission;
-import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
+import com.kaching123.tcr.model.RegisterStatus;
 import com.kaching123.tcr.service.LocalSyncHelper;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.service.SyncCommand.OfflineException;

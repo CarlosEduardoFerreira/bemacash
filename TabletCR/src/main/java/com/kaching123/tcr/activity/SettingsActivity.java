@@ -70,10 +70,23 @@ public class SettingsActivity extends ScannerBaseActivity implements SyncSetting
 
     private Fragment fragment = null;
 
+    private boolean canDestroy;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        canDestroy = true;
+    }
+
+    public boolean canDestroy(){
+        return canDestroy;
+    }
+
+    @Override
+    public void onDestroy() {
+        canDestroy = false;
+        super.onDestroy();
     }
 
     @Override

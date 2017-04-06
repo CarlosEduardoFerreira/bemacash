@@ -6,7 +6,7 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.RegisterModel;
-import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
+import com.kaching123.tcr.model.RegisterStatus;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
