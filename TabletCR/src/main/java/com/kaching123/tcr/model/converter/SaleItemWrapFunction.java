@@ -256,7 +256,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                 String modifierTitle = c.getString(c.getColumnIndex(SaleOrderItemsView2.ModifierTable.TITLE));
                 String itemTitle = c.getString(c.getColumnIndex(SaleAddonSubItemTable.DESCRIPTION));
 //                title = TextUtils.isEmpty(modifierTitle) ? String.format("[%s]", itemTitle) : modifierTitle;
-                title = String.format("[%s]", itemTitle);
+                title = String.format("%s", itemTitle);
             } else {
                 title = c.getString(c.getColumnIndex(SaleOrderItemsView2.ModifierTable.TITLE));
             }
