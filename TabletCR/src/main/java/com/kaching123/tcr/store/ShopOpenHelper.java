@@ -15,7 +15,7 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.support.SendLogCommand;
 import com.kaching123.tcr.fragment.dialog.SyncWaitDialogFragment;
-import com.kaching123.tcr.model.RegisterModel.RegisterStatus;
+import com.kaching123.tcr.model.RegisterStatus;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.service.SyncCommand.Table;
 import com.kaching123.tcr.store.ShopStore.SaleOrderTable;

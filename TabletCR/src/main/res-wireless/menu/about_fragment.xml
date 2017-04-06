@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:icon="@drawable/ic_sync"
+        android:id="@+id/action_force_sync"
+        android:title="@string/action_force_sync"
+        app:showAsAction="never"
+        android:visible="false" />
+
+    <item
+        android:icon="@drawable/ic_sync"
+        android:id="@+id/action_add"
+        android:title="@string/cashier_action_gc"
+        app:showAsAction="never"
+        android:visible="false" />
+
+    <item
+        android:icon="@drawable/ic_sync"
+        android:id="@+id/action_upload_backup"
+        android:title="@string/cashier_action_backup"
+        app:showAsAction="never"
+        android:visible="false" />
+
+    <item
+        android:icon="@drawable/ic_sync"
+        android:id="@+id/action_local_sync_upload"
+        app:showAsAction="never"
+        android:visible="false" />
+
+    <item
+        android:icon="@drawable/ic_sync"
+        android:id="@+id/action_show_bemacashs"
+        android:title="@string/local_bemacashs"
+        app:showAsAction="never" />
+
+    <item
+        android:icon="@drawable/plus_normal"
+        android:id="@+id/action_delete"
+        android:title="@string/cashier_action_seqc"
+        app:showAsAction="never"
+        android:visible="false" />
+
+</menu>

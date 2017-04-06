@@ -125,4 +125,9 @@
     <color name="to_stay">#27CC62</color>
     <color name="to_go">#341CAE</color>
 
+    <color name="div_color">#D5D5D5</color>
+    <color name="back">#f9f9f9</color>
+    <color name="payment_button_color">#888888</color>
+    <color name="div_dashboard">@color/div_color</color>
+
 </resources>

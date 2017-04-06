@@ -11,9 +11,9 @@ import java.util.UUID;
 public class RunCommandsMsg extends BemaSocketMsg<RunCommandsMsg> {
 
     public String serial;
-    public Map<String, SqlCommand> commandsSend;
+    public Map<Integer, SqlCommand> commandsSend;
 
-    public RunCommandsMsg(String serial, Map<String, SqlCommand> commandsSend) {
+    public RunCommandsMsg(String serial, Map<Integer, SqlCommand> commandsSend) {
         this.serial = serial;
         this.commandsSend = commandsSend;
         this.uuid = UUID.randomUUID().toString();

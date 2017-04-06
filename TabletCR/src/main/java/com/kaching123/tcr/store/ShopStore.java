@@ -1433,8 +1433,8 @@ public abstract class ShopStore {
         String TABLE_NAME = "sql_command_client";
 
         @NotNull
-        @Column(type = Type.TEXT)
-        String COMMAND_GUID = "command_guid";
+        @Column(type = Type.INTEGER)
+        String COMMAND_ID = "command_id";
 
         @NotNull
         @Column(type = Type.TEXT)
@@ -1443,7 +1443,7 @@ public abstract class ShopStore {
         @Column(type = Type.INTEGER)
         String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
 
-        String DELETE_WHERE = COMMAND_GUID + " in (SELECT " + SqlCommandHostTable.GUID + " FROM " +
+        String DELETE_WHERE = COMMAND_ID + " in (SELECT " + SqlCommandHostTable.ORDER_COMMAND + " FROM " +
                 SqlCommandHostTable.TABLE_NAME + " order by " + SqlCommandHostTable.CREATE_TIME + " LIMIT ?)";
     }
 
@@ -4521,18 +4521,15 @@ public abstract class ShopStore {
         String VIEW_NAME = "sql_command_host_query";
 
         @SqlQuery
-        String SQL = "SELECT " + SqlCommandHostTable.GUID + "," + SqlCommandHostTable.SQL_COMMAND + "," + SqlCommandHostTable.ORDER_COMMAND +
+        String SQL = "SELECT " + SqlCommandHostTable.ORDER_COMMAND + "," + SqlCommandHostTable.SQL_COMMAND +
                 " FROM " + SqlCommandHostTable.TABLE_NAME +
                 " LEFT JOIN " + SqlCommandClientTable.TABLE_NAME +
-                " ON " + SqlCommandHostTable.TABLE_NAME + "." + SqlCommandHostTable.GUID + " = " +
-                SqlCommandClientTable.TABLE_NAME + "." + SqlCommandClientTable.COMMAND_GUID +
+                " ON " + SqlCommandHostTable.TABLE_NAME + "." + SqlCommandHostTable.ORDER_COMMAND + " = " +
+                SqlCommandClientTable.TABLE_NAME + "." + SqlCommandClientTable.COMMAND_ID +
                 " AND " + SqlCommandClientTable.TABLE_NAME + "." + SqlCommandClientTable.CLIENT_SERIAL + " = ?" +
-                " WHERE " + SqlCommandClientTable.TABLE_NAME + "." + SqlCommandClientTable.COMMAND_GUID + " is null" +
+                " WHERE " + SqlCommandClientTable.TABLE_NAME + "." + SqlCommandClientTable.COMMAND_ID + " is null" +
                 " ORDER BY " + SqlCommandHostTable.ORDER_COMMAND + " LIMIT ?";
     }
-
-
-
 
     @RawQuery(SaleOrderItemsMappingQuery.VIEW_NAME)
     public interface SaleOrderItemsMappingQuery {
@@ -4869,4 +4866,43 @@ public abstract class ShopStore {
                 " AND " + SaleOrderTable.TABLE_NAME + "." + SaleOrderTable.REGISTER_ID + " = ?";
 
     }
+
+
+    @RawQuery(SqlCommandHostCountQuery.VIEW_NAME)
+    public interface SqlCommandHostCountQuery {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "sql_command_host_count_query";
+
+        String VIEW_NAME = "sql_command_host_count_query";
+
+        @SqlQuery
+        String SQL = "SELECT COUNT(*)" +
+                " FROM " + SqlCommandHostTable.TABLE_NAME +
+                " LEFT JOIN " + SqlCommandClientTable.TABLE_NAME +
+                " ON " + SqlCommandHostTable.TABLE_NAME + "." + SqlCommandHostTable.ORDER_COMMAND + " = " +
+                SqlCommandClientTable.TABLE_NAME + "." + SqlCommandClientTable.COMMAND_ID +
+                " AND " + SqlCommandClientTable.TABLE_NAME + "." + SqlCommandClientTable.CLIENT_SERIAL + " = ?" +
+                " WHERE " + SqlCommandClientTable.TABLE_NAME + "." + SqlCommandClientTable.COMMAND_ID + " is null";
+    }
+
+
+    @RawQuery(SqlCommandLocalSent.URI_CONTENT)
+    public interface SqlCommandLocalSent {
+
+        @URI(type = URI.Type.DIR, onlyQuery = true)
+        String URI_CONTENT = "sql_command_host_sent_query";
+
+        @SqlQuery
+        String SQL = "SELECT " + SqlCommandClientTable.COMMAND_ID +
+                " FROM " + SqlCommandClientTable.TABLE_NAME +
+                " GROUP BY " + SqlCommandClientTable.COMMAND_ID +
+                " HAVING COUNT(DISTINCT " + SqlCommandClientTable.CLIENT_SERIAL + ") >= " +
+                "(SELECT COUNT(" + RegisterTable.ID + ") FROM " + RegisterTable.TABLE_NAME +
+                " WHERE " + RegisterTable.REGISTER_SERIAL+ " <> ? " +
+                " AND (" + RegisterTable.STATUS + " = 0 OR " + RegisterTable.STATUS + " = 1)" +
+                " AND " + RegisterTable.IS_DELETED + " = 0)";
+    }
+
+
 }
