@@ -16,11 +16,8 @@ import com.kaching123.tcr.commands.store.saleorder.ItemsNegativeStockTrackingCom
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleItemAddonsCommand.BaseUpdateSaleItemAddonsCallback;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderAgeVeridiedCommand;
-import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderCommand;
 import com.kaching123.tcr.component.CustomEditBox;
 import com.kaching123.tcr.component.KeyboardView;
-import com.kaching123.tcr.fragment.dialog.DialogUtil;
-import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.quickservice.AgeVerificationFragment;
@@ -249,7 +246,7 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
     }
 
     private void continueAddingItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit){
-        if(!model.hasModificators() && !checkTracked(model)){
+        if(!model.hasModificators() && !checkTrackedQty(model)){
             return;
         } else if (model.isAComposisiton) {
             ItemsNegativeStockTrackingCommand.start(QuickServiceActivity.this, model.getGuid(), ItemsNegativeStockTrackingCommand.ItemType.COMPOSITION, new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {

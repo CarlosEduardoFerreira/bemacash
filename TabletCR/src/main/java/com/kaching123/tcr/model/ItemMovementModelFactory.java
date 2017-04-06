@@ -13,6 +13,7 @@ public class ItemMovementModelFactory {
 
     public static final ItemMovementModel getNewModel(String guid,
                                                       String itemGuid,
+                                                      String orderGuid,
                                                       String itemUpdateFlag,
                                                       BigDecimal qty,
                                                       boolean manual,
@@ -22,6 +23,7 @@ public class ItemMovementModelFactory {
         return new ItemMovementModel(
                 guid,
                 itemGuid,
+                orderGuid,
                 itemUpdateFlag,
                 qty,
                 manual,
@@ -32,6 +34,7 @@ public class ItemMovementModelFactory {
 
     public static final ItemMovementModel getNewModel(String guid,
                                                       String itemGuid,
+                                                      String orderGuid,
                                                       String itemUpdateFlag,
                                                       BigDecimal qty,
                                                       boolean manual,
@@ -40,6 +43,7 @@ public class ItemMovementModelFactory {
         return new ItemMovementModel(
                 guid,
                 itemGuid,
+                orderGuid,
                 itemUpdateFlag,
                 qty,
                 manual,
@@ -58,6 +62,26 @@ public class ItemMovementModelFactory {
         return new ItemMovementModel(
                 UUID.randomUUID().toString(),
                 itemGuid,
+                null,
+                itemUpdateFlag,
+                qty,
+                manual,
+                TcrApplication.get().getOperatorGuid(),
+                createTime,
+                null);
+    }
+
+    public static final ItemMovementModel getNewModel(String itemGuid,
+                                                      String orderGuid,
+                                                      String itemUpdateFlag,
+                                                      BigDecimal qty,
+                                                      boolean manual,
+                                                      Date createTime) {
+
+        return new ItemMovementModel(
+                UUID.randomUUID().toString(),
+                itemGuid,
+                orderGuid,
                 itemUpdateFlag,
                 qty,
                 manual,

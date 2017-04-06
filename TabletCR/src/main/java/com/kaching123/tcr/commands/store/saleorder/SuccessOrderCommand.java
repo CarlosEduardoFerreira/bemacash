@@ -57,6 +57,7 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
     private SyncResult addCommissionsResult;
     private SyncResult addItemsMovementResult;
     private SyncResult addLoyaltyPointsMovementResult;
+    private OrderStatus prevOrderStatus;
 
     private String customerId;
 
@@ -97,6 +98,9 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
         if (currentShiftGuid != null) {
             order.shiftGuid = currentShiftGuid;
         }
+
+        prevOrderStatus = order.orderStatus;
+
         boolean isManualReturn = getBooleanArg(ARG_IS_MANUAL_RETURN_ORDER, false);
         if (!isManualReturn) {
             order.orderStatus = OrderStatus.COMPLETED;
@@ -182,6 +186,10 @@ public class SuccessOrderCommand extends UpdateSaleOrderCommand {
     }
 
     private boolean updateItemMovement() {
+        if (order.orderStatus == OrderStatus.COMPLETED && prevOrderStatus == OrderStatus.HOLDON) {
+            return !isFailed(new UpdateSaleOrderItemMovementsCommand().startSync(getContext(), getStringArg(ARG_ORDER_GUID), false, getAppCommandContext()));
+        }
+
         ArrayList<ItemMovementModel> itemMovements = new ArrayList<>();
         MovementUtils.processAll(
                 getContext(),

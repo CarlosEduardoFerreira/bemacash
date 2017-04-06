@@ -13,8 +13,11 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.ItemModel;
+import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ModifierType;
+import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
+import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
@@ -25,6 +28,7 @@ import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +44,7 @@ public class ItemsNegativeStockTrackingCommand extends AsyncCommand {
 
     private static final Uri URI_ORDER_ITEMS = ShopProvider.contentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
     private static final Uri URI_ADDONS = ShopProvider.contentUri(ShopStore.ModifierTable.URI_CONTENT);
+    private static final Uri ITEM_MOVEMENT_URI = ShopProvider.getContentUri(ShopStore.ItemMovementTable.URI_CONTENT);
 
     private static final String ORDER_BY = ShopSchema2.SaleOrderItemsView2.SaleItemTable.SEQUENCE + ", " + ShopSchema2.SaleOrderItemsView2.SaleAddonTable.TYPE + ", " + ShopSchema2.SaleOrderItemsView2.ModifierTable.TITLE;
 
@@ -145,9 +150,11 @@ public class ItemsNegativeStockTrackingCommand extends AsyncCommand {
     }
 
     private boolean changeQty() {
+        String orderGuid = getStringArg(ARG_ORDER_GUID);
         String itemGuid = getStringArg(ARG_ITEM_GUID);
         BigDecimal newQty = (BigDecimal) getArgs().get(ARG_ITEM_NEW_QTY);
         BigDecimal oldQty = (BigDecimal) getArgs().get(ARG_ITEM_OLD_QTY);
+        SaleOrderModel saleOrderModel = SaleOrderModel.getById(getContext(), orderGuid);
         ArrayList<SaleOrderItemViewModel.AddonInfo> addonsForChange = (ArrayList<SaleOrderItemViewModel.AddonInfo>) getArgs().get(ARG_ITEM_REMOVE_ADDONS);
 
         tmpOrderItemQty.putAll(currentOrderItemQty);
@@ -156,6 +163,24 @@ public class ItemsNegativeStockTrackingCommand extends AsyncCommand {
             ItemModel model = ItemModel.getById(getContext(), itemGuid, true);
             if (model != null) {
                 if (model.isLimitQtySelected()) {
+
+                    if (saleOrderModel != null && saleOrderModel.orderStatus == OrderStatus.HOLDON) {
+                        BigDecimal historyAddedQty = BigDecimal.ZERO;
+                        Cursor c = ProviderAction.query(ITEM_MOVEMENT_URI)
+                                .projection(ShopStore.ItemMovementTable.QTY)
+                                .where(ShopStore.ItemMovementTable.ORDER_GUID + " = ?", orderGuid)
+                                .where(ShopStore.ItemMovementTable.ITEM_GUID + " = ?", model.guid)
+                                .perform(getContext());
+
+                        if (c != null && c.moveToFirst()) {
+                            do {
+                                historyAddedQty = historyAddedQty.add(new BigDecimal(c.getDouble(c.getColumnIndex(ShopStore.ItemMovementTable.QTY))).abs());
+                            }while (c.moveToNext());
+                            c.close();
+                        }
+                        model.availableQty =  model.availableQty.add(historyAddedQty);
+                    }
+
                     BigDecimal newValue = newQty;
                     if (currentOrderItemQty.containsKey(model.guid)) {
                         newValue = (currentOrderItemQty.get(model.guid).subtract(oldQty)).add(newQty);
@@ -517,8 +542,9 @@ public class ItemsNegativeStockTrackingCommand extends AsyncCommand {
                 .arg(ARG_ITEM_TYPE, itemType).queueUsing(context);
     }
 
-    public static void start(Context context, String itemGuid, BigDecimal oldQty, BigDecimal newQty, ArrayList<SaleOrderItemViewModel.AddonInfo> itemAddons, ItemType itemType, NegativeStockTrackingCallback callback) {
+    public static void start(Context context, String orderGuid, String itemGuid, BigDecimal oldQty, BigDecimal newQty, ArrayList<SaleOrderItemViewModel.AddonInfo> itemAddons, ItemType itemType, NegativeStockTrackingCallback callback) {
         create(ItemsNegativeStockTrackingCommand.class)
+                .arg(ARG_ORDER_GUID, orderGuid)
                 .arg(ARG_ITEM_GUID, itemGuid)
                 .arg(ARG_ITEM_REMOVE_ADDONS, itemAddons)
                 .arg(ARG_ITEM_TYPE, itemType)

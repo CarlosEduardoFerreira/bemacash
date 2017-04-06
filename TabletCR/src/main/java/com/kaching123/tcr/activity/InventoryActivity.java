@@ -198,37 +198,37 @@ public class InventoryActivity extends ScannerBaseActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    @OptionsItem
-    protected void actionImportSelected() {
-        FileChooserFragment.show(this, Type.FILE, new FileChooseListener() {
-            @Override
-            public void fileChosen(final File file) {
-                ImportTypeFragment.show(InventoryActivity.this, new OnTypeChosenListener() {
-                    @Override
-                    public void onTypeChosen(ImportInventoryCommand.ImportType type) {
-                        importCallback.type = type;
-                        WaitDialogFragment.show(InventoryActivity.this, getString(R.string.inventory_import_wait));
-                        ImportInventoryCommand.start(InventoryActivity.this, type, file.getAbsolutePath(), importCallback);
-                    }
-                });
-            }
-        });
-    }
+//    @OptionsItem
+//    protected void actionImportSelected() {
+//        FileChooserFragment.show(this, Type.FILE, new FileChooseListener() {
+//            @Override
+//            public void fileChosen(final File file) {
+//                ImportTypeFragment.show(InventoryActivity.this, new OnTypeChosenListener() {
+//                    @Override
+//                    public void onTypeChosen(ImportInventoryCommand.ImportType type) {
+//                        importCallback.type = type;
+//                        WaitDialogFragment.show(InventoryActivity.this, getString(R.string.inventory_import_wait));
+//                        ImportInventoryCommand.start(InventoryActivity.this, type, file.getAbsolutePath(), importCallback);
+//                    }
+//                });
+//            }
+//        });
+//    }
 
-    @OptionsItem
-    protected void actionExportSelected() {
-        if (!PlanOptions.isExportInventoryAllowed()) {
-            AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
-        } else {
-            FileChooserFragment.show(this, Type.FOLDER, new FileChooseListener() {
-                @Override
-                public void fileChosen(final File file) {
-                    WaitDialogFragment.show(InventoryActivity.this, getString(R.string.inventory_export_wait_msg));
-                    ExportInventoryCommand.start(InventoryActivity.this, file.getAbsolutePath(), exportCallback);
-                }
-            });
-        }
-    }
+//    @OptionsItem
+//    protected void actionExportSelected() {
+//        if (!PlanOptions.isExportInventoryAllowed()) {
+//            AlertDialogFragment.showAlert(this, R.string.unavailable_option_title, getString(R.string.unavailable_option_message));
+//        } else {
+//            FileChooserFragment.show(this, Type.FOLDER, new FileChooseListener() {
+//                @Override
+//                public void fileChosen(final File file) {
+//                    WaitDialogFragment.show(InventoryActivity.this, getString(R.string.inventory_export_wait_msg));
+//                    ExportInventoryCommand.start(InventoryActivity.this, file.getAbsolutePath(), exportCallback);
+//                }
+//            });
+//        }
+//    }
 
 
     @OptionsItem

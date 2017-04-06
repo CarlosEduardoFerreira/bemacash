@@ -25,9 +25,15 @@ public class AddItemsMovementCommand extends AsyncCommand {
     private static final Uri MOVEMENT_URI = ShopProvider.getContentUri(ItemMovementTable.URI_CONTENT);
 
     private List<ItemMovementModel> models;
+    private String orderGuid;
 
     @Override
     protected TaskResult doCommand() {
+        if (orderGuid != null) {
+            for (ItemMovementModel model : models) {
+                model.setOrderGuid(orderGuid);
+            }
+        }
         return succeeded();
     }
 
@@ -57,6 +63,12 @@ public class AddItemsMovementCommand extends AsyncCommand {
 
     public SyncResult syncNow(Context context, List<ItemMovementModel> models, IAppCommandContext appCommandContext){
         this.models = models;
+        return syncDependent(context, appCommandContext);
+    }
+
+    public SyncResult syncNow(Context context, String orderGuid, List<ItemMovementModel> models, IAppCommandContext appCommandContext){
+        this.models = models;
+        this.orderGuid = orderGuid;
         return syncDependent(context, appCommandContext);
     }
 }
