@@ -302,6 +302,8 @@ public class EmployeesActivity extends SuperBaseActivity {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(EMPLOYEE_URI);
             builder.orderBy(EmployeeTable.FIRST_NAME + "," + EmployeeTable.LAST_NAME);
             builder.where(EmployeeTable.IS_MERCHANT + " = ?", 0);
+            builder.where(EmployeeTable.LOGIN + " <> ?", "");
+            builder.where(EmployeeTable.LOGIN + " IS NOT NULL");
             if (!TextUtils.isEmpty(textFilter)) {
                 String filter = "%" + textFilter + "%";
                 builder.where(EmployeeTable.FIRST_NAME + " like ? OR " + EmployeeTable.LAST_NAME + " like ?", filter, filter);
