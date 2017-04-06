@@ -239,7 +239,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             }
 
             private void checkAvailableQty(SaleOrderItemViewModel model, final BigDecimal value, final String saleItemGuid){
-                ItemsNegativeStockTrackingCommand.start(getActivity(), model.itemModel.itemGuid, model.itemModel.qty,
+                ItemsNegativeStockTrackingCommand.start(getActivity(), orderGuid, model.itemModel.itemGuid, model.itemModel.qty,
                         value, model.modifiers, ItemsNegativeStockTrackingCommand.ItemType.CHANGE_QTY,
                         new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
                             @Override

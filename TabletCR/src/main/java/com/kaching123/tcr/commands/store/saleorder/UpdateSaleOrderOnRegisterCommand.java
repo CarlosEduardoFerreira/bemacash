@@ -28,7 +28,10 @@ public class UpdateSaleOrderOnRegisterCommand extends UpdateSaleOrderCommand {
         String guid = getStringArg(ARG_ORDER_GUID);
         boolean onRegister = getBooleanArg(ARG_ON_REGISTER, false);
 
-
+        if(guid == null) {
+            failed();
+            return null;
+        }
         Cursor c = ProviderAction.query(URI_ORDER)
                 .where(ShopStore.SaleOrderTable.GUID + " = ?", guid)
                 .where(ShopStore.SaleOrderTable.STATUS + " = ?", OrderStatus.HOLDON.ordinal())

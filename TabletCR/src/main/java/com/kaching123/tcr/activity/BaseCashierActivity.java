@@ -137,6 +137,7 @@ import com.kaching123.tcr.model.BillPaymentDescriptionModel;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.DiscountBundle;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.OnHoldStatus;
@@ -229,6 +230,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
     private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
+    private static final Uri ITEM_MOVEMENT_URI = ShopProvider.getContentUri(ShopStore.ItemMovementTable.URI_CONTENT);
     private static final int NUMBER_OF_LETTERS_TO_START_SEARCH = 2;
 
     static {
@@ -248,6 +250,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final int LOADER_SEARCH_BARCODE = 10;
     private static final int LOADER_SALE_INCENTIVES = 12;
     private static final int LOADER_DISCOUNT_BUNDLES = 13;
+    private static final int LOADER_ORDER_REAL_AVAILABLE_QTY = 14;
 
     private int barcodeLoaderId = LOADER_SEARCH_BARCODE;
 
@@ -275,6 +278,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private TextView holdCounterView;
 
     private OrderInfoLoader orderInfoLoader = new OrderInfoLoader();
+    private OrderHoldItemsQtyLoader orderHoldQtyLoader = new OrderHoldItemsQtyLoader();
     //    private SaleItemCountLoader saleItemCountLoader = new SaleItemCountLoader();
     private OrdersCountLoader ordersCountLoader = new OrdersCountLoader();
     private AddItem2SaleOrderCallback addItemCallback = new AddItem2SaleOrderCallback();
@@ -315,6 +319,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
 
     private HashSet<String> salesmanGuids = new HashSet<String>();
+    private HashMap<String, BigDecimal> itemsQtyFromOnHold = new HashMap<>();
 
     private Calendar calendar = Calendar.getInstance();
 
@@ -634,15 +639,23 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     protected abstract void showEditItemModifiers(final String saleItemGuid,
                                                   final String itemGuid);
 
-    protected boolean checkTracked(ItemExModel model){
+    protected boolean checkTrackedQty(ItemExModel model){
         if(model.isLimitQtySelected()) {
             HashMap<String, BigDecimal> map = new HashMap<>();
             map.putAll(app.getOrderItemsQty());
 
+            BigDecimal availableQty = model.availableQty;
+            if (saleOrderModel != null && saleOrderModel.orderStatus == OrderStatus.HOLDON && itemsQtyFromOnHold.containsKey(model.guid)) {
+                availableQty =  model.availableQty.add(itemsQtyFromOnHold.get(model.guid));
+                if(map.size() == 0) {
+                    map.putAll(itemsQtyFromOnHold);
+                }
+            }
+
             if (!map.isEmpty()) {
                 BigDecimal count = map.containsKey(model.getGuid()) ? map.get(model.getGuid()) : BigDecimal.ZERO;
 
-                if (model.availableQty.subtract(BigDecimal.ONE.add(count)).compareTo(BigDecimal.ZERO) < 0) {
+                if (availableQty.subtract(BigDecimal.ONE.add(count)).compareTo(BigDecimal.ZERO) < 0) {
                     Toast.makeText(this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
                     return false;
                 }
@@ -650,7 +663,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 map.put(model.getGuid(), count.add(BigDecimal.ONE));
                 app.addCurrentOrderItemsQty(map);
             } else {
-                if (model.availableQty.subtract(BigDecimal.ONE).compareTo(BigDecimal.ZERO) < 0) {
+                if (availableQty.subtract(BigDecimal.ONE).compareTo(BigDecimal.ZERO) < 0) {
                     Toast.makeText(this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
                     return false;
                 }
@@ -677,7 +690,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
 
-        if(!model.hasModificators() && !checkTracked(model)){
+        if(!model.hasModificators() && !checkTrackedQty(model)){
             return;
         } else if (model.isAComposisiton) {
             ItemsNegativeStockTrackingCommand.start(BaseCashierActivity.this, model.getGuid(), ItemsNegativeStockTrackingCommand.ItemType.COMPOSITION, new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
@@ -948,6 +961,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         if (saleOrderModel != null) {
             this.orderTitle = saleOrderModel.getHoldName();
+            if (saleOrderModel.orderStatus == OrderStatus.HOLDON) {
+                getSupportLoaderManager().restartLoader(LOADER_ORDER_REAL_AVAILABLE_QTY, null, orderHoldQtyLoader);
+            }
         }
         if (TextUtils.isEmpty(this.orderGuid)) {
             this.orderTitle = null;
@@ -1387,6 +1403,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             @Override
             public void onSwap2Order(final String holdName, final String holdPhone, final OnHoldStatus status, final String nextOrderGuid, final String definedOnHoldGuid) {
                 UpdateSaleOrderOnRegisterCommand.start(getApplicationContext(), nextOrderGuid, true);
+                app.clearCurrentOrderItemsQty();
+                itemsQtyFromOnHold.clear();
                 setOrderGuid(nextOrderGuid, true);
             }
         });
@@ -2668,6 +2686,52 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         @Override
         public void onLoaderReset(Loader<SaleOrderViewResult> saleOrderModelLoader) {
             updateOrderInfo(null, null);
+        }
+    }
+
+    private class OrderHoldItemsQtyLoader implements LoaderCallbacks<HashMap<String, BigDecimal>> {
+
+        @Override
+        public Loader<HashMap<String, BigDecimal>> onCreateLoader(int i, Bundle bundle) {
+            return CursorLoaderBuilder.forUri(ITEM_MOVEMENT_URI)
+                    .where(ShopStore.ItemMovementTable.ORDER_GUID + " = ?", saleOrderModel.guid)
+                    .transform(new Function<Cursor, HashMap<String, BigDecimal>>() {
+                        @Override
+                        public HashMap<String, BigDecimal> apply(Cursor cursor) {
+                            if (cursor != null && cursor.moveToFirst()) {
+                                ArrayList<ItemMovementModel> historyMovementModels = new ArrayList<>(cursor.getCount());
+                                do {
+                                    historyMovementModels.add(new ItemMovementModel(cursor));
+                                } while (cursor.moveToNext());
+                                cursor.close();
+                                if (historyMovementModels.size() > 0) {
+                                    HashMap<String, BigDecimal> itemQtyMovementHistory = new HashMap<>(historyMovementModels.size());
+                                    for (ItemMovementModel historyMovementModel : historyMovementModels) {
+                                        if (itemQtyMovementHistory.containsKey(historyMovementModel.itemGuid)) {
+                                            itemQtyMovementHistory.put(historyMovementModel.itemGuid,
+                                                    itemQtyMovementHistory.get(historyMovementModel.itemGuid).add(historyMovementModel.qty.abs()));
+                                        } else {
+                                            itemQtyMovementHistory.put(historyMovementModel.itemGuid, historyMovementModel.qty.abs());
+                                        }
+                                    }
+                                    return itemQtyMovementHistory;
+                                }
+                            }
+                            return null;
+                        }
+                    }).build(BaseCashierActivity.this);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<HashMap<String, BigDecimal>> itemQty, HashMap<String, BigDecimal> result) {
+            itemsQtyFromOnHold.clear();
+            if (result != null) {
+                itemsQtyFromOnHold.putAll(result);
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<HashMap<String, BigDecimal>> itemQty) {
         }
     }
 

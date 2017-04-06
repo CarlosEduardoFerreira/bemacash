@@ -63,14 +63,11 @@ public class UpdateSaleOrderItemMovementsCommand extends AsyncCommand {
                 .where(ShopStore.ItemMovementTable.ORDER_GUID + " = ?", orderGuid)
                 .perform(getContext());
 
-        if (itemMovementsCursor != null) {
+        if (itemMovementsCursor != null && itemMovementsCursor.moveToFirst()) {
             ArrayList<ItemMovementModel> historyMovementModels = new ArrayList<>(itemMovementsCursor.getCount());
-            if (itemMovementsCursor.moveToFirst()) {
+            do {
                 historyMovementModels.add(new ItemMovementModel(itemMovementsCursor));
-                while(itemMovementsCursor.moveToNext()) {
-                    historyMovementModels.add(new ItemMovementModel(itemMovementsCursor));
-                }
-            }
+            } while(itemMovementsCursor.moveToNext());
             itemMovementsCursor.close();
             if (historyMovementModels.size() > 0) {
                 HashMap<String, BigDecimal> itemQtyMovementHistory = new HashMap<>(historyMovementModels.size());
@@ -91,6 +88,12 @@ public class UpdateSaleOrderItemMovementsCommand extends AsyncCommand {
                 }
             }
 
+        } else {
+            if(isReturn) {
+                for (ItemMovementModel movementModel : orderItemMovements) {
+                    movementModel.qty = movementModel.qty.multiply(BigDecimal.ONE.negate());
+                }
+            }
         }
 
         if(copyMovementsToRemove.size() > 0) {
