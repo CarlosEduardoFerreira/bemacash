@@ -63,7 +63,7 @@ public class ModifierExModel extends ModifierModel {
            return title;
 
        if (childItem != null)
-           return String.format("[%s]", childItem.description);
+           return String.format("%s", childItem.description);
 
        return null;
    }
