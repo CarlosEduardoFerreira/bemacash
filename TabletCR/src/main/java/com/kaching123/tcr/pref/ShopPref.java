@@ -421,6 +421,8 @@ public interface ShopPref {
     boolean definedOnHold();
     boolean onHoldStatusMandatory();
 
+    boolean isAgeFormateLatin();
+
     /* Digital signature / Signature receipt ********************** */
 
     boolean digitalSignature();

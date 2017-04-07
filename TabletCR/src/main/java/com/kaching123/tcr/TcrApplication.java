@@ -331,7 +331,8 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.digitalSignature().getOr(false),
                     shopPref.signatureReceipt().get(),
                     shopPref.definedOnHold().getOr(false),
-                    shopPref.onHoldStatusMandatory().getOr(false)
+                    shopPref.onHoldStatusMandatory().getOr(false),
+                    shopPref.isAgeFormateLatin().getOr(false)
                     );
         }
         barcodePrefixes = new BarcodePrefixes(
@@ -744,6 +745,7 @@ public class TcrApplication extends MultiDexApplication {
                 .signatureReceipt().put(info.signatureReceipt)
                 .definedOnHold().put(info.definedOnHold)
                 .onHoldStatusMandatory().put(info.onHoldStatusMandatory)
+                .isAgeFormateLatin().put(info.ageVerificationFormatLatin)
                 .apply();
 
         setUsers();

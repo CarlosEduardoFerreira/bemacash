@@ -141,6 +141,8 @@ public class ShopInfoViewJdbcConverter {
     private static final String DEFINED_ON_HOLD = "DEFINED_ON_HOLD";
     private static final String ON_HOLD_STATUS_MANDATORY = "ON_HOLD_STATUS_MANDATORY";
 
+    private static final String AGE_VERIFICATION_FORMAT = "AGE_VERIFICATION_FORMAT";
+
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
         return new ShopInfo(
@@ -229,7 +231,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(DIGITAL_SIGNATURE),
                 rs.getString(SIGNATURE_RECEIPT),
                 rs.getBoolean(DEFINED_ON_HOLD),
-                rs.getBoolean(ON_HOLD_STATUS_MANDATORY)
+                rs.getBoolean(ON_HOLD_STATUS_MANDATORY),
+                rs.getBoolean(AGE_VERIFICATION_FORMAT)
         );
     }
 
@@ -320,7 +323,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(DIGITAL_SIGNATURE),
                 rs.getString(SIGNATURE_RECEIPT),
                 rs.getBoolean(DEFINED_ON_HOLD),
-                rs.getBoolean(ON_HOLD_STATUS_MANDATORY)
+                rs.getBoolean(ON_HOLD_STATUS_MANDATORY),
+                rs.getBoolean(AGE_VERIFICATION_FORMAT)
         );
     }
 
@@ -434,6 +438,7 @@ public class ShopInfoViewJdbcConverter {
 
         public final boolean definedOnHold;
         public final boolean onHoldStatusMandatory;
+        public final boolean ageVerificationFormatLatin;
 
 
 
@@ -518,7 +523,8 @@ public class ShopInfoViewJdbcConverter {
                         boolean digitalSignature,
                         String signatureReceipt,
                         boolean definedOnHold,
-                        boolean onHoldStatusMandatory) {
+                        boolean onHoldStatusMandatory,
+                        boolean ageVerificationFormat) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -627,6 +633,8 @@ public class ShopInfoViewJdbcConverter {
 
             this.definedOnHold = definedOnHold;
             this.onHoldStatusMandatory = onHoldStatusMandatory;
+
+            this.ageVerificationFormatLatin = ageVerificationFormat;
         }
 
     }
