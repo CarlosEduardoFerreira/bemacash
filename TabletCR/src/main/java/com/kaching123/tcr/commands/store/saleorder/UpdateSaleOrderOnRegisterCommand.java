@@ -5,10 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.SaleOrderModel;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 
@@ -71,6 +73,12 @@ public class UpdateSaleOrderOnRegisterCommand extends UpdateSaleOrderCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         SaleOrdersJdbcConverter converter = (SaleOrdersJdbcConverter) JdbcFactory.getConverter(ShopStore.SaleOrderTable.TABLE_NAME);
-        return converter.updateOnRegisterStatus(order, getAppCommandContext());
+
+        BatchSqlCommand batch = batchUpdate(order);
+        batch.add(converter.updateOnRegisterStatus(order, getAppCommandContext()));
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+
+        return batch;
     }
 }

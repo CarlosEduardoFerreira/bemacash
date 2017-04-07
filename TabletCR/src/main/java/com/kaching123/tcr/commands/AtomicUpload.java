@@ -98,8 +98,9 @@ public class AtomicUpload {
 
     public boolean hasInternetConnection(){
         String servidorBemacash = mContext.getResources().getString(R.string.api_server_url);
-        Log.d("BemaCarl7", "AtomicUpload.hasInternetConnection.servidorBemacash: " + servidorBemacash);
-        HttpGet httpGet = new HttpGet(servidorBemacash);
+        String url = fixURL(servidorBemacash);
+        Log.d("BemaCarl7", "AtomicUpload.hasInternetConnection.servidorBemacash: " + url);
+        HttpGet httpGet = new HttpGet(url);
         HttpParams httpParameters = new BasicHttpParams();
         int timeoutConnection = 2000;
         HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
@@ -107,22 +108,34 @@ public class AtomicUpload {
         HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
         DefaultHttpClient httpClient = new DefaultHttpClient(httpParameters);
         try{
-            Log.d("BemaCarl7", "AtomicUpload.hasInternetConnection: Checking Internet Connection...");
+            Log.d("BemaCarl7", "AtomicUpload.hasInternetConnection: Checking Connection to " + url);
             httpClient.execute(httpGet);
-            Log.d("BemaCarl7", "AtomicUpload.hasInternetConnection: Internet is connected.");
+            Log.d("BemaCarl7", "AtomicUpload.hasInternetConnection: Connection to " + url + " is ok.");
             return true;
         }
         catch(ClientProtocolException e){
-            Log.e("BemaCarl7", "AtomicUpload.hasInternetConnection: ClientProtocolException: Internet is not connected.");
+            Log.e("BemaCarl7", "AtomicUpload.hasInternetConnection: ClientProtocolException: Connection to " + url + " is NOT ok.");
             //e.printStackTrace();
         }
         catch(IOException e){
-            Log.e("BemaCarl7", "AtomicUpload.hasInternetConnection: IOException: Internet is not connected.");
+            Log.e("BemaCarl7", "AtomicUpload.hasInternetConnection: IOException: Connection to " + url + " is NOT ok.");
             //e.printStackTrace();
         }
-        Log.e("BemaCarl7", "AtomicUpload.hasInternetConnection: Internet is not connected.");
+        Log.e("BemaCarl7", "AtomicUpload.hasInternetConnection: Connection to " + url + " is NOT ok.");
         return false;
     }
 
+
+    private String fixURL(String url){
+        if(url.contains("@")){
+            String[] urls = url.split("@");
+            String newUrl = urls[1];
+            if(newUrl.substring(newUrl.length() - 1).equals("/")){
+                newUrl = newUrl.substring(0, newUrl.length() - 1);
+            }
+            return "http://" + newUrl;
+        }
+        return url;
+    }
 
 }
