@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
@@ -2689,49 +2690,47 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    private class OrderHoldItemsQtyLoader implements LoaderCallbacks<HashMap<String, BigDecimal>> {
+    private class OrderHoldItemsQtyLoader implements LoaderCallbacks<Cursor> {
 
         @Override
-        public Loader<HashMap<String, BigDecimal>> onCreateLoader(int i, Bundle bundle) {
+        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
             return CursorLoaderBuilder.forUri(ITEM_MOVEMENT_URI)
                     .where(ShopStore.ItemMovementTable.ORDER_GUID + " = ?", saleOrderModel.guid)
-                    .transform(new Function<Cursor, HashMap<String, BigDecimal>>() {
-                        @Override
-                        public HashMap<String, BigDecimal> apply(Cursor cursor) {
-                            if (cursor != null && cursor.moveToFirst()) {
-                                ArrayList<ItemMovementModel> historyMovementModels = new ArrayList<>(cursor.getCount());
-                                do {
-                                    historyMovementModels.add(new ItemMovementModel(cursor));
-                                } while (cursor.moveToNext());
-                                cursor.close();
-                                if (historyMovementModels.size() > 0) {
-                                    HashMap<String, BigDecimal> itemQtyMovementHistory = new HashMap<>(historyMovementModels.size());
-                                    for (ItemMovementModel historyMovementModel : historyMovementModels) {
-                                        if (itemQtyMovementHistory.containsKey(historyMovementModel.itemGuid)) {
-                                            itemQtyMovementHistory.put(historyMovementModel.itemGuid,
-                                                    itemQtyMovementHistory.get(historyMovementModel.itemGuid).add(historyMovementModel.qty.abs()));
-                                        } else {
-                                            itemQtyMovementHistory.put(historyMovementModel.itemGuid, historyMovementModel.qty.abs());
-                                        }
-                                    }
-                                    return itemQtyMovementHistory;
-                                }
-                            }
-                            return null;
+                    .build(BaseCashierActivity.this);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> itemQty, Cursor cursor) {
+            if (cursor != null && cursor.moveToFirst()) {
+                ArrayList<ItemMovementModel> historyMovementModels = new ArrayList<>(cursor.getCount());
+                do {
+                    historyMovementModels.add(new ItemMovementModel(cursor));
+                } while (cursor.moveToNext());
+                cursor.close();
+                if (historyMovementModels.size() > 0) {
+                    HashMap<String, BigDecimal> itemQtyMovementHistory = new HashMap<>(historyMovementModels.size());
+                    for (ItemMovementModel historyMovementModel : historyMovementModels) {
+                        if (itemQtyMovementHistory.containsKey(historyMovementModel.itemGuid)) {
+                            itemQtyMovementHistory.put(historyMovementModel.itemGuid,
+                                    itemQtyMovementHistory.get(historyMovementModel.itemGuid).add(historyMovementModel.qty.abs()));
+                        } else {
+                            itemQtyMovementHistory.put(historyMovementModel.itemGuid, historyMovementModel.qty.abs());
                         }
-                    }).build(BaseCashierActivity.this);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<HashMap<String, BigDecimal>> itemQty, HashMap<String, BigDecimal> result) {
-            itemsQtyFromOnHold.clear();
-            if (result != null) {
-                itemsQtyFromOnHold.putAll(result);
+                    }
+                    itemsQtyFromOnHold.clear();
+                    itemsQtyFromOnHold.putAll(itemQtyMovementHistory);
+                }
+            } else {
+                itemsQtyFromOnHold.clear();
+                if (cursor != null) {
+                    cursor.close();
+                }
             }
+            getSupportLoaderManager().destroyLoader(LOADER_ORDER_REAL_AVAILABLE_QTY);
         }
 
         @Override
-        public void onLoaderReset(Loader<HashMap<String, BigDecimal>> itemQty) {
+        public void onLoaderReset(Loader<Cursor> cursor) {
         }
     }
 
