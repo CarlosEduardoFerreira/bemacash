@@ -226,7 +226,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.CursorUtil._wrap;
 
 @EActivity
-public abstract class BaseCashierActivity extends ScannerBaseActivity implements IOrderActionListener, IDisplayBinder, BarcodeListenerHolder {
+public abstract class BaseCashierActivity extends ScannerBaseActivity implements IOrderActionListener, IDisplayBinder, BarcodeListenerHolder, OrderItemListFragment.OrderDelivery {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
     private static final Uri URI_SALE_ITEMS = ShopProvider.getContentUri(ShopStore.SaleOrderItemsView.URI_CONTENT);
@@ -355,7 +355,6 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private List<Integer> priceLevels = Collections.EMPTY_LIST;
     private List<DiscountBundle> discountBundles = Collections.EMPTY_LIST;
     private boolean hasPrefixes;
-    protected int ageVerified;
 
 
     @Override
@@ -371,6 +370,11 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     @Override
     public void setBarcodeListener(BarcodeListener barcodeListener) {
         this.barcodeListener = barcodeListener;
+    }
+
+    @Override
+    public SaleOrderModel getOrder() {
+        return getSaleOrderModel();
     }
 
     @Override

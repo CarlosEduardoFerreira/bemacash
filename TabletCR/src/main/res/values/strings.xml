@@ -2254,6 +2254,7 @@
 
     <string name="clear_local_sync_data">Clear Missing</string>
         <string name="clear_local_sync_data_confirm">Are you sure you want clear all missing data of the local sync?\n\nOnly do this if you are sure all Bemacashs are synchronized.</string>
+    <string name="kitchen_printable_modifier_cant_be_changed">Kitchen printable items cannot be changed, you can remove and re-collect new item</string>
 
 
     <!-- local sync ends -->

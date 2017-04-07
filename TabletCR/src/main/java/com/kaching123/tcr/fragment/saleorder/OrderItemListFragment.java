@@ -60,6 +60,7 @@ import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PriceType;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
+import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
 import com.kaching123.tcr.store.ShopProvider;
@@ -522,6 +523,11 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         if (!item.hasModifiers()) {
             return;
         }
+        SaleOrderModel saleOrder = ((OrderDelivery)getActivity()).getOrder();
+        if (item.isKitchenPrintable && saleOrder != null && saleOrder.orderStatus == OrderStatus.HOLDON) {
+            Toast.makeText(getContext(), R.string.kitchen_printable_modifier_cant_be_changed, Toast.LENGTH_LONG).show();
+            return;
+        }
 
         if (itemsListHandler != null) {
             itemsListHandler.onEditItemModifiers(
@@ -848,6 +854,10 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     private Set<Permission> getOperatorPermissions() {
         return ((TcrApplication) getActivity().getApplication()).getOperatorPermissions();
+    }
+
+    public interface OrderDelivery {
+        SaleOrderModel getOrder();
     }
 
 }
