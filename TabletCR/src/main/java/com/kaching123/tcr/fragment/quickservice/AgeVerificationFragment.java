@@ -56,6 +56,7 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
     private AgeVerifiedListener ageVerifiedListener;
     private ItemExModel itemExModel;
     private int customerAge;
+    private boolean ageFormatLatin = false;
 
     public void setConfirmListener(AgeVerifiedListener listener) {
         this.ageVerifiedListener = listener;
@@ -113,13 +114,11 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
         enablePositiveButtons(false);
         keyboard.setDotEnabled(false);
 
-
         mmAgeField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus) {
-                    firstSlash.setTextColor(getResources().getColor(R.color.mint_color));
-                    secondSlash.setTextColor(getResources().getColor(R.color.dashboard_module_text));
+                    hilightRequest(FieldOrder.MONTH);
                     if (mmAgeField.getText().length() == 0) {
                         keyboard.setEnterEnabled(false);
                     }
@@ -137,8 +136,7 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus) {
-                    firstSlash.setTextColor(getResources().getColor(R.color.mint_color));
-                    secondSlash.setTextColor(getResources().getColor(R.color.mint_color));
+                    hilightRequest(FieldOrder.DAY);
                     if (((CustomEditBox)v).getText().length() == 0) {
                         keyboard.setEnterEnabled(false);
                     } else {
@@ -241,11 +239,11 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
                         ddAgeField.setText(String.valueOf(s.charAt(0)));
                         return;
                     }
-                    yyyyAgeField.requestFocusFromTouch();
+                    requestNextFocus(FieldOrder.DAY);
                     needRefresh();
                 } else if (s.length() > 2) {
                     ddAgeField.setText(String.valueOf(s.subSequence(0, 1)));
-                    yyyyAgeField.requestFocusFromTouch();
+                    requestNextFocus(FieldOrder.DAY);
                 }
             }
         });
@@ -282,11 +280,11 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
                         mmAgeField.setText(String.valueOf(s.charAt(0)));
                         return;
                     }
-                    ddAgeField.requestFocusFromTouch();
+                    requestNextFocus(FieldOrder.MONTH);
                     needRefresh();
                 } else if (s.length()> 2) {
                     mmAgeField.setText(String.valueOf(s.subSequence(0, 1)));
-                    ddAgeField.requestFocusFromTouch();
+                    requestNextFocus(FieldOrder.MONTH);
                 }
             }
         });
@@ -299,7 +297,7 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
                 } else if (text.length() == 1) {
                     mmAgeField.setText("0".concat(text));
                 }
-                ddAgeField.requestFocusFromTouch();
+                requestNextFocus(FieldOrder.MONTH);
                 return false;
             }
         });
@@ -311,7 +309,7 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
                 } else if (text.length() == 1) {
                     ddAgeField.setText("0".concat(text));
                 }
-                yyyyAgeField.requestFocusFromTouch();
+                requestNextFocus(FieldOrder.DAY);
                 return false;
             }
         });
@@ -323,6 +321,49 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
                 return false;
             }
         });
+    }
+
+    private void requestNextFocus(FieldOrder orderField) {
+        switch (orderField) {
+            case MONTH:
+                if(!ageFormatLatin) {
+                    ddAgeField.requestFocusFromTouch();
+                } else {
+                    yyyyAgeField.requestFocusFromTouch();
+                }
+                break;
+            case DAY:
+                if(!ageFormatLatin) {
+                    yyyyAgeField.requestFocusFromTouch();
+                } else {
+                    mmAgeField.requestFocusFromTouch();
+                }
+                break;
+        }
+    }
+
+    private void hilightRequest(FieldOrder currentFocus){
+        switch (currentFocus){
+            case MONTH:
+                if (!ageFormatLatin) {
+                    firstSlash.setTextColor(getResources().getColor(R.color.mint_color));
+                    secondSlash.setTextColor(getResources().getColor(R.color.dashboard_module_text));
+                } else {
+                    firstSlash.setTextColor(getResources().getColor(R.color.mint_color));
+                    secondSlash.setTextColor(getResources().getColor(R.color.mint_color));
+                }
+                break;
+            case DAY:
+                if (!ageFormatLatin) {
+                    firstSlash.setTextColor(getResources().getColor(R.color.mint_color));
+                    secondSlash.setTextColor(getResources().getColor(R.color.mint_color));
+                } else {
+                    firstSlash.setTextColor(getResources().getColor(R.color.mint_color));
+                    secondSlash.setTextColor(getResources().getColor(R.color.dashboard_module_text));
+                }
+                break;
+
+        }
     }
 
     private void needRefresh() {
@@ -371,7 +412,8 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
 
     @Override
     protected int getDialogContentLayout() {
-        return R.layout.age_verification_dialog_fragment;
+        ageFormatLatin = getApp().getShopInfo().ageVerificationFormatLatin;
+        return ageFormatLatin ? R.layout.age_verification_latin_dialog_fragment : R.layout.age_verification_dialog_fragment;
     }
 
     @Override
@@ -427,5 +469,10 @@ public class AgeVerificationFragment extends KeyboardDialogFragment implements L
 
     public static void show(FragmentActivity context, String orderGuid, AgeVerifiedListener listener){
         DialogUtil.show(context, DIALOG_NAME, AgeVerificationFragment_.builder().orderGuid(orderGuid).build()).setConfirmListener(listener);
+    }
+
+    enum FieldOrder {
+        MONTH,
+        DAY
     }
 }
