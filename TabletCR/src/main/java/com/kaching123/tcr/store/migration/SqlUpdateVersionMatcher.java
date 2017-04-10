@@ -1,5 +1,12 @@
 package com.kaching123.tcr.store.migration;
 
+import com.kaching123.tcr.store.migration.version.to10.Update6_4to10;
+import com.kaching123.tcr.store.migration.version.to10.Update6_5to10;
+import com.kaching123.tcr.store.migration.version.to10.Update6_6to10;
+import com.kaching123.tcr.store.migration.version.to10.Update6_7to10;
+import com.kaching123.tcr.store.migration.version.to10.Update7to10;
+import com.kaching123.tcr.store.migration.version.to10.Update8to10;
+import com.kaching123.tcr.store.migration.version.to10.Update9to10;
 import com.kaching123.tcr.store.migration.version.to2.Update1to2;
 import com.kaching123.tcr.store.migration.version.to3.Update1to3;
 import com.kaching123.tcr.store.migration.version.to3.Update2to3;
@@ -452,7 +459,15 @@ public class SqlUpdateVersionMatcher {
         UPDATE6_6TO9(new Update6_6to9()),
         UPDATE6_7TO9(new Update6_7to9()),
         UPDATE7TO9(new Update7to9()),
-        UPDATE8TO9(new Update8to9());
+        UPDATE8TO9(new Update8to9()),
+
+        UPDATE6_4TO10(new Update6_4to10()),
+        UPDATE6_5TO10(new Update6_5to10()),
+        UPDATE6_6TO10(new Update6_6to10()),
+        UPDATE6_7TO10(new Update6_7to10()),
+        UPDATE7TO10(new Update7to10()),
+        UPDATE8TO10(new Update8to10()),
+        UPDATE9TO10(new Update9to10());
 
         private IUpdateContainer container;
 

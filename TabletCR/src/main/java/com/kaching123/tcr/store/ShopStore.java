@@ -36,8 +36,9 @@ import static com.kaching123.tcr.store.ShopSchemaEx.Trigger.trigger;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTriggers;
+import static com.kaching123.tcr.store.migration.IUpdateContainer.VERSION10;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = 309)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = VERSION10)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
@@ -1736,10 +1737,10 @@ public abstract class ShopStore {
         String COUNTRY_ID = "country_id";
 
         @NotNull
-        @Column(type = Type.INTEGER)
+        @Column(type = Type.TEXT)
         String NAME = "name";
 
-        @Column(type = Type.TEXT)
+        @Column(type = Type.INTEGER)
         String CODE = "code";
 
         @Column(type = Type.INTEGER)
@@ -2723,9 +2724,6 @@ public abstract class ShopStore {
         @Columns(SaleOrderTable.CREATE_TIME)
         @Join(type = Join.Type.LEFT, joinTable = SaleOrderTable.TABLE_NAME, joinColumn = SaleOrderTable.GUID, onTableAlias = TABLE_UNIT, onColumn = UnitTable.SALE_ORDER_ID)
         String TABLE_SALE_ORDER = "sale_order_table";
-
-        @Column(type = Type.INTEGER)
-        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
     }
 
     public static interface OldSaleOrdersQuery {

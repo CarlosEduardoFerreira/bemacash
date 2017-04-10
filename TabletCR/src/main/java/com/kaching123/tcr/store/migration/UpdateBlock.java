@@ -263,6 +263,123 @@ public class UpdateBlock {
     public static final String SQL_CREATE_SALE_ADDON_VIEW = "CREATE VIEW sale_addon_view AS SELECT  sale_addon_table.guid as sale_addon_table_guid, sale_addon_table.addon_id as sale_addon_table_addon_id, sale_addon_table.item_guid as sale_addon_table_item_guid, sale_addon_table.extra_cost as sale_addon_table_extra_cost, sale_addon_table.addon_type as sale_addon_table_addon_type, sale_addon_table.child_item_guid as sale_addon_table_child_item_guid, sale_addon_table.child_item_qty as sale_addon_table_child_item_qty, sale_addon_table.is_deleted as sale_addon_table_is_deleted, sale_addon_table.update_time as sale_addon_table_update_time, sale_addon_table.is_draft as sale_addon_table_is_draft, modifier_table.title as modifier_table_title, modifier_table.item_group_guid as modifier_table_item_group_guid FROM sale_order_item_addon AS sale_addon_table JOIN items_modifier AS modifier_table ON modifier_table.modifier_guid = sale_addon_table.addon_id and modifier_table.is_deleted = 0 where sale_addon_table.is_deleted = 0";
     private static final String SQL_DROP_SALE_ADDON_VIEW = "DROP VIEW if exists sale_addon_view";
 
+
+    public static void update9to10(SQLiteDatabase db){
+
+        db.execSQL( "CREATE TABLE " +
+                    "sql_command_host" +
+            "(" +
+                "order_command INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "guid TEXT," +
+                "sql_command TEXT NOT NULL," +
+                "create_time INTEGER NOT NULL," +
+                "update_time_local INTEGER" +
+            ")"
+        );
+
+        db.execSQL( "CREATE TABLE " +
+                "sql_command_client" +
+            "(" +
+                "command_id INTEGER NOT NULL," +
+                "client_serial TEXT NOT NULL," +
+                "update_time_local INTEGER" +
+            ")"
+        );
+
+        db.execSQL( "CREATE TABLE " +
+                "country" +
+            "(" +
+                "sid INTEGER PRIMARY KEY NOT NULL," +
+                "_id TEXT UNIQUE NOT NULL," +
+                "name TEXT NOT NULL," +
+                "is_draft INTEGER DEFAULT (0)," +
+                "update_time_local INTEGER" +
+            ")"
+        );
+
+        db.execSQL( "CREATE TABLE " +
+                "state" +
+            "(" +
+                "_id INTEGER PRIMARY KEY NOT NULL," +
+                "code INTEGER NOT NULL," +
+                "name TEXT NOT NULL," +
+                "abbreviation TEXT NOT NULL," +
+                "FISCAL_TECH INTEGER," +
+                "MAX_SALES_AMOUNT TEXT," +
+                "country_id TEXT NOT NULL," +
+                "is_draft INTEGER DEFAULT (0)," +
+                "update_time_local INTEGER" +
+            ")"
+        );
+
+        db.execSQL( "CREATE TABLE " +
+                "municipality" +
+            "(" +
+                "_id INTEGER PRIMARY KEY NOT NULL," +
+                "state_id TEXT NOT NULL," +
+                "country_id TEXT NOT NULL," +
+                "name TEXT NOT NULL," +
+                "code INTEGER," +
+                "is_draft INTEGER DEFAULT (0)," +
+                "update_time_local INTEGER" +
+            ")"
+        );
+
+        db.execSQL("ALTER TABLE country                 ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE state                   ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE apk_update              ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE BillPayment_item        ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE wireless_item           ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE composer                ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE unit                    ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE department              ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE category                ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE item                    ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE item_movement           ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE items_modifier          ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE items_kds               ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE sale_order              ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE sale_order_item         ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE sale_order_item_addon   ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE employee                ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE employee_permission     ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE shift                   ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE cashdrawer_tr           ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE sql_command             ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE payment_transaction     ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE employee_timesheet      ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE tax_group               ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE register                ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE bp_description          ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE municipality            ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE customer                ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE printer_alias_table     ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE kds_alias_table         ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE pax_table               ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE printer_able            ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE kds_table               ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE credit_receipt_table    ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE employee_tips           ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE activation_carrier      ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE employee_commissions    ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE update_time             ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE variant_item            ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE variant_sub_item        ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE item_matrix             ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE loyalty_incentive       ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE loyalty_plan            ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE loyalty_incentive_plan  ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE loyalty_points_movement ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE sale_incentive          ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE tbp                     ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE tbp_x_register          ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE multiple_discount       ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE items_modifier_group    ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE unit_label_table        ADD COLUMN update_time_local INTEGER");
+
+        updateViews(db);
+    }
+
     public static void update8to9(SQLiteDatabase db){
         db.execSQL("CREATE TABLE defined_on_hold(id TEXT PRIMARY KEY NOT NULL, name TEXT, is_deleted INTEGER DEFAULT (0), update_time INTEGER, is_draft INTEGER DEFAULT (0))");
 
@@ -283,8 +400,6 @@ public class UpdateBlock {
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_cryptogram_type TEXT");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN authorization_number TEXT");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN signature_bytes TEXT");
-
-        updateViews(db);
     }
 
     public static void update7to8(SQLiteDatabase db){
