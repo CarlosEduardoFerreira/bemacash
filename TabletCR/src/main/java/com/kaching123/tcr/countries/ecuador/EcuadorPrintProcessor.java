@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.pos.util.ITextPrinter;
@@ -23,6 +24,7 @@ import com.kaching123.tcr.model.SaleOrderItemViewModel.AddonInfo;
 import com.kaching123.tcr.model.TaxGroupModel;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.print.FormatterUtil;
+import com.kaching123.tcr.print.builder.DigitalOrderBuilder;
 import com.kaching123.tcr.print.processor.PrintOrderProcessor;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2.CustomerTable;
@@ -180,14 +182,26 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
         final String itemDiscountText = context.getString(R.string.print_order_item_discount);
         final List<PaymentTransactionModel> payments = (transactions != null && transactions.size() != 0) ?
                 transactions : ReadPaymentTransactionsFunction.loadByOrderSingle(context, orderGuid);
-        ((PosEcuadorOrderTextPrinter) printerWrapper).addHeaderTitle(context.getString(R.string.printer_ec_header_description),
-                context.getString(R.string.printer_ec_header_qty),
-                context.getString(R.string.printer_ec_header_iva),
-                context.getString(R.string.printer_ec_header_dto),
-                context.getString(R.string.printer_ec_header_total),
-                context.getString(R.string.printer_ec_header_unit_price));
-
-        printerWrapper.drawLine();
+        if(printerWrapper instanceof PosEcuadorOrderTextPrinter) {
+            Log.d("BemaCarl14","EcuadorPrintProcessor.printBody: instanceof PosEcuadorOrderTextPrinter");
+            ((PosEcuadorOrderTextPrinter) printerWrapper).addHeaderTitle(
+                    context.getString(R.string.printer_ec_header_description),
+                    context.getString(R.string.printer_ec_header_qty),
+                    context.getString(R.string.printer_ec_header_iva),
+                    context.getString(R.string.printer_ec_header_dto),
+                    context.getString(R.string.printer_ec_header_total),
+                    context.getString(R.string.printer_ec_header_unit_price));
+            printerWrapper.drawLine();
+        } else if(printerWrapper instanceof DigitalOrderBuilder){
+            Log.d("BemaCarl14","EcuadorPrintProcessor.printBody: instanceof DigitalOrderBuilder");
+            ((EcuadorDigitalOrderBuilder) printerWrapper).addHeader(
+                    context.getString(R.string.printer_ec_header_description),
+                    context.getString(R.string.printer_ec_header_qty),
+                    context.getString(R.string.printer_ec_header_dto),
+                    context.getString(R.string.printer_ec_header_total),
+                    context.getString(R.string.printer_ec_header_unit_price));
+        }
+        /**/
 
         OrderTotalPriceCursorQuery.loadSync(context, orderGuid, new OrderTotalPriceCursorQuery.PrintHandler() {
             @Override
@@ -215,7 +229,14 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                         isIva = context.getString(R.string.printer_tax_is_iva);
                     else
                         isIva = context.getString(R.string.printer_tax_is_not_iva);
-                    ((PosEcuadorOrderTextPrinter) printerWrapper).addEcua(description, qty.toString(), isIva, itemDiscount, itemSubtotal.subtract(itemDiscount), itemPrice, unitAsStrings);
+                    if(printerWrapper instanceof PosEcuadorOrderTextPrinter) {
+                        ((PosEcuadorOrderTextPrinter) printerWrapper).addEcua(description, qty.toString(),
+                                isIva, itemDiscount, itemSubtotal.subtract(itemDiscount), itemPrice, unitAsStrings);
+                    }else if(printerWrapper instanceof DigitalOrderBuilder){
+                        ((EcuadorDigitalOrderBuilder)printerWrapper).add(description, qty.toString(),
+                                itemDiscount, itemSubtotal.subtract(itemDiscount), itemPrice, unitAsStrings);
+                    }
+
 //                    printerWrapper.add(description, qty, itemSubtotal, itemPrice, unitAsStrings);
                 }
                 if (addons != null && addons.size() != 0)
@@ -329,10 +350,6 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
 
             }
 
-        int printedLines = ((PosEcuadorOrderTextPrinter) printerWrapper).linesCount;
-        if (printedLines < EC_RECEIPT_LINES_COUNT) {
-            printerWrapper.emptyLine(EC_RECEIPT_LINES_COUNT - printedLines);
-        }
     }
 
     private String[] getFormattedLine(String receipt) {

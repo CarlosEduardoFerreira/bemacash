@@ -22,7 +22,7 @@ public class EcuadorSettings implements CountryFunctionality {
 
     @Override
     public DigitalOrderBuilder getDigitalOrderBuilder() {
-        return new DigitalOrderBuilder();
+        return new EcuadorDigitalOrderBuilder();
     }
 
     @Override
