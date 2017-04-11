@@ -49,6 +49,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
     public boolean isKitchenPrintable;
     public boolean isPrepaidItem;
     public boolean isGiftCard;
+    public boolean locked;
 
     public SaleOrderItemViewModel(SaleOrderItemModel itemModel,
                                   String description,
@@ -112,6 +113,14 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
             return builder.toString();
         }
         return "";
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     public String getUniqSerialCodesString() {

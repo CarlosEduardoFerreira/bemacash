@@ -166,10 +166,14 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
             @Override
             public void onRemoveClicked(View v, final int pos) {
                 //adapter.itemRemoved = true;
+                SaleOrderItemViewModel orderItemForRemove = adapter.getItem(pos);
+                if (orderItemForRemove.isLocked()) {
+                    return;
+                }
+                orderItemForRemove.setLocked(true);
+
                 position = pos;
                 isVoidNeedPermission();
-
-                SaleOrderItemViewModel orderItemForRemove = adapter.getItem(pos);
 
                 BigDecimal subValue = app.getOrderItemsQty().get(orderItemForRemove.itemModel.itemGuid);
                 subValue = subValue != null ? subValue.subtract(orderItemForRemove.getQty()) : subValue;
@@ -354,6 +358,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
                         doRemoceClickLine();
                     }
                 }, Permission.VOID_SALES);
+                adapter.getItem(position).setLocked(false);
             }
         c.close();
 
@@ -404,6 +409,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         getListView().closeOpenedItems();
         itemsListHandler.onTotolQtyUpdated(getRemoveQty(adapter.getSaleItemGuid(position)), true, null);
         if (adapter.getCount() == 1) {
+            adapter.getItem(position).setLocked(false);
             cleanAll();
             if (itemsListHandler != null) {
                 itemsListHandler.onRemoveLastItem();
@@ -479,6 +485,9 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     public void onItemRemovedFailCallback(@Param(PrinterCommand.EXTRA_ERROR_PRINTER) PrinterCommand.PrinterError printerError,
                                           @Param(EXTRA_PRINTER) String fromPrinter,
                                           @Param(EXTRA_ALIAS_TITLE) String aliasTitle) {
+
+        adapter.getItem(position).setLocked(false);
+
         KitchenPrintCallbackHelper.IKitchenPrintCallback callback = new KitchenPrintCallbackHelper.IKitchenPrintCallback() {
             @Override
             public void onRetry(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
