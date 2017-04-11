@@ -325,8 +325,6 @@ public class UpdateBlock {
             ")"
         );
 
-        db.execSQL("ALTER TABLE country                 ADD COLUMN update_time_local INTEGER");
-        db.execSQL("ALTER TABLE state                   ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE apk_update              ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE BillPayment_item        ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE wireless_item           ADD COLUMN update_time_local INTEGER");
@@ -351,7 +349,6 @@ public class UpdateBlock {
         db.execSQL("ALTER TABLE tax_group               ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE register                ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE bp_description          ADD COLUMN update_time_local INTEGER");
-        db.execSQL("ALTER TABLE municipality            ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE customer                ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE printer_alias_table     ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE kds_alias_table         ADD COLUMN update_time_local INTEGER");
