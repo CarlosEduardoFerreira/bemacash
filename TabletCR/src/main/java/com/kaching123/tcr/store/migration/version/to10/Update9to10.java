@@ -4,7 +4,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.kaching123.tcr.store.migration.IUpdateContainer;
 
-import static com.kaching123.tcr.store.migration.UpdateBlock.update8to9;
 import static com.kaching123.tcr.store.migration.UpdateBlock.update9to10;
 
 /**

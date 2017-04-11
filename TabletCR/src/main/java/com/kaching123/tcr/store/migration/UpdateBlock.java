@@ -363,10 +363,11 @@ public class UpdateBlock {
         db.execSQL("ALTER TABLE variant_item            ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE variant_sub_item        ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE item_matrix             ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE loyalty_points_movement ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE loyalty_incentive       ADD COLUMN update_time_local INTEGER");
+        db.execSQL("ALTER TABLE loyalty_incentive_item  ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE loyalty_plan            ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE loyalty_incentive_plan  ADD COLUMN update_time_local INTEGER");
-        db.execSQL("ALTER TABLE loyalty_points_movement ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE sale_incentive          ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE tbp                     ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE tbp_x_register          ADD COLUMN update_time_local INTEGER");
@@ -374,10 +375,7 @@ public class UpdateBlock {
         db.execSQL("ALTER TABLE items_modifier_group    ADD COLUMN update_time_local INTEGER");
         db.execSQL("ALTER TABLE unit_label_table        ADD COLUMN update_time_local INTEGER");
 
-        updateViews(db);
-    }
 
-    public static void update8to9(SQLiteDatabase db){
         db.execSQL("CREATE TABLE defined_on_hold(id TEXT PRIMARY KEY NOT NULL, name TEXT, is_deleted INTEGER DEFAULT (0), update_time INTEGER, is_draft INTEGER DEFAULT (0))");
 
         db.execSQL("ALTER TABLE sale_order ADD COLUMN hold_tel TEXT");
@@ -385,12 +383,17 @@ public class UpdateBlock {
         db.execSQL("ALTER TABLE sale_order ADD COLUMN defined_on_hold_id TEXT REFERENCES defined_on_hold(id)");
         db.execSQL("ALTER TABLE sale_order ADD COLUMN on_register INTEGER");
         db.execSQL("ALTER TABLE sale_order ADD COLUMN age_verified INTEGER");
+        db.execSQL("ALTER TABLE sale_order ADD COLUMN checkout_state INTEGER");
 
         db.execSQL("ALTER TABLE item ADD COLUMN age_verification INTEGER");
 
         db.execSQL("ALTER TABLE item_movement ADD COLUMN order_guid TEXT");
-        // payment transaction
-        //if(!checkIfColumnDBExist(db, "payment_transaction", "last_four")) {
+
+
+        updateViews(db);
+    }
+
+    public static void update8to9(SQLiteDatabase db){
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN last_four TEXT");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN entry_method TEXT");
         db.execSQL("ALTER TABLE payment_transaction ADD COLUMN application_identifier TEXT");
