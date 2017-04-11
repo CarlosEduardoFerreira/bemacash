@@ -175,7 +175,12 @@ public class ItemsFragment extends BaseItemsPickFragment {
             }
 
             if (!TextUtils.isEmpty(textFilter)) {
-                builder.where(ItemTable.PRODUCT_CODE + " like? " + " OR " + ItemTable.DESCRIPTION + " like ? " + " OR " + ItemTable.EAN_CODE + " like ? ", "%" + textFilter + "%", "%" + textFilter + "%");
+                builder.where(   ItemTable.PRODUCT_CODE +   " like ? " +
+                        " OR " + ItemTable.DESCRIPTION +    " like ? " +
+                        " OR " + ItemTable.EAN_CODE +       " like ? ",
+                           "%" + textFilter + "%",
+                           "%" + textFilter + "%",
+                           "%" + textFilter + "%");
                 draggable = false;
             }
             if (useOnlyNearTheEnd) {

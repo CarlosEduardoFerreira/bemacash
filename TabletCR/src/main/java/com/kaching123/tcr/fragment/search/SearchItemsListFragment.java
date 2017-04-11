@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -91,12 +92,17 @@ public class SearchItemsListFragment extends Fragment implements IPriceLevelList
 
     @Override
     public Loader<List<CategoryItemViewModel>> onCreateLoader(int loaderId, Bundle args) {
-        Logger.d("ItemsListFragment onCreateLoader");
+        Log.d("BemaCarl12","SearchItemsListFragment.onCreateLoader");
         return CursorLoaderBuilder.forUri(URI_ITEMS)
                 .projection(ItemConverter.PROJECTION)
-                .where(ItemTable.ACTIVE_STATUS + " = ? AND " + ItemTable.SALABLE + " = ? AND ( " + ItemTable.DESCRIPTION
-                                + " like ?" + " OR " + ItemTable.PRODUCT_CODE + " like ? )", 1, 1,
-                        "%" + searchText + "%", "%" + searchText + "%")
+                .where(ItemTable.ACTIVE_STATUS + " = ? AND " + ItemTable.SALABLE + " = ? " +
+                        "AND ( " + ItemTable.DESCRIPTION + " like ?" +
+                        " OR " + ItemTable.PRODUCT_CODE + " like ?" +
+                        " OR " + ItemTable.EAN_CODE + " like ? )",
+                        1, 1,
+                        "%" + searchText + "%",
+                        "%" + searchText + "%",
+                        "%" + searchText + "%")
                 .orderBy(ItemTable.CATEGORY_ID + ", " + ItemTable.ORDER_NUM)
                 .transform(new Function<Cursor, List<CategoryItemViewModel>>() {
                     @Override
