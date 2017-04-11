@@ -32,7 +32,6 @@ public class PayChooseCustomerDialog extends ChooseCustomerBaseDialog {
 
     @Override
     protected void onCustomerPicked(CustomerModel customer) {
-        SendDigitalOrderCommand.start(getActivity(), orderGuid, customer.email, null, transactions, releaseResultList);
         dismiss();
         listener.onComplete();
     }
