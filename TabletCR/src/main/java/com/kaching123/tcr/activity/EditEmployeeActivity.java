@@ -372,7 +372,6 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
                     @Override
                     public boolean onClick() {
                         onBackPressedDialog();
-                        disableForceLogOut();
                         return false;
                     }
                 }, new OnDialogClickListener() {
@@ -401,14 +400,16 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         formatar.setMinimumFractionDigits(2);
 
         BigDecimal hR1 = initEmployeeModel.hRate == null ? BigDecimal.ZERO : initEmployeeModel.hRate;
-        BigDecimal hR2 = hourlyRate.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(hourlyRate.getText().toString());
+        String hR2String = hourlyRate.getText().toString().replaceAll(",", "");
+        BigDecimal hR2 = hourlyRate.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(hR2String);
         String hRate1 = formatar.format(hR1);
         String hRate2 = formatar.format(hR2);
 
         statusChanged = statusValue != status.getSelectedItemId();
 
         BigDecimal co1 = initEmployeeModel.commission  == null ? BigDecimal.ZERO : initEmployeeModel.commission;
-        BigDecimal co2 = commissions.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(commissions.getText().toString());
+        String co2String = commissions.getText().toString().replaceAll(",", "");
+        BigDecimal co2 = commissions.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(co2String);
         String commission1 = formatar.format(co1);
         String commission2 = formatar.format(co2);
 
