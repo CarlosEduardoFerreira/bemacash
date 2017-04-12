@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -144,6 +145,11 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         tipsEligible.setChecked(model.tipsEligible);
         commissionsEligible.setChecked(model.commissionEligible);
         showPrice(commissions, model.commission);
+
+        InputFilter[] filterArray = new InputFilter[1];
+        filterArray[0] = new InputFilter.LengthFilter(6);
+        hourlyRate.setFilters(filterArray);
+        commissions.setFilters(filterArray);
 
         initEmployeeModel = model;
     }

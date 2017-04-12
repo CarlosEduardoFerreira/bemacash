@@ -246,12 +246,12 @@
                 <EditText
                     style="@style/EditItem.Table.Edittext"
                     android:id="@+id/hourly_rate"
-                    android:inputType="numberDecimal|numberSigned"
+                    android:inputType="numberDecimal"
                     android:layout_width="0dp"
                     android:singleLine="true"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    />
+                    android:maxLength="6"/>
             </TableRow>
 
             <TableRow
