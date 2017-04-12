@@ -87,7 +87,6 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
     @Override
     public SingleSqlCommand insertSQL(EmployeePermissionModel model, IAppCommandContext appCommandContext) {
         InsertOrUpdateBuilder builder = _insertOrUpdate(TABLE_NAME, appCommandContext);
-        Log.d("BemaCarl4","EmployeePermissionJdbcConverter.insertSQL.model.toValues(): " + model.toValues());
         builder
                 .add(USER_ID, model.userGuid)
                 .add(PERM_ID, model.permissionId)
@@ -97,7 +96,6 @@ public class EmployeePermissionJdbcConverter extends JdbcConverter<EmployeePermi
 
     @Override
     public SingleSqlCommand updateSQL(EmployeePermissionModel model, IAppCommandContext appCommandContext) {
-        Log.d("BemaCarl4","EmployeePermissionJdbcConverter.updateSQL.model.toValues(): " + model.toValues());
         throw new UnsupportedOperationException();
     }
 

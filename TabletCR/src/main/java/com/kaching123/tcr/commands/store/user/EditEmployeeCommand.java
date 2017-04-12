@@ -53,7 +53,6 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
         for (Permission p : permissions) {
             ContentValues v = new ContentValues();
             v.put(ShopStore.DEFAULT_UPDATE_TIME_LOCAL, TcrApplication.get().getCurrentServerTimestamp());
-            Log.d("BemaCarl5","EditEmployeeCommand.savePermissions: " + model.guid+"|"+p.getId());
             v.put(EmployeePermissionTable.USER_GUID, model.guid);
             v.put(EmployeePermissionTable.PERMISSION_ID, p.getId());
             v.put(EmployeePermissionTable.ENABLED, true);
@@ -84,9 +83,7 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
         BatchSqlCommand batch = batchUpdate(model)
                 .add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()))
                 .add(permissionJdbcConverter.disableAllSQL(model.guid, getAppCommandContext()));
-        Log.d("BemaCarl5","EditEmployeeCommand.createSqlCommand1: " + model.guid);
         for (Permission p : permissions) {
-            Log.d("BemaCarl5","EditEmployeeCommand.createSqlCommand2: " + model.guid+"|"+p.getId());
             batch.add(permissionJdbcConverter.insertSQL(new EmployeePermissionModel(model.guid, p.getId(), true, null), getAppCommandContext()));
         }
 

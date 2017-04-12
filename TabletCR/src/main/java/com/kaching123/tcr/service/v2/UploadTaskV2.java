@@ -59,9 +59,6 @@ public class UploadTaskV2 {
     public boolean webApiUpload(ContentResolver cr, Context context) throws TransactionNotFinalizedException, SyncCommand.SyncLockedException {
 
         Log.d("BemaCarl","UploadTaskV2.webApiUpload.cr: " + cr);
-        if(!new AtomicUpload().hasInternetConnection()){
-            return false;
-        }
 
         if (TcrApplication.get().isTrainingMode())
             return true;
@@ -145,9 +142,6 @@ public class UploadTaskV2 {
     public boolean employeeUpload(ContentResolver cr, Context context) throws SyncCommand.SyncLockedException {
 
         Log.d("BemaCarl","UploadTaskV2.employeeUpload.cr: " + cr);
-        if(!new AtomicUpload().hasInternetConnection()){
-            return false;
-        }
 
         if (TcrApplication.get().isTrainingMode())
             return true;
@@ -245,6 +239,9 @@ public class UploadTaskV2 {
     private boolean try2Upload(ContentResolver cr, ArrayList<UploadCommand> commands, Context context) throws SyncCommand.SyncLockedException {
 
         Log.d("BemaCarl","UploadTaskV2.try2Upload.cr: " + cr);
+        if(!new AtomicUpload().hasInternetConnection()){
+            return false;
+        }
 
         TcrApplication app = TcrApplication.get();
         EmployeeModel employeeModel = app.getOperator() == null ? employee : app.getOperator();

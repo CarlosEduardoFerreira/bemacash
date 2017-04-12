@@ -39,10 +39,6 @@ public class UploadTaskV1 {
     public boolean webApiUpload(ContentResolver cr) {
 
         Log.d("BemaCarl","UploadTaskV1.webApiUpload.cr: " + cr);
-        if(!new AtomicUpload().hasInternetConnection()){
-            return false;
-        }
-
 
         if (TcrApplication.get().isTrainingMode())
             return true;
@@ -88,6 +84,9 @@ public class UploadTaskV1 {
     private boolean try2Upload(SyncApiV1 api, ContentResolver cr, ArrayList<UploadCommandV1> commands) {
 
         Log.d("BemaCarl","UploadTaskV1.try2Upload.cr: " + cr);
+        if(!new AtomicUpload().hasInternetConnection()){
+            return false;
+        }
 
         TcrApplication app = TcrApplication.get();
         EmployeeModel employeeModel = app.getOperator();
