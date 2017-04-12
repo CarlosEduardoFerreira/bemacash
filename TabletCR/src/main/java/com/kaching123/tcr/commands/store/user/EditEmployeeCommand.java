@@ -81,7 +81,7 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         EmployeePermissionJdbcConverter permissionJdbcConverter = (EmployeePermissionJdbcConverter) JdbcFactory.getConverter(EmployeePermissionTable.TABLE_NAME);
-        batch = batchUpdate(model)
+        BatchSqlCommand batch = batchUpdate(model)
                 .add(JdbcFactory.getConverter(model).updateSQL(model, getAppCommandContext()))
                 .add(permissionJdbcConverter.disableAllSQL(model.guid, getAppCommandContext()));
         Log.d("BemaCarl5","EditEmployeeCommand.createSqlCommand1: " + model.guid);
@@ -89,6 +89,9 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
             Log.d("BemaCarl5","EditEmployeeCommand.createSqlCommand2: " + model.guid+"|"+p.getId());
             batch.add(permissionJdbcConverter.insertSQL(new EmployeePermissionModel(model.guid, p.getId(), true, null), getAppCommandContext()));
         }
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB, AtomicUpload.UploadObject.EMPLOYEE);
+
         return batch;
     }
 

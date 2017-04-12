@@ -53,27 +53,27 @@ public class AtomicUpload {
 
         mContext = TcrApplication.get().getApplicationContext();
 
+        if (type.equals(UploadType.LOCAL) || type.equals(UploadType.BOTH)) {
+            Log.d("BemaCarl7", "AtomicUpload.upload.type|sql1: " + type + "|" + sql.toJson());
+            ContentValues values = getContentValues(sql, System.currentTimeMillis(), true);
+            mContext.getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandHostTable.URI_CONTENT), values);
+
+        }
+
+        if (type.equals(UploadType.WEB) || type.equals(UploadType.BOTH)) {
+            Log.d("BemaCarl7", "AtomicUpload.upload.type|sql2: " + type + "|" + sql.toJson());
+            ContentValues values = getContentValues(sql, System.currentTimeMillis(), false);
+            mContext.getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT), values);
+        }
+
         if(hasInternetConnection()) {
-
-            if (type.equals(UploadType.LOCAL) || type.equals(UploadType.BOTH)) {
-                Log.d("BemaCarl7", "AtomicUpload.upload.type|sql1: " + type + "|" + sql.toJson());
-                ContentValues values = getContentValues(sql, System.currentTimeMillis(), true);
-                mContext.getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandHostTable.URI_CONTENT), values);
-
+            if (object.equals(UploadObject.DATA)) {
+                Log.d("BemaCarl7", "AtomicUpload.upload.object: " + object);
+                OfflineCommandsService.startUpload(mContext);
+            } else {
+                Log.d("BemaCarl7", "AtomicUpload.upload.object: " + object);
+                OfflineCommandsService.startemployeeTableUpload(mContext);
             }
-
-            if (type.equals(UploadType.WEB) || type.equals(UploadType.BOTH)) {
-                Log.d("BemaCarl7", "AtomicUpload.upload.type|sql2: " + type + "|" + sql.toJson());
-                ContentValues values = getContentValues(sql, System.currentTimeMillis(), false);
-                mContext.getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandTable.URI_CONTENT), values);
-
-                if (object.equals(UploadObject.DATA)) {
-                    OfflineCommandsService.startUpload(mContext);
-                } else {
-                    OfflineCommandsService.startemployeeTableUpload(mContext);
-                }
-            }
-
         }
 
     }

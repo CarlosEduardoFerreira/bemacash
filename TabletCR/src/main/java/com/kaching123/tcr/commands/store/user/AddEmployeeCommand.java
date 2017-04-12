@@ -47,10 +47,13 @@ public class AddEmployeeCommand extends BaseEmployeeCommand {
     protected ISqlCommand createSqlCommand() {
         model.isSynced = true;
         EmployeePermissionJdbcConverter permissionJdbcConverter = (EmployeePermissionJdbcConverter)JdbcFactory.getConverter(EmployeePermissionTable.TABLE_NAME);
-        batch = batchInsert(model).add(JdbcFactory.getConverter(model).insertSQL(model, getAppCommandContext()));
+        BatchSqlCommand batch = batchInsert(model).add(JdbcFactory.getConverter(model).insertSQL(model, getAppCommandContext()));
         for(Permission p : permissions){
             batch.add(permissionJdbcConverter.insertSQL(new EmployeePermissionModel(model.guid, p.getId(), true, null), getAppCommandContext()));
         }
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB, AtomicUpload.UploadObject.EMPLOYEE);
+
         return batch;
     }
 

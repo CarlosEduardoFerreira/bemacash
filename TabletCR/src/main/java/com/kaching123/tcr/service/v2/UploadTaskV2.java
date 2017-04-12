@@ -91,7 +91,8 @@ public class UploadTaskV2 {
                         Logger.d("[CMD_TABLE] %d = %s", subId, subJson);
                         //TODO need to verify end
                         Log.d("BemaCarl", "UploadTask2.webApiUpload.json|subJson: |" + json +"|"+ subJson + "|");
-                        if ((CMD_START_TRANSACTION.equals(json) && CMD_END_TRANSACTION.equals(subJson)) || (CMD_START_EMPLOYEE.equals(json) && CMD_END_EMPLOYEE.equals(subJson))) {
+                        if ((CMD_START_TRANSACTION.equals(json) && CMD_END_TRANSACTION.equals(subJson)) ||
+                                (CMD_START_EMPLOYEE.equals(json) && CMD_END_EMPLOYEE.equals(subJson))) {
                             endTransactionId = subId;
                             Logger.d("END TRANSACTION");
                             break;
@@ -203,11 +204,14 @@ public class UploadTaskV2 {
                             break;
                         }
                         try {
-                            Log.d("BemaCarl","UploadTaskV2.employeeUpload.subJson: " + subJson);
-                            if (batch == null) {
-                                batch = BatchSqlCommand.fromJson(subJson);
-                            } else {
-                                batch.add(BatchSqlCommand.fromJson(subJson));
+                            if ( !CMD_START_TRANSACTION.equals(subJson) && !CMD_END_TRANSACTION.equals(subJson)
+                                    && !CMD_START_EMPLOYEE.equals(subJson) && !CMD_END_EMPLOYEE.equals(subJson)) {
+                                Log.d("BemaCarl", "UploadTaskV2.employeeUpload.subJson: " + subJson);
+                                if (batch == null) {
+                                    batch = BatchSqlCommand.fromJson(subJson);
+                                } else {
+                                    batch.add(BatchSqlCommand.fromJson(subJson));
+                                }
                             }
                         } catch (JSONException e) {
 //                            throw new IllegalArgumentException("can't parse command: " + subJson, e);
