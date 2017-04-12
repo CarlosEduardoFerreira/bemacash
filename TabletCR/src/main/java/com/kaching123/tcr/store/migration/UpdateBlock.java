@@ -389,6 +389,7 @@ public class UpdateBlock {
 
         db.execSQL("ALTER TABLE item_movement ADD COLUMN order_guid TEXT");
 
+        db.execSQL("ALTER TABLE loyalty_points_movement ADD COLUMN shop_id TEXT");
 
         updateViews(db);
     }
