@@ -1581,8 +1581,10 @@ public class DashboardActivity extends SuperBaseActivity {
     }
 
     private void printDropAndPayout(boolean skipPaperWarning, boolean searchByMac) {
-        WaitDialogFragment.show(this, getString(R.string.wait_printing));
-        PrintDropPayoutCommand.start(this, null, skipPaperWarning, searchByMac, printDropPayoutCallback);
+        if(getApp().getShopInfo().printDropOrPayout) {
+            WaitDialogFragment.show(this, getString(R.string.wait_printing));
+            PrintDropPayoutCommand.start(this, null, skipPaperWarning, searchByMac, printDropPayoutCallback);
+        }
     }
 
     private class StartShiftCallback extends StartShiftCommand.BaseStartShiftCallback {
