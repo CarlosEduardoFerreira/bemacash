@@ -33,6 +33,7 @@ import com.kaching123.tcr.store.ShopStore.CustomerTable;
 import com.kaching123.tcr.util.DateUtils;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
@@ -53,6 +54,24 @@ import static com.kaching123.tcr.util.KeyboardUtils.hideKeyboard;
 public class CustomersActivity extends SuperBaseActivity {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
+
+    private static final String FILTER_FIELD_CLICKED = "FILTER_FIELD_CLICKED";
+
+    private static final int FILTER_NAME_CLICKED = 1;
+    private static final int FILTER_ADDRESS_CLICKED = 2;
+    private static final int FILTER_EMAIL_CLICKED = 3;
+    private static final int FILTER_PHONE_CLICKED = 4;
+    private static final int FILTER_SEX_CLICKED = 5;
+    private static final int FILTER_CREATED_CLICKED = 6;
+    private static final int FILTER_PROM_CLICKED = 7;
+
+    private boolean nameOrderAsc = true;
+    private boolean addressOrderAsc = true;
+    private boolean emailOrderAsc = true;
+    private boolean phoneOrderAsc = true;
+    private boolean sexOrderAsc = true;
+    private boolean createdOrderAsc = true;
+    private boolean promOrderAsc = true;
 
     static {
         permissions.add(Permission.CUSTOMER_MANAGEMENT);
@@ -96,6 +115,56 @@ public class CustomersActivity extends SuperBaseActivity {
         });
         list.setAdapter(adapter);
     }
+
+    @Click(R.id.header_name)
+    protected void filterNameClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_NAME_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+
+    }
+    @Click(R.id.header_address)
+    protected void filterAddressClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_ADDRESS_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+
+    }
+    @Click(R.id.header_email)
+    protected void filterEmailClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_EMAIL_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+
+    }
+    @Click(R.id.header_phone)
+    protected void filterPhoneClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_PHONE_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+
+    }
+    @Click(R.id.header_sex)
+    protected void filterSexClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_SEX_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+
+    }
+    @Click(R.id.header_created)
+    protected void filterCreatedClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_CREATED_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+
+    }
+    @Click(R.id.header_promotions)
+    protected void filterPromClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_PROM_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -249,7 +318,48 @@ public class CustomersActivity extends SuperBaseActivity {
         @Override
         public Loader<List<CustomerModel>> onCreateLoader(int i, Bundle bundle) {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(CUSTOMERS_URI);
-            builder.orderBy(CustomerTable.FISRT_NAME + ", " + CustomerTable.LAST_NAME);
+            if (bundle == null) {
+                builder.orderBy(CustomerTable.FISRT_NAME + ", " + CustomerTable.LAST_NAME);
+                nameOrderAsc = !nameOrderAsc;
+            } else {
+                switch (bundle.getInt(FILTER_FIELD_CLICKED)) {
+                    case FILTER_NAME_CLICKED:
+                        String nameOrder = CustomerTable.FISRT_NAME + ", " + CustomerTable.LAST_NAME;
+                        builder.orderBy(nameOrderAsc ? nameOrder : CustomerTable.FISRT_NAME + " DESC" + ", " + CustomerTable.LAST_NAME + " DESC");
+                        nameOrderAsc = !nameOrderAsc;
+                        break;
+                    case FILTER_ADDRESS_CLICKED:
+                        String addressOrder = CustomerTable.STREET + ", " + CustomerTable.COMPLEMENTARY + ", " +
+                                CustomerTable.CITY + ", " + CustomerTable.STATE + ", " +
+                                CustomerTable.COUNTRY + ", " + CustomerTable.ZIP;
+                        builder.orderBy(addressOrderAsc ? addressOrder : CustomerTable.STREET + " DESC" + ", " +
+                                CustomerTable.COMPLEMENTARY + " DESC" + ", " +
+                                CustomerTable.CITY + " DESC" + ", " + CustomerTable.STATE + " DESC" + ", " +
+                                CustomerTable.COUNTRY + " DESC" + ", " + CustomerTable.ZIP + " DESC");
+                        addressOrderAsc = !addressOrderAsc;
+                        break;
+                    case FILTER_EMAIL_CLICKED:
+                        builder.orderBy(emailOrderAsc ? CustomerTable.EMAIL : CustomerTable.EMAIL + " DESC");
+                        emailOrderAsc = !emailOrderAsc;
+                        break;
+                    case FILTER_PHONE_CLICKED:
+                        builder.orderBy(phoneOrderAsc ? CustomerTable.PHONE : CustomerTable.PHONE + " DESC");
+                        phoneOrderAsc = !phoneOrderAsc;
+                        break;
+                    case FILTER_SEX_CLICKED:
+                        builder.orderBy(sexOrderAsc ? CustomerTable.SEX : CustomerTable.SEX + " DESC");
+                        sexOrderAsc = !sexOrderAsc;
+                        break;
+                    case FILTER_CREATED_CLICKED:
+                        builder.orderBy(createdOrderAsc ? CustomerTable.CREATE_TIME : CustomerTable.CREATE_TIME + " DESC");
+                        createdOrderAsc = !createdOrderAsc;
+                        break;
+                    case FILTER_PROM_CLICKED:
+                        builder.orderBy(promOrderAsc ? CustomerTable.CONSENT_PROMOTIONS : CustomerTable.CONSENT_PROMOTIONS + " DESC");
+                        promOrderAsc = !promOrderAsc;
+                        break;
+                }
+            }
             if (!TextUtils.isEmpty(textFilter)) {
                 String filter = "%" + textFilter + "%";
                 builder.where(CustomerTable.FISRT_NAME + " LIKE ? OR " + CustomerTable.LAST_NAME + " LIKE ? OR " + CustomerTable.EMAIL + " LIKE ? OR " + CustomerTable.PHONE + " LIKE ?",

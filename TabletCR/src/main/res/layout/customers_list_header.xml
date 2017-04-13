@@ -9,6 +9,7 @@
     android:background="@color/main_pages_bg_mint_color">
 
     <TextView
+        android:id="@+id/header_name"
         style="@style/ItemList.HeaderText"
         android:layout_height="match_parent"
         android:layout_width="0dp"
@@ -17,6 +18,7 @@
         android:text="@string/customers_header_name"/>
 
     <TextView
+        android:id="@+id/header_address"
         style="@style/ItemList.HeaderText"
         android:layout_height="match_parent"
         android:layout_width="0dp"
@@ -25,6 +27,7 @@
         android:text="@string/customers_header_address"/>
 
     <TextView
+        android:id="@+id/header_email"
         style="@style/ItemList.HeaderText"
         android:layout_height="match_parent"
         android:layout_width="0dp"
@@ -33,6 +36,7 @@
         android:text="@string/customers_header_email"/>
 
     <TextView
+        android:id="@+id/header_phone"
         style="@style/ItemList.HeaderText"
         android:layout_height="match_parent"
         android:layout_width="0dp"
@@ -41,6 +45,7 @@
         android:text="@string/customers_header_phone"/>
 
     <TextView
+        android:id="@+id/header_sex"
         style="@style/ItemList.HeaderText"
         android:layout_height="match_parent"
         android:layout_width="0dp"
@@ -49,6 +54,7 @@
         android:text="@string/customers_header_sex"/>
 
     <TextView
+        android:id="@+id/header_created"
         style="@style/ItemList.HeaderText"
         android:layout_height="match_parent"
         android:layout_width="0dp"
@@ -57,6 +63,7 @@
         android:text="@string/customers_header_create_date"/>
 
     <TextView
+        android:id="@+id/header_promotions"
         style="@style/ItemList.HeaderText"
         android:layout_height="match_parent"
         android:layout_width="0dp"
