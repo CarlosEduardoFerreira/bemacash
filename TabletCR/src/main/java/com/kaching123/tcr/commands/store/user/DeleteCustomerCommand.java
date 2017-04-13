@@ -27,11 +27,14 @@ public class DeleteCustomerCommand extends BaseCustomerCommand {
                 .withValues(ShopStore.DELETE_VALUES)
                 .withSelection(CustomerTable.GUID + " = ?", new String[]{model.guid})
                 .build());
+
+        sql = batchUpdate(model);
+        sql.add(JdbcFactory.getConverter(CustomerTable.TABLE_NAME).deleteSQL(model, getAppCommandContext()));
     }
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.getConverter(CustomerTable.TABLE_NAME).deleteSQL(model, getAppCommandContext());
+        return sql;
     }
 
     public static void start(Context context, CustomerModel model, BaseCustomerCallback callback){

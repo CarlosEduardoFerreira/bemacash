@@ -29,16 +29,15 @@ public class AddCustomerCommand extends BaseCustomerCommand {
 
         sql = batchInsert(model);
         sql.add(JdbcFactory.getConverter(model).insertSQL(model, getAppCommandContext()));
+
+        if (pointsMovementResult != null && pointsMovementResult.getSqlCmd() != null){
+            sql.add(pointsMovementResult.getSqlCmd());
+        }
     }
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        BatchSqlCommand batch = batchInsert(model);
-        batch.add(JdbcFactory.getConverter(model).insertSQL(model, getAppCommandContext()));
-        if (pointsMovementResult != null && pointsMovementResult.getSqlCmd() != null){
-            batch.add(pointsMovementResult.getSqlCmd());
-        }
-        return batch;
+        return sql;
     }
 
     public static void start(Context context, BaseCustomerCallback callback, CustomerModel customer) {
