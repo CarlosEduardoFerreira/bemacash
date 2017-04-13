@@ -97,14 +97,14 @@ public class LocalSyncHelper {
     public static final String TAG = "LOCAL_SYNC";
     public static final String TAG_HEIGHT = TAG + "_HEIGHT";
 
-    private static final int MAX_RETRY_COMMAND = 10;            // Max commands on Retry Process
-    private static final int GET_COMMANDS_BATCH_SIZE = 500;     // Commands Size?
-    private static final int RELOAD_INTERVAL = 1000;            // Reload command interval if it needs
-    private static final int RELOAD_STOCK_INTERVAL = 10000;     // Reload Stock (items movement)
+    private static final int MAX_RETRY_COMMAND = 10;            // Max commands on Retry Process                                // def=    10
+    private static final int GET_COMMANDS_BATCH_SIZE = 500;     // Commands Size?                                               // def=   500
+    private static final int RELOAD_INTERVAL = 1000;            // Reload command interval if it needs                          // def=  1000
+    private static final int RELOAD_STOCK_INTERVAL = 10000;     // Reload Stock (items movement)                                // def= 10000
 
     private static final int CHECK_COMMANDS_INTERVAL = 1000;    // Request commands from others tablets                         // def=   500
     private static final int RUN_COMMAND_INTERVAL = 200;        // Execute commands on Local Database                           // def=   100
-    private static final int FORCE_SYNC_INTERVAL = 20000;       // Interval to force notify others tablets the commands it has  // def= 30000
+    private static final int FORCE_SYNC_INTERVAL = 30000;       // Interval to force notify others tablets the commands it has  // def= 30000
 
     public static String LOCAL_SYNC_NEED_COLLECT_DATA = "LOCAL_SYNC_NEED_COLLECT_DATA";
     public static String LOCAL_SYNC_FAILED = "LOCAL_SYNC_FAILED";

@@ -54,7 +54,7 @@ public class EditItemCommand extends AsyncCommand {
     private ItemModel item;
     private ItemMovementModel movementModel;
     private ArrayList<ContentProviderOperation> operations;
-    private BatchSqlCommand sql;
+    private static BatchSqlCommand sql;
 
     @Override
     protected TaskResult doCommand() {
@@ -125,8 +125,6 @@ public class EditItemCommand extends AsyncCommand {
         if (categoryChanged){
             shiftOrderNums(oldCategoryId);
         }
-
-        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
 
         return succeeded();
     }
@@ -225,6 +223,7 @@ public class EditItemCommand extends AsyncCommand {
 
         @OnSuccess(EditItemCommand.class)
         public void onSuccess() {
+            new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
             handleSuccess();
         }
 

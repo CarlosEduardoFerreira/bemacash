@@ -27,6 +27,15 @@ public class AddEmployeeCommand extends BaseEmployeeCommand {
     @Override
     protected void doQuery(ArrayList<ContentProviderOperation> operations) {
         operations.add(ContentProviderOperation.newInsert(URI_EMPLOYEE).withValues(model.toValues()).build());
+
+        model.isSynced = true;
+        EmployeePermissionJdbcConverter permissionJdbcConverter = (EmployeePermissionJdbcConverter)JdbcFactory.getConverter(EmployeePermissionTable.TABLE_NAME);
+        sql = batchInsert(model);
+        sql.add(JdbcFactory.getConverter(model).insertSQL(model, getAppCommandContext()));
+        for(Permission p : permissions){
+            sql.add(permissionJdbcConverter.insertSQL(new EmployeePermissionModel(model.guid, p.getId(), true, null), getAppCommandContext()));
+        }
+
     }
 
     @Override
@@ -45,16 +54,7 @@ public class AddEmployeeCommand extends BaseEmployeeCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        model.isSynced = true;
-        EmployeePermissionJdbcConverter permissionJdbcConverter = (EmployeePermissionJdbcConverter)JdbcFactory.getConverter(EmployeePermissionTable.TABLE_NAME);
-        BatchSqlCommand batch = batchInsert(model).add(JdbcFactory.getConverter(model).insertSQL(model, getAppCommandContext()));
-        for(Permission p : permissions){
-            batch.add(permissionJdbcConverter.insertSQL(new EmployeePermissionModel(model.guid, p.getId(), true, null), getAppCommandContext()));
-        }
-
-        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB, AtomicUpload.UploadObject.EMPLOYEE);
-
-        return batch;
+        return sql;
     }
 
     public static void start(Context context, EmployeeModel model, ArrayList<Permission> permissions, BaseEmployeeCallback callback) {

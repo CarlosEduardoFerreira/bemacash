@@ -42,6 +42,8 @@ public abstract class BaseEmployeeCommand extends AsyncCommand {
     protected EmployeeModel model;
     protected ArrayList<Permission> permissions;
 
+    protected BatchSqlCommand sql;
+
     @Override
     protected TaskResult doCommand() {
         model = (EmployeeModel) getArgs().getSerializable(ARG_EMPLOYEE);
@@ -54,6 +56,9 @@ public abstract class BaseEmployeeCommand extends AsyncCommand {
         }
         doQuery(operations);
         savePermissions(operations);
+
+        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB, AtomicUpload.UploadObject.EMPLOYEE);
+
         return succeeded();
     }
 

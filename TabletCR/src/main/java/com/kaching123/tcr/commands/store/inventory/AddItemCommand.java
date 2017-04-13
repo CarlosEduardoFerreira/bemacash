@@ -39,6 +39,8 @@ public class AddItemCommand extends AsyncCommand {
 
     private boolean isMaxItemsCountError;
 
+    BatchSqlCommand batch;
+
     @Override
     protected TaskResult doCommand() {
         Logger.d("AddItemCommand doCommand");
@@ -61,6 +63,16 @@ public class AddItemCommand extends AsyncCommand {
             );
         }
 
+
+        batch = batchInsert(item);
+        batch.add(JdbcFactory.getConverter(item).insertSQL(item, getAppCommandContext()));
+        if (movementModel != null) {
+            batch.add(JdbcFactory.getConverter(movementModel)
+                    .insertSQL(movementModel, getAppCommandContext()));
+        }
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
+
         return succeeded();
     }
 
@@ -82,14 +94,6 @@ public class AddItemCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        BatchSqlCommand batch = batchInsert(item);
-        batch.add(JdbcFactory.getConverter(item).insertSQL(item, getAppCommandContext()));
-        if (movementModel != null) {
-            batch.add(JdbcFactory.getConverter(movementModel)
-                    .insertSQL(movementModel, getAppCommandContext()));
-        }
-        Log.d("BemaCarl6","AddItemCommand.createSqlCommand.item.description." + item.description);
-        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
         return batch;
     }
 
