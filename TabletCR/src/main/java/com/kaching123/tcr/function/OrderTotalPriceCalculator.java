@@ -205,8 +205,8 @@ public final class OrderTotalPriceCalculator {
             BigDecimal itemFinalPrice = i.totalPrice.subtract(itemDiscount);
             BigDecimal itemOrderDiscount = BigDecimal.ZERO;
             if (BigDecimal.ZERO.compareTo(tmpOderDiscountVal) != 0 && i.discountable) {
-                itemOrderDiscount = itemFinalPrice.divide(new BigDecimal("100.00"), 4, RoundingMode.HALF_UP).multiply(tmpOderDiscountPercent);
-                BigDecimal qtyOrderDiscount = i.qty.multiply(itemOrderDiscount).setScale(4, RoundingMode.HALF_UP);
+                itemOrderDiscount = CalculationUtil.getDiscountValue(itemFinalPrice, tmpOderDiscountPercent, DiscountType.PERCENT);
+                BigDecimal qtyOrderDiscount = getSubTotal(i.qty, itemOrderDiscount);
                 calcDiscountVal = calcDiscountVal.add(qtyOrderDiscount);
                 Logger.d("TotalCost: item order discount %s %s(%s) * %s = %s; * %s = %s", i.description, itemFinalPrice, itemDiscount, tmpOderDiscountPercent, itemOrderDiscount, i.qty, qtyOrderDiscount);
             }
