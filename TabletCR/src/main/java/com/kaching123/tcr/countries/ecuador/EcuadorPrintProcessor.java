@@ -296,7 +296,7 @@ public class EcuadorPrintProcessor extends PrintOrderProcessor {
                 printerWrapper.orderFooter(context.getString(R.string.printer_tips), tipsAmount);
 
                 BigDecimal totalOrderPrice = totalSubtotal.add(totalTax).subtract(totalDiscount);
-                totalOrderPrice = totalOrderPrice.setScale(2, BigDecimal.ROUND_UP);
+                totalOrderPrice = totalOrderPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
                 if (amountTotal == null) {
                     printerWrapper.orderFooter(context.getString(R.string.printer_total), totalOrderPrice.add(tipsAmount).add(transactionFee).add(totalCashBack), true);
                 } else {
