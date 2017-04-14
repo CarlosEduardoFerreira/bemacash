@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.kaching123.tcr.model.ContentValuesUtil._bool;
+import static com.kaching123.tcr.model.ContentValuesUtil._customerStatus;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
 
@@ -47,6 +48,7 @@ public class CustomerModel implements IValueModel, Serializable {
     public String loyaltyPlanId;
     public BigDecimal loyaltyPoints;
     public String loyaltyBarcode;
+    public CustomerStatus status = CustomerStatus.ACTIVE;
 
     private List<String> mIgnoreFields;
 
@@ -77,6 +79,7 @@ public class CustomerModel implements IValueModel, Serializable {
                 cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_PLAN_ID)),
                 _decimal(cursor, cursor.getColumnIndex(CustomerTable.TMP_LOYALTY_POINTS), BigDecimal.ZERO),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)),
+                _customerStatus(cursor, cursor.getColumnIndex(CustomerTable.STATUS)),
                 null);
     }
 
@@ -85,7 +88,7 @@ public class CustomerModel implements IValueModel, Serializable {
                          String zip, String email, String phone, boolean sex, Date birthday,
                          Date birthdayRewardApplyDate, Date createTime,
                          boolean consentPromotions, String notes, String customerIdentification,
-                         String loyaltyPlanId, BigDecimal loyaltyPoints, String loyaltyBarcode,
+                         String loyaltyPlanId, BigDecimal loyaltyPoints, String loyaltyBarcode, CustomerStatus status,
                          List<String> ignoreFields) {
 
         this.firstName = firstName;
@@ -109,7 +112,7 @@ public class CustomerModel implements IValueModel, Serializable {
         this.loyaltyPlanId = loyaltyPlanId;
         this.loyaltyPoints = loyaltyPoints;
         this.loyaltyBarcode = loyaltyBarcode;
-
+        this.status = status;
         this.mIgnoreFields = ignoreFields;
     }
 
@@ -136,6 +139,7 @@ public class CustomerModel implements IValueModel, Serializable {
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_PLAN_ID)),
                 _decimal(cursor, cursor.getColumnIndex(SaleOrderView2.CustomerTable.TMP_LOYALTY_POINTS), BigDecimal.ZERO),
                 cursor.getString(cursor.getColumnIndex(SaleOrderView2.CustomerTable.LOYALTY_BARCODE)),
+                _customerStatus(cursor, cursor.getColumnIndex(CustomerTable.STATUS)),
                 null);
     }
     public String getFullName() {
@@ -172,6 +176,7 @@ public class CustomerModel implements IValueModel, Serializable {
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.LOYALTY_PLAN_ID)) v.put(CustomerTable.LOYALTY_PLAN_ID, loyaltyPlanId);
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.TMP_LOYALTY_POINTS)) v.put(CustomerTable.TMP_LOYALTY_POINTS, _decimal(loyaltyPoints));
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.LOYALTY_BARCODE)) v.put(CustomerTable.LOYALTY_BARCODE, loyaltyBarcode);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.STATUS)) v.put(CustomerTable.STATUS, status.ordinal());
         return v;
     }
 
@@ -202,6 +207,7 @@ public class CustomerModel implements IValueModel, Serializable {
         v.put(CustomerTable.LOYALTY_PLAN_ID, loyaltyPlanId);
         v.put(CustomerTable.TMP_LOYALTY_POINTS, _decimal(loyaltyPoints));
         v.put(CustomerTable.LOYALTY_BARCODE, loyaltyBarcode);
+        v.put(CustomerTable.STATUS, status.ordinal());
         return v;
     }
 

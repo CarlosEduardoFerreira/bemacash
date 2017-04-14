@@ -36,9 +36,9 @@ import static com.kaching123.tcr.store.ShopSchemaEx.Trigger.trigger;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTriggers;
-import static com.kaching123.tcr.store.migration.IUpdateContainer.VERSION10;
+import static com.kaching123.tcr.store.migration.IUpdateContainer.VERSION10_1;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = VERSION10)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = VERSION10_1)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
@@ -1813,6 +1813,10 @@ public abstract class ShopStore {
 
         @Column(type = Column.Type.INTEGER)
         String BIRTHDAY = "birthday";
+
+        @NotNull
+        @Column(type = Column.Type.INTEGER)
+        String STATUS = "status";
 
         @Column(type = Column.Type.INTEGER)
         String BIRTHDAY_REWARD_APPLY_DATE = "birthday_reward_apply_date";

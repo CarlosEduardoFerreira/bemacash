@@ -264,6 +264,12 @@ public class UpdateBlock {
     private static final String SQL_DROP_SALE_ADDON_VIEW = "DROP VIEW if exists sale_addon_view";
 
 
+    public static void update10to10_1(SQLiteDatabase db){
+        db.execSQL("ALTER TABLE customer ADD COLUMN status INTEGER");
+
+        updateViews(db);
+    }
+
     public static void update9to10(SQLiteDatabase db){
 
         db.execSQL( "CREATE TABLE " +
@@ -391,7 +397,6 @@ public class UpdateBlock {
 
         db.execSQL("ALTER TABLE loyalty_points_movement ADD COLUMN shop_id TEXT");
 
-        updateViews(db);
     }
 
     public static void update8to9(SQLiteDatabase db){

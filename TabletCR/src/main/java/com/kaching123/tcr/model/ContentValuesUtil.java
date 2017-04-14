@@ -242,6 +242,10 @@ public final class ContentValuesUtil {
         return c.isNull(index) ? null : DiscountType.valueOf(c.getInt(index));
     }
 
+    public static CustomerStatus _customerStatus(Cursor c, int index) {
+        return c.isNull(index) ? null : CustomerStatus.values()[(c.getInt(index))];
+    }
+
     public static OrderStatus _orderStatus(Cursor c, int index) {
         return c.isNull(index) ? null : OrderStatus.values()[(c.getInt(index))];
     }

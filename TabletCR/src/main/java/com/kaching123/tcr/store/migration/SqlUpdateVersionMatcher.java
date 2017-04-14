@@ -10,6 +10,17 @@ import com.kaching123.tcr.store.migration.version.to10.Update6_7to10;
 import com.kaching123.tcr.store.migration.version.to10.Update7to10;
 import com.kaching123.tcr.store.migration.version.to10.Update8to10;
 import com.kaching123.tcr.store.migration.version.to10.Update9to10;
+import com.kaching123.tcr.store.migration.version.to10_1.Update10to10_1;
+import com.kaching123.tcr.store.migration.version.to10_1.Update6_1to10_1;
+import com.kaching123.tcr.store.migration.version.to10_1.Update6_2to10_1;
+import com.kaching123.tcr.store.migration.version.to10_1.Update6_3to10_1;
+import com.kaching123.tcr.store.migration.version.to10_1.Update6_4to10_1;
+import com.kaching123.tcr.store.migration.version.to10_1.Update6_5to10_1;
+import com.kaching123.tcr.store.migration.version.to10_1.Update6_6to10_1;
+import com.kaching123.tcr.store.migration.version.to10_1.Update6_7to10_1;
+import com.kaching123.tcr.store.migration.version.to10_1.Update7to10_1;
+import com.kaching123.tcr.store.migration.version.to10_1.Update8to10_1;
+import com.kaching123.tcr.store.migration.version.to10_1.Update9to10_1;
 import com.kaching123.tcr.store.migration.version.to2.Update1to2;
 import com.kaching123.tcr.store.migration.version.to3.Update1to3;
 import com.kaching123.tcr.store.migration.version.to3.Update2to3;
@@ -473,7 +484,19 @@ public class SqlUpdateVersionMatcher {
         UPDATE6_7TO10(new Update6_7to10()),
         UPDATE7TO10(new Update7to10()),
         UPDATE8TO10(new Update8to10()),
-        UPDATE9TO10(new Update9to10());
+        UPDATE9TO10(new Update9to10()),
+
+        UPDATE6_1TO10_1(new Update6_1to10_1()),
+        UPDATE6_2TO10_1(new Update6_2to10_1()),
+        UPDATE6_3TO10_1(new Update6_3to10_1()),
+        UPDATE6_4TO10_1(new Update6_4to10_1()),
+        UPDATE6_5TO10_1(new Update6_5to10_1()),
+        UPDATE6_6TO10_1(new Update6_6to10_1()),
+        UPDATE6_7TO10_1(new Update6_7to10_1()),
+        UPDATE7TO10_1(new Update7to10_1()),
+        UPDATE8TO10_1(new Update8to10_1()),
+        UPDATE9TO10_1(new Update9to10_1()),
+        UPDATE10TO10_1(new Update10to10_1());
 
         private IUpdateContainer container;
 
