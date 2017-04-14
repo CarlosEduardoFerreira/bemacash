@@ -3,7 +3,6 @@ package com.kaching123.tcr.jdbc.converters;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CustomerModel;
-import com.kaching123.tcr.model.CustomerStatus;
 import com.kaching123.tcr.service.SingleSqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.util.JdbcJSONObject;
@@ -12,14 +11,11 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
-import static com.kaching123.tcr.jdbc.JdbcUtil._jdbcDate;
-import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 
 /**
  * Created by pkabakov on 10.02.14.
@@ -49,7 +45,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     private static final String LOYALTY_PLAN_ID = "LOYALTY_PLAN_ID";
     private static final String TMP_LOYALTY_POINTS = "TMP_LOYALTY_POINTS";
     private static final String LOYALTY_BARCODE = "LOYALTY_BARCODE";
-    private static final String STATUS = "STATUS";
 
     @Override
     public CustomerModel toValues(JdbcJSONObject rs) throws JSONException {
@@ -75,7 +70,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
         if (!rs.has(LOYALTY_PLAN_ID)) ignoreFields.add(ShopStore.CustomerTable.LOYALTY_PLAN_ID);
         if (!rs.has(TMP_LOYALTY_POINTS)) ignoreFields.add(ShopStore.CustomerTable.TMP_LOYALTY_POINTS);
         if (!rs.has(LOYALTY_BARCODE)) ignoreFields.add(ShopStore.CustomerTable.LOYALTY_BARCODE);
-        if (!rs.has(STATUS)) ignoreFields.add(ShopStore.CustomerTable.STATUS);
 
         return new CustomerModel(
                 rs.getString(GUID),
@@ -99,7 +93,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getString(LOYALTY_PLAN_ID),
                 rs.getBigDecimal(TMP_LOYALTY_POINTS),
                 rs.getString(LOYALTY_BARCODE),
-                _enum(CustomerStatus.class, rs.getString(STATUS), CustomerStatus.INACTIVE),
                 ignoreFields);
     }
 
@@ -144,8 +137,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                     .put(CUSTOMER_IDENTIFICATION, model.customerIdentification)
                     .put(LOYALTY_PLAN_ID, model.loyaltyPlanId)
                     .put(TMP_LOYALTY_POINTS, model.loyaltyPoints)
-                    .put(LOYALTY_BARCODE, model.loyaltyBarcode)
-                    .put(STATUS, model.status.name());
+                    .put(LOYALTY_BARCODE, model.loyaltyBarcode);
         } catch (JSONException e) {
             Logger.e("JSONException", e);
         }
@@ -177,7 +169,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(LOYALTY_PLAN_ID, model.loyaltyPlanId)
                 .add(TMP_LOYALTY_POINTS, model.loyaltyPoints)
                 .add(LOYALTY_BARCODE, model.loyaltyBarcode)
-                .add(STATUS, model.status.name())
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -203,7 +194,6 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 .add(LOYALTY_PLAN_ID, model.loyaltyPlanId)
                 .add(TMP_LOYALTY_POINTS, model.loyaltyPoints)
                 .add(LOYALTY_BARCODE, model.loyaltyBarcode)
-                .add(STATUS, model.status.name())
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }
