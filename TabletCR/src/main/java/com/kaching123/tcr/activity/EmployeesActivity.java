@@ -52,6 +52,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
@@ -77,6 +78,21 @@ import static com.kaching123.tcr.util.KeyboardUtils.hideKeyboard;
 public class EmployeesActivity extends SuperBaseActivity {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
+
+    private static final String FILTER_FIELD_CLICKED = "FILTER_FIELD_CLICKED";
+
+    private static final int FILTER_NAME_CLICKED = 1;
+    private static final int FILTER_ADDRESS_CLICKED = 2;
+    private static final int FILTER_EMAIL_CLICKED = 3;
+    private static final int FILTER_STATUS_CLICKED = 4;
+    private static final int FILTER_USER_ID_CLICKED = 5;
+
+    private boolean nameOrderAsc = true;
+    private boolean addressOrderAsc = true;
+    private boolean emailOrderAsc = true;
+    private boolean statusOrderAsc = true;
+    private boolean userIdOrderAsc = true;
+
 
     static {
         permissions.add(Permission.EMPLOYEE_MANAGEMENT);
@@ -131,6 +147,42 @@ public class EmployeesActivity extends SuperBaseActivity {
             }
         });
         list.setAdapter(adapter);
+    }
+
+    @Click(R.id.header_name)
+    protected void filterNameClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_NAME_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+
+    }
+    @Click(R.id.address)
+    protected void filterAddressClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_ADDRESS_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+
+    }
+    @Click(R.id.header_email)
+    protected void filterEmailClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_EMAIL_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+
+    }
+    @Click(R.id.status)
+    protected void filterStatusClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_STATUS_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+
+    }
+    @Click(R.id.header_user_id)
+    protected void filterUserIdClicked() {
+        Bundle args = new Bundle();
+        args.putInt(FILTER_FIELD_CLICKED, FILTER_USER_ID_CLICKED);
+        getSupportLoaderManager().restartLoader(0, args, loader);
+
     }
 
     @OptionsItem
@@ -300,7 +352,40 @@ public class EmployeesActivity extends SuperBaseActivity {
         @Override
         public Loader<List<EmployeeModel>> onCreateLoader(int i, Bundle bundle) {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(EMPLOYEE_URI);
-            builder.orderBy(EmployeeTable.FIRST_NAME + "," + EmployeeTable.LAST_NAME);
+            if (bundle == null) {
+                builder.orderBy(EmployeeTable.FIRST_NAME + "," + EmployeeTable.LAST_NAME);
+                nameOrderAsc = !nameOrderAsc;
+            } else {
+                switch (bundle.getInt(FILTER_FIELD_CLICKED)) {
+                    case FILTER_NAME_CLICKED:
+                        String nameOrder = EmployeeTable.FIRST_NAME + "," + EmployeeTable.LAST_NAME;
+                        builder.orderBy(nameOrderAsc ? nameOrder : EmployeeTable.FIRST_NAME + " DESC, " + EmployeeTable.LAST_NAME + " DESC");
+                        nameOrderAsc = !nameOrderAsc;
+                        break;
+                    case FILTER_ADDRESS_CLICKED:
+                        String addressOrder = EmployeeTable.STREET + ", " + EmployeeTable.COMPLEMENTARY + ", " +
+                                EmployeeTable.CITY + ", " + EmployeeTable.STATE + ", " +
+                                EmployeeTable.COUNTRY + ", " + EmployeeTable.ZIP;
+                        builder.orderBy(addressOrderAsc ? addressOrder : EmployeeTable.STREET + " DESC" + ", " +
+                                EmployeeTable.COMPLEMENTARY + " DESC" + ", " +
+                                EmployeeTable.CITY + " DESC" + ", " + EmployeeTable.STATE + " DESC" + ", " +
+                                EmployeeTable.COUNTRY + " DESC" + ", " + EmployeeTable.ZIP + " DESC");
+                        addressOrderAsc = !addressOrderAsc;
+                        break;
+                    case FILTER_EMAIL_CLICKED:
+                        builder.orderBy(emailOrderAsc ? EmployeeTable.EMAIL : EmployeeTable.EMAIL + " DESC");
+                        emailOrderAsc = !emailOrderAsc;
+                        break;
+                    case FILTER_STATUS_CLICKED:
+                        builder.orderBy(statusOrderAsc ? EmployeeTable.STATUS : EmployeeTable.STATUS + " DESC");
+                        statusOrderAsc = !statusOrderAsc;
+                        break;
+                    case FILTER_USER_ID_CLICKED:
+                        builder.orderBy(userIdOrderAsc ? EmployeeTable.ID : EmployeeTable.ID + " DESC");
+                        userIdOrderAsc = !userIdOrderAsc;
+                        break;
+                }
+            }
             builder.where(EmployeeTable.IS_MERCHANT + " = ?", 0);
             builder.where(EmployeeTable.LOGIN + " <> ?", "");
             builder.where(EmployeeTable.LOGIN + " IS NOT NULL");
