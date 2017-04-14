@@ -931,7 +931,7 @@
     <string name="item_multi_tax_group">%1$s Total</string>
     <string name="permission_sales_transaction">Sales Transaction</string>
     <string name="permission_sales_discount">Sales Discount</string>
-    <string name="permission_sales_history">Sales Hisrtory</string>
+    <string name="permission_sales_history">Sales History</string>
     <string name="permission_void_items">Void Items</string>
     <string name="permission_void_sales">Void After Tender</string>
     <string name="permission_sales_return">Sales Return</string>
