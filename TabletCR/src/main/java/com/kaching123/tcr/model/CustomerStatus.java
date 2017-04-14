@@ -5,5 +5,5 @@ package com.kaching123.tcr.model;
  */
 
 public enum  CustomerStatus {
-    ACTIVE, INACTIVE
+    INACTIVE, ACTIVE
 }
