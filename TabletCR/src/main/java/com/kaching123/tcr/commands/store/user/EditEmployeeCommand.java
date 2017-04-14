@@ -19,6 +19,8 @@ import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
+import com.telly.groundy.annotations.OnFailure;
+import com.telly.groundy.annotations.OnSuccess;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -87,13 +89,15 @@ public class EditEmployeeCommand extends BaseEmployeeCommand {
     }
 
     @Override
-    protected ISqlCommand createSqlCommand() {
+    protected ISqlCommand createSqlCommand(){
         return sql;
     }
 
     public static void start(Context context, EmployeeModel model, ArrayList<Permission> permissions, BaseEmployeeCallback callback) {
         create(EditEmployeeCommand.class).arg(ARG_EMPLOYEE, model).arg(ARG_PERMISSIONS, permissions).callback(callback).queueUsing(context);
     }
+
+
 
 
 }
