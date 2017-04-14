@@ -381,7 +381,7 @@ public class EmployeesActivity extends SuperBaseActivity {
                         statusOrderAsc = !statusOrderAsc;
                         break;
                     case FILTER_USER_ID_CLICKED:
-                        builder.orderBy(userIdOrderAsc ? EmployeeTable.ID : EmployeeTable.ID + " DESC");
+                        builder.orderBy(userIdOrderAsc ? EmployeeTable.LOGIN : EmployeeTable.LOGIN + " DESC");
                         userIdOrderAsc = !userIdOrderAsc;
                         break;
                 }
