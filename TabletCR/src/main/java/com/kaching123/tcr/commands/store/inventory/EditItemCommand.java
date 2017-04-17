@@ -195,6 +195,7 @@ public class EditItemCommand extends AsyncCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
+        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
         return sql;
     }
 
@@ -223,7 +224,6 @@ public class EditItemCommand extends AsyncCommand {
 
         @OnSuccess(EditItemCommand.class)
         public void onSuccess() {
-            new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
             handleSuccess();
         }
 
