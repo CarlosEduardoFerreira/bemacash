@@ -67,6 +67,7 @@ public class AddUnitLabelCommand extends AsyncCommand {
     protected ISqlCommand createSqlCommand() {
         sql = batchInsert(model);
         sql.add(JdbcFactory.insert(model, getAppCommandContext()));
+        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
         return sql;
     }
 
@@ -95,7 +96,6 @@ public class AddUnitLabelCommand extends AsyncCommand {
 
         @OnSuccess(AddUnitLabelCommand.class)
         public final void onSuccess() {
-            new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
             handleSuccess();
         }
 

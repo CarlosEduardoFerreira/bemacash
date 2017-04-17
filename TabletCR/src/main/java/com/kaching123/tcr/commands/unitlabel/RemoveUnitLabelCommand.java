@@ -47,6 +47,7 @@ public class RemoveUnitLabelCommand extends AsyncCommand {
     protected ISqlCommand createSqlCommand() {
         sql = batchDelete(model);
         sql.add(JdbcFactory.delete(model, getAppCommandContext()));
+        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
         return sql;
     }
 
@@ -61,7 +62,6 @@ public class RemoveUnitLabelCommand extends AsyncCommand {
 
         @OnSuccess(RemoveUnitLabelCommand.class)
         public final void onSuccess() {
-            new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB);
             handleSuccess();
         }
 
