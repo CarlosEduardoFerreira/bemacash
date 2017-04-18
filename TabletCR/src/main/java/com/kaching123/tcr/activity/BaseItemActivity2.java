@@ -29,7 +29,9 @@ import com.kaching123.tcr.commands.wireless.CollectUnitsCommand.UnitCallback;
 import com.kaching123.tcr.component.slidingtab.SlidingTabLayout;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
+import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
+import com.kaching123.tcr.fragment.item.ChooseSaveItemActionFragment;
 import com.kaching123.tcr.fragment.item.ItemAdditionalInformationFragment_;
 import com.kaching123.tcr.fragment.item.ItemBaseFragment;
 import com.kaching123.tcr.fragment.item.ItemCommonInformationFragment;
@@ -68,6 +70,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+
+import static com.kaching123.tcr.fragment.item.ChooseSaveItemActionFragment.SAVE_ITEM_CHOOSE_ACTION_DIALOG;
 
 /**
  * Created by vkompaniets on 21.07.2016.
@@ -234,6 +238,9 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     protected void btnSaveClicked(){
         if (!validateData())
             return;
+
+//        ChooseSaveItemActionFragment.show(this, new ChooseSaveItemActionFragment.ChooseSaveItemActionCallback() {
+//        });
 
         collectData();
         saveReference();
