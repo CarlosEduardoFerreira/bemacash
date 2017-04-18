@@ -117,8 +117,10 @@ public class PrintItemsForKitchenProcessor {
 
             if (c.moveToFirst()) {
                 onHoldPhone = parseDigitsToFormattedPhone(c.getString(0));
-                orderTitle = c.getString(1);
                 onHoldStatus = _onHoldStatus(c, 2);
+                if (TextUtils.isEmpty(orderTitle)) {
+                    orderTitle = c.getString(1);
+                }
             }
             c.close();
         }

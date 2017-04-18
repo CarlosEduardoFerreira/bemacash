@@ -1814,10 +1814,6 @@ public abstract class ShopStore {
         @Column(type = Column.Type.INTEGER)
         String BIRTHDAY = "birthday";
 
-        @NotNull
-        @Column(type = Column.Type.INTEGER)
-        String STATUS = "status";
-
         @Column(type = Column.Type.INTEGER)
         String BIRTHDAY_REWARD_APPLY_DATE = "birthday_reward_apply_date";
 
