@@ -240,6 +240,10 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             return;
 
 //        ChooseSaveItemActionFragment.show(this, new ChooseSaveItemActionFragment.ChooseSaveItemActionCallback() {
+//            @Override
+//            public void onConfirm(ChooseSaveItemActionFragment.SaveItemAction action) {
+//
+//            }
 //        });
 
         collectData();
