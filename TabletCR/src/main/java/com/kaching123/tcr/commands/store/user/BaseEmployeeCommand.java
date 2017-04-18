@@ -42,7 +42,7 @@ public abstract class BaseEmployeeCommand extends AsyncCommand {
     protected EmployeeModel model;
     protected ArrayList<Permission> permissions;
 
-    protected BatchSqlCommand sql;
+    protected static BatchSqlCommand sql;
 
     @Override
     protected TaskResult doCommand() {
@@ -56,8 +56,6 @@ public abstract class BaseEmployeeCommand extends AsyncCommand {
         }
         doQuery(operations);
         savePermissions(operations);
-
-        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB, AtomicUpload.UploadObject.EMPLOYEE);
 
         return succeeded();
     }
@@ -100,6 +98,18 @@ public abstract class BaseEmployeeCommand extends AsyncCommand {
         @OnSuccess(BaseEmployeeCommand.class)
         public void handleSuccess() {
             Log.d("BemaCarl9","BaseEmployeeCommand.handleSuccess");
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Thread.sleep(2000);
+                        new AtomicUpload().upload(sql, AtomicUpload.UploadType.WEB, AtomicUpload.UploadObject.EMPLOYEE);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
             onSuccess();
         }
 
