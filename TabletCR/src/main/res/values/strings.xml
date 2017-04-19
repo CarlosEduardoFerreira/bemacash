@@ -285,6 +285,7 @@
     <string name="btn_no">No</string>
     <string name="btn_retry">Retry</string>
     <string name="btn_abort">Abort</string>
+    <string name="btn_duplicate">Duplicate</string>
     <string name="btn_continue">Continue</string>
     <string name="btn_back">Back</string>
     <string name="btn_next">Next</string>
@@ -2257,6 +2258,7 @@
     <string name="kitchen_printable_modifier_cant_be_changed">Kitchen printable items cannot be changed, you can remove and re-collect new item</string>
 
     <string name="choose_item_save_action">Your item has been saved. Would you like to add another item?</string>
+    <string name="item_save_action">Save options</string>
 
 
     <!-- local sync ends -->

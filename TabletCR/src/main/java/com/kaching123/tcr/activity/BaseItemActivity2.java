@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -239,15 +240,28 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         if (!validateData())
             return;
 
-//        ChooseSaveItemActionFragment.show(this, new ChooseSaveItemActionFragment.ChooseSaveItemActionCallback() {
-//            @Override
-//            public void onConfirm(ChooseSaveItemActionFragment.SaveItemAction action) {
-//
-//            }
-//        });
+        ChooseSaveItemActionFragment.show(this, new ChooseSaveItemActionFragment.ChooseSaveItemActionCallback() {
+            @Override
+            public void onConfirm(ChooseSaveItemActionFragment.SaveItemAction action) {
+                collectData();
+                saveReference();
+                switch (action) {
+                    case SAVE:
+                        saveModel();
+                        finish();
+                        break;
+                    case ADD_MORE:
+                        saveModel();
+                        break;
+                    case DUPLICATE:
+                        saveModel();
+                        break;
+                }
+            }
+        });
+    }
 
-        collectData();
-        saveReference();
+    private void saveModel(){
         if (StartMode.ADD == mode){
             if (model.isReferenceItem()){
                 AddReferenceItemCommand.start(self(), model, null);
@@ -261,7 +275,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
                 EditItemCommand.start(self(), model, null);
             }
         }
-        finish();
     }
 
     private void saveReference() {
