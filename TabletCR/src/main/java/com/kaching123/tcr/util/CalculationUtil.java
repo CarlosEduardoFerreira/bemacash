@@ -103,7 +103,7 @@ public final class CalculationUtil {
     public static BigDecimal getTaxVatValueNoScale(BigDecimal itemSubTotal, BigDecimal taxVATPercent) {
         if(taxVATPercent == null)
             return BigDecimal.ZERO;
-        BigDecimal result = itemSubTotal.multiply(taxVATPercent.divide(ONE_HUNDRED, PERCENT_SCALE, MONEY_ROUNDING));
+        BigDecimal result = itemSubTotal.multiply(taxVATPercent.divide(ONE_HUNDRED, 5, MONEY_ROUNDING));
         return result;
     }
 
