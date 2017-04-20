@@ -259,6 +259,14 @@ public class ItemExModel extends ItemModel {
 
     }
 
+    public ItemExModel duplicate() {
+        guid = UUID.randomUUID().toString();
+        description = description.concat("-1");
+        eanCode = null;
+        productCode = null;
+        return this;
+    }
+
     public int getTmpAgeVerified() {
         return tmpAgeVerified;
     }

@@ -43,6 +43,20 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"/>
 
+    <Button
+        style="@style/LocalizableButton.Green.Wide"
+        android:textSize="26sp"
+        android:paddingBottom="6dp"
+        android:id="@+id/btn_duplicate"
+        android:text="@string/btn_duplicate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/save_btn_bg"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:layout_toLeftOf="@+id/btn_save"/>
+
     <android.inputmethodservice.KeyboardView
         android:id="@+id/keyboardview"
         android:layout_width="445dp"

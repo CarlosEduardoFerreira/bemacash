@@ -1,5 +1,6 @@
 package com.kaching123.tcr.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,12 +68,15 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import static com.kaching123.tcr.activity.BaseItemActivity2_.MODEL_EXTRA;
+import static com.kaching123.tcr.activity.BaseItemActivity2_.MODE_EXTRA;
 import static com.kaching123.tcr.fragment.item.ChooseSaveItemActionFragment.SAVE_ITEM_CHOOSE_ACTION_DIALOG;
 
 /**
@@ -84,6 +89,8 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     public static final int TAG_RESULT_SERIAL = 1;
     public static final int TAG_RESULT_COMPOSER = 2;
     public static final int TAG_RESULT_MODIFIER = 3;
+
+    public static final String DUPLICATE_EXTRA = "DUPLICATE_TAG";
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
     static {
@@ -109,6 +116,9 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @ViewById
     protected ViewPager viewPager;
 
+    @ViewById
+    protected Button btnDuplicate;
+
     @Extra
     protected ItemExModel model;
 
@@ -120,12 +130,18 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     private ItemQtyInfo qtyInfo;
 
     private boolean changesInSubActivitiesDone;
+    private boolean duplicateRequest;
 
     private ItemExModel parentItem;
     private ItemMatrixModel parentItemMatrix;
 
     @AfterViews
     protected void init(){
+        duplicateRequest = getIntent().getExtras().getBoolean(DUPLICATE_EXTRA, false);
+        if(mode == StartMode.EDIT && !duplicateRequest) {
+            btnDuplicate.setVisibility(View.VISIBLE);
+        }
+
         qtyInfo = new ItemQtyInfo();
         qtyInfo.setAvailableQty(model.availableQty);
 
@@ -240,29 +256,22 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         if (!validateData())
             return;
 
-        ChooseSaveItemActionFragment.show(this, new ChooseSaveItemActionFragment.ChooseSaveItemActionCallback() {
-            @Override
-            public void onConfirm(ChooseSaveItemActionFragment.SaveItemAction action) {
-                collectData();
-                saveReference();
-                switch (action) {
-                    case SAVE:
-                        saveModel();
-                        finish();
-                        break;
-                    case ADD_MORE:
-                        saveModel();
-                        break;
-                    case DUPLICATE:
-                        saveModel();
-                        break;
-                }
-            }
-        });
+        collectData();
+        saveReference();
+        saveModel();
+        exit();
+    }
+
+    private void exit() {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(MODEL_EXTRA, model);
+        resultIntent.putExtra(MODE_EXTRA, mode);
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
     }
 
     private void saveModel(){
-        if (StartMode.ADD == mode){
+        if (StartMode.ADD == mode || (StartMode.EDIT == mode && duplicateRequest)){
             if (model.isReferenceItem()){
                 AddReferenceItemCommand.start(self(), model, null);
             }else{
@@ -505,6 +514,21 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             model.refType = refType;
         }
         BaseItemActivity2_.intent(context).model(model).mode(mode).start();
+    }
+
+    public static Intent getIntentToStart(Context context, ItemExModel model, ItemRefType refType, StartMode mode, boolean duplicate){
+        Intent intent = new Intent(context, BaseItemActivity2_.class);
+        boolean isCommonItem = refType == ItemRefType.Simple;
+        if (StartMode.ADD == mode){
+            model.isSalable = isCommonItem;
+            model.isActiveStatus = true;
+            model.isDiscountable = true;
+            model.refType = refType;
+        }
+        intent.putExtra(MODEL_EXTRA, model);
+        intent.putExtra(MODE_EXTRA, mode);
+        intent.putExtra(DUPLICATE_EXTRA, duplicate);
+        return intent;
     }
 
     private class TabHolder{

@@ -17,7 +17,7 @@ import org.androidannotations.annotations.ViewById;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.kaching123.tcr.fragment.item.ChooseSaveItemActionFragment.SaveItemAction.ADD_MORE;
 import static com.kaching123.tcr.fragment.item.ChooseSaveItemActionFragment.SaveItemAction.DUPLICATE;
-import static com.kaching123.tcr.fragment.item.ChooseSaveItemActionFragment.SaveItemAction.SAVE;
+import static com.kaching123.tcr.fragment.item.ChooseSaveItemActionFragment.SaveItemAction.NO;
 
 /**
  * Created by mboychenko on 4/18/2017.
@@ -38,7 +38,7 @@ public class ChooseSaveItemActionFragment extends StyledDialogFragment {
     protected CheckBox btnDup;
 
     private ChooseSaveItemActionCallback callback;
-    private SaveItemAction action = SAVE;
+    private SaveItemAction action = NO;
 
     @Override
     protected int getDialogContentLayout() {
@@ -100,7 +100,7 @@ public class ChooseSaveItemActionFragment extends StyledDialogFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    action = SAVE;
+                    action = NO;
                     btnDup.setChecked(false);
                     btnYes.setChecked(false);
                 } else if(!btnDup.isChecked() && !btnYes.isChecked()) {
@@ -136,6 +136,6 @@ public class ChooseSaveItemActionFragment extends StyledDialogFragment {
     }
 
     public enum SaveItemAction {
-        ADD_MORE, SAVE, DUPLICATE
+        ADD_MORE, NO, DUPLICATE
     }
 }

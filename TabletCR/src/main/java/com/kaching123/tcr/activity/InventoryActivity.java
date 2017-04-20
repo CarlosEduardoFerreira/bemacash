@@ -2,7 +2,9 @@ package com.kaching123.tcr.activity;
 
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,6 +47,7 @@ import com.kaching123.tcr.fragment.filemanager.ImportTypeFragment;
 import com.kaching123.tcr.fragment.filemanager.ImportTypeFragment.OnTypeChosenListener;
 import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.inventory.ItemsFragment;
+import com.kaching123.tcr.fragment.item.ChooseSaveItemActionFragment;
 import com.kaching123.tcr.fragment.itempick.DrawerCategoriesFragment;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
@@ -67,6 +70,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.kaching123.tcr.activity.BaseItemActivity2_.MODEL_EXTRA;
+import static com.kaching123.tcr.activity.BaseItemActivity2_.MODE_EXTRA;
 import static com.kaching123.tcr.util.KeyboardUtils.hideKeyboard;
 
 /**
@@ -85,6 +90,9 @@ public class InventoryActivity extends ScannerBaseActivity {
     private final static int INVENTORY_NAVIGATION_SERIAL = 5;
     private final static int INVENTORY_NAVIGATION_FILTER_REFS = 6;
     private final static int INVENTORY_NAVIGATION_FILTER_CHILD = 7;
+
+    private final static int ADD_ITEM_REQUEST_CODE = 0x128;
+    public final static String ITEM_SAVED_ACTION = "ITEM_SAVED_ACTION";
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
     private static final int INITCOUNT_LOADER_ID = 0;
@@ -253,16 +261,62 @@ public class InventoryActivity extends ScannerBaseActivity {
 
     @OptionsItem
     protected void actionAddItemSelected() {
+        addSimpleItem();
+    }
+
+    private void addSimpleItem() {
+        addSimpleItem(null);
+    }
+    private void addSimpleItem(ItemExModel model){
         if (inventoryLimitReached()) {
             AlertDialogFragment.showAlert(this, R.string.error_dialog_title, getString(R.string.error_message_max_items_count));
             return;
         }
 
-        ItemExModel model = new ItemExModel();
-        model.categoryId = selectedCategoryGuid;
-        model.departmentGuid = selectedDeartmentGuid;
+        StartMode startMode = StartMode.ADD;
+        boolean duplicate = false;
+        ItemExModel exModel = model;
+        if (exModel == null) {
+            exModel = new ItemExModel();
+            exModel.categoryId = selectedCategoryGuid;
+            exModel.departmentGuid = selectedDeartmentGuid;
+        } else {
+            startMode = StartMode.EDIT;
+            duplicate = true;
+        }
 
-        BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.ADD);
+        Intent intent = BaseItemActivity2.getIntentToStart(self(), exModel, ItemRefType.Simple, startMode, duplicate);
+        startActivityForResult(intent, ADD_ITEM_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case ADD_ITEM_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    final ItemExModel savedModel = (ItemExModel) data.getSerializableExtra(MODEL_EXTRA);
+                    StartMode mode = (StartMode) data.getSerializableExtra(MODE_EXTRA);
+                    if (mode == StartMode.ADD && savedModel.refType == ItemRefType.Simple) {
+                        ChooseSaveItemActionFragment.show(this, new ChooseSaveItemActionFragment.ChooseSaveItemActionCallback() {
+                            @Override
+                            public void onConfirm(ChooseSaveItemActionFragment.SaveItemAction action) {
+                                switch (action) {
+                                    case NO:
+                                        break;
+                                    case ADD_MORE:
+                                        addSimpleItem();
+                                        break;
+                                    case DUPLICATE:
+                                        addSimpleItem(savedModel.duplicate());
+                                        break;
+                                }
+                            }
+                        });
+                    }
+                }
+                break;
+        }
     }
 
     private boolean inventoryLimitReached() {
