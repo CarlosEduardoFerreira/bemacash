@@ -137,6 +137,11 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
         getLoaderManager().initLoader(UNIT_LABEL_LOADER_ID, null, new UnitsLabelLoader());
     }
 
+    public void duplicate() {
+        eanUpc.setText("");
+        productCode.setText("");
+    }
+
     @Override
     protected void setModel() {
         ItemExModel model = getModel();

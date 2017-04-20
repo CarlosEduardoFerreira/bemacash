@@ -35,6 +35,7 @@ import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.item.ChooseSaveItemActionFragment;
+import com.kaching123.tcr.fragment.item.ItemAdditionalInformationFragment;
 import com.kaching123.tcr.fragment.item.ItemAdditionalInformationFragment_;
 import com.kaching123.tcr.fragment.item.ItemBaseFragment;
 import com.kaching123.tcr.fragment.item.ItemCommonInformationFragment;
@@ -138,7 +139,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @AfterViews
     protected void init(){
         duplicateRequest = getIntent().getExtras().getBoolean(DUPLICATE_EXTRA, false);
-        if(mode == StartMode.EDIT && !duplicateRequest) {
+        if(mode == StartMode.EDIT && !duplicateRequest && model.refType != ItemRefType.Reference) {
             btnDuplicate.setVisibility(View.VISIBLE);
         }
 
@@ -260,6 +261,24 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         saveReference();
         saveModel();
         exit();
+    }
+
+    @Click
+    protected void btnDuplicateClicked(){
+        duplicateRequest = true;
+
+        model.guid = UUID.randomUUID().toString();
+        model.description = model.description.concat("-1");
+        model.eanCode = null;
+        model.productCode = null;
+
+        parentItem = null;
+        model.referenceItemGuid = null;
+
+        commonInformationFragment.duplicate();
+        ((ItemAdditionalInformationFragment)adapter.getItem(1)).duplicate();
+
+        btnDuplicate.setVisibility(View.GONE);
     }
 
     private void exit() {

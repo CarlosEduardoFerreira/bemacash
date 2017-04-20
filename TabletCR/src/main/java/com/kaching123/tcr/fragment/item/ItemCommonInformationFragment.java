@@ -111,6 +111,10 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         initLoaders();
     }
 
+    public void duplicate(){
+        description.setText(getModel().description);
+    }
+
     protected void callBemaKeyboard(){
         salesPrice.setFocusableInTouchMode(false);
         salesPrice.setOnClickListener(new View.OnClickListener() {
