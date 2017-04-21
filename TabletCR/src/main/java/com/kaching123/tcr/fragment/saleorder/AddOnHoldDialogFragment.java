@@ -32,6 +32,8 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
+
 import static com.kaching123.tcr.util.PhoneUtil.onlyDigits;
 
 /**
@@ -70,6 +72,9 @@ public class AddOnHoldDialogFragment extends BaseOnHoldDialogFragment {
     @FragmentArg
     protected boolean hasKitchenPrintable;
 
+    @FragmentArg
+    protected ArrayList<String> kitchenAliases;
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -77,6 +82,7 @@ public class AddOnHoldDialogFragment extends BaseOnHoldDialogFragment {
         getDialog().getWindow().setLayout(
                 getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_width),
                 getResources().getDimensionPixelOffset(R.dimen.holdon_dlg_heigth));
+        itemsPrinterAlias = kitchenAliases;
         initFields();
         initListeners();
     }
@@ -152,7 +158,7 @@ public class AddOnHoldDialogFragment extends BaseOnHoldDialogFragment {
                         Toast.makeText(getContext(), "On Hold status is mandatory, please choose one. To Stay or To Go", Toast.LENGTH_LONG).show();
                         return false;
                     }
-                    printItemsToKitchen(null, false, false, false);
+                    printItemsToKitchen(null, false, false, false, itemsPrinterAlias);
                     printItemToKds();
                     return false;
             }
@@ -175,7 +181,7 @@ public class AddOnHoldDialogFragment extends BaseOnHoldDialogFragment {
         return status;
     }
 
-    protected void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
+    protected void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac, ArrayList<String> printerGuids) {
         printToKitchenFlag = false;
         Logger.e("CEF.HoldFragmentDialog.printItemsToKitchen:printOnholdOrders " + getApp().getShopInfo().printOnholdOrders);
         /*
@@ -185,7 +191,7 @@ public class AddOnHoldDialogFragment extends BaseOnHoldDialogFragment {
             WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
         }
         PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip,
-                new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString(), getOnHoldStatus(), orderPhone.getText().toString(), false);
+                new KitchenKitchenPrintCallback(), false, orderTitle.getText().toString(), getOnHoldStatus(), orderPhone.getText().toString(), false, printerGuids);
     }
 
     protected void printItemToKds(){
@@ -197,12 +203,13 @@ public class AddOnHoldDialogFragment extends BaseOnHoldDialogFragment {
         this.listener = listener;
     }
 
-    public static void show(FragmentActivity context, String orderGuid, String holdTitle, String holdPhone, OnHoldStatus status, boolean hasKitchenPrintable, IHoldListener listener) {
+    public static void show(FragmentActivity context, String orderGuid, String holdTitle, String holdPhone, OnHoldStatus status, boolean hasKitchenPrintable, ArrayList<String> diffKitchenAliases, IHoldListener listener) {
         DialogUtil.show(context, DIALOG_NAME, AddOnHoldDialogFragment_.builder()
                 .argOrderGuid(orderGuid)
                 .argOrderTitle(holdTitle)
                 .argOrderPhone(holdPhone)
                 .argOrderHoldStatus(status)
+                .kitchenAliases(diffKitchenAliases)
                 .hasKitchenPrintable(hasKitchenPrintable)
                 .build()).setListener(listener);
     }

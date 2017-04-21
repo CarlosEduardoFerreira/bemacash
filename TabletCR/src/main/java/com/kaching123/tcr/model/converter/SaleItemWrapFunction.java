@@ -101,6 +101,7 @@ public abstract class SaleItemWrapFunction implements Function<Cursor, List<Sale
                             _discountType(c, c.getColumnIndex(SaleOrderTable.DISCOUNT_TYPE)),
                             _decimal(c, c.getColumnIndex(SaleOrderTable.TRANSACTION_FEE)),
                             !c.isNull(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
+                            c.getString(c.getColumnIndex(ItemTable.PRINTER_ALIAS_GUID)),
                             c.getInt(c.getColumnIndex(SaleItemTable.IS_PREPAID_ITEM)) == 1,
                             c.getInt(c.getColumnIndex(SaleItemTable.IS_GIFT_CARD)) == 1,
                             taxModel1, taxModel2);

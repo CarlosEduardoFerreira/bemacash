@@ -80,6 +80,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
     private static final String ARG_ON_HOLD_STATUS = "ARG_ON_HOLD_STATUS";
     private static final String ARG_ON_HOLD_PHONE = "ARG_ON_HOLD_PHONE";
     private static final String ARG_COMES_FROM_PAY = "ARG_COMES_FROM_PAY";
+    private static final String ARG_PRINTER_GUIDS = "ARG_PRINTER_GUIDS";
 
     private String orderGuid;
     private String orderTitle;
@@ -95,6 +96,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
     private boolean isVoidOrder;
     private boolean isSyncCall;
     private boolean itComesFromPay;
+    private ArrayList<String> printerGuids = new ArrayList<>();
 
     @Override
     protected TaskResult doInBackground() {
@@ -110,6 +112,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
             isUpdated = isOrderUpdated();
             onHoldPhone = getStringArg(ARG_ON_HOLD_PHONE);
             onHoldStatus = (OnHoldStatus) getArgs().getSerializable(ARG_ON_HOLD_STATUS);
+            printerGuids = getArgs().getStringArrayList(ARG_PRINTER_GUIDS);
         }
 
         List<ItemInfo> items = loadItems();
@@ -133,7 +136,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
         Map<String, String> guid2Title = loadAliasTitles(itemsMap.keySet());
         for (Entry<String, List<ItemInfo>> e : itemsMap.entrySet()) {
             String aliasGuid = e.getKey();
-            if (!find && fromPrinter != null && !fromPrinter.equals(aliasGuid)) {
+            if (!printerGuids.contains(aliasGuid) || (!find && fromPrinter != null && !fromPrinter.equals(aliasGuid))) {
                 continue;
             }
             find = true;
@@ -487,7 +490,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
 
 
     public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter,
-                             boolean skip, BaseKitchenPrintCallback callback, boolean printAllItems, String argOrderTitle, boolean itComesFromPay) {
+                             boolean skip, BaseKitchenPrintCallback callback, boolean printAllItems, String argOrderTitle, boolean itComesFromPay, ArrayList<String> printerGuids) {
         create(PrintItemsForKitchenCommand.class)
                 .arg(ARG_ORDER_GUID, orderGuid)
                 .arg(ARG_FROM_PRINTER, fromPrinter)
@@ -497,12 +500,13 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 .arg(ARG_SEARCH_BY_MAC, searchByMac)
                 .arg(ARG_ORDER_TITLE, argOrderTitle)
                 .arg(ARG_COMES_FROM_PAY, itComesFromPay)
+                .arg(ARG_PRINTER_GUIDS, printerGuids)
                 .callback(callback)
                 .queueUsing(context);
     }
 
     public static void start(Context context, boolean skipPaperWarning, boolean searchByMac, String orderGuid, String fromPrinter,
-                             boolean skip, BaseKitchenPrintCallback callback, boolean printAllItems, String argOrderTitle, OnHoldStatus onHoldStatus, String onHoldPhone, boolean itComesFromPay) {
+                             boolean skip, BaseKitchenPrintCallback callback, boolean printAllItems, String argOrderTitle, OnHoldStatus onHoldStatus, String onHoldPhone, boolean itComesFromPay, ArrayList<String> printerGuids) {
         create(PrintItemsForKitchenCommand.class)
                 .arg(ARG_ORDER_GUID, orderGuid)
                 .arg(ARG_FROM_PRINTER, fromPrinter)
@@ -514,6 +518,7 @@ public class PrintItemsForKitchenCommand extends PublicGroundyTask {
                 .arg(ARG_ON_HOLD_STATUS, onHoldStatus)
                 .arg(ARG_ON_HOLD_PHONE, onHoldPhone)
                 .arg(ARG_COMES_FROM_PAY, itComesFromPay)
+                .arg(ARG_PRINTER_GUIDS, printerGuids)
                 .callback(callback)
                 .queueUsing(context);
     }

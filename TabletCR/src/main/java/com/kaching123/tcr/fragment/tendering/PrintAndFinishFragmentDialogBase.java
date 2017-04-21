@@ -2,6 +2,8 @@ package com.kaching123.tcr.fragment.tendering;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.widget.CheckBox;
@@ -14,7 +16,10 @@ import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorHelloComman
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.PaxModel;
+import com.kaching123.tcr.model.SaleOrderItemModel;
+import com.kaching123.tcr.model.SaleOrderItemViewModel;
 import com.kaching123.tcr.model.SaleOrderModel;
+import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
 import com.kaching123.tcr.store.ShopStore.SaleOrderView;
@@ -24,6 +29,9 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by pkabakov on 26.12.13.
@@ -40,6 +48,8 @@ public abstract class PrintAndFinishFragmentDialogBase extends StyledDialogFragm
     protected String orderGuid;
 
     protected SaleOrderModel order;
+    protected ArrayList<SaleOrderItemViewModel> items;
+    protected ArrayList<String> itemsPrinterAlias = new ArrayList<>();
     protected CustomerModel customer;
 
     @Override
@@ -111,7 +121,7 @@ public abstract class PrintAndFinishFragmentDialogBase extends StyledDialogFragm
         public void onLoadFinished(Loader<SaleOrderViewResult> loader, SaleOrderViewResult data) {
             order = data.order;
             customer = data.customer;
-            onOrderDataLoaded();
+            getLoaderManager().initLoader(1, null, new SaleOrderItemsModelLoader());
         }
 
         @Override
@@ -120,6 +130,40 @@ public abstract class PrintAndFinishFragmentDialogBase extends StyledDialogFragm
             customer = null;
         }
     }
+
+    private class SaleOrderItemsModelLoader implements LoaderCallbacks<List<SaleOrderItemViewModel>> {
+
+        @Override
+        public Loader<List<SaleOrderItemViewModel>> onCreateLoader(int loaderId, Bundle args) {
+            return SaleOrderItemViewModelWrapFunction.createLoader(getActivity(), orderGuid);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<SaleOrderItemViewModel>> loader, final List<SaleOrderItemViewModel> list) {
+            items = new ArrayList<>(list);
+            HashSet<String> printerAliases = new HashSet<>(items.size());
+            for (SaleOrderItemViewModel item : items) {
+                printerAliases.add(item.kitchenPrinterGuid);
+            }
+            itemsPrinterAlias = new ArrayList<>(printerAliases);
+            handler.sendEmptyMessage(MSG_ORDER_DATA_LOADED);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<SaleOrderItemViewModel>> c) {
+            items.clear();
+            items = new ArrayList<>();
+        }
+    }
+
+    public static final int MSG_ORDER_DATA_LOADED = 123;
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.what == MSG_ORDER_DATA_LOADED)
+                onOrderDataLoaded();
+        }
+    };
 
     protected void onOrderDataLoaded(){
 

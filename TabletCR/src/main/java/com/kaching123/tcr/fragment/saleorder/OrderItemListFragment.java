@@ -145,6 +145,14 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         return false;
     }
 
+    public HashSet<String> printerAlias() {
+        HashSet<String> aliases = new HashSet<>(adapter.getCount());
+        for (int i = 0; i < adapter.getCount(); i++) {
+            aliases.add(adapter.getItem(i).kitchenPrinterGuid);
+        }
+        return aliases;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.saleorder_items_list_fragment, container, false);

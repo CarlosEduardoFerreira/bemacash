@@ -2300,7 +2300,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 }
             });
         } else {
-            AddOnHoldDialogFragment.show(this, this.orderGuid, this.orderTitle, saleOrderModel.holdPhone, saleOrderModel.holdStatus, orderItemListFragment.hasKitchenItems(), new IHoldListener() {
+            AddOnHoldDialogFragment.show(this, this.orderGuid, this.orderTitle, saleOrderModel.holdPhone,
+                    saleOrderModel.holdStatus, orderItemListFragment.hasKitchenItems(), new ArrayList<String>(orderItemListFragment.printerAlias()), new IHoldListener() {
                 @Override
                 public void onSwap2Order(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid) {
                     onSwap2OrderAction(holdName, holdPhone, status, nextOrderGuid, null);

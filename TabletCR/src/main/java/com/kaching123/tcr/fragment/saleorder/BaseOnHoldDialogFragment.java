@@ -15,6 +15,8 @@ import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.Permission;
 
+import java.util.ArrayList;
+
 
 /**
  * Created by mboychenko on 2/10/2017.
@@ -23,6 +25,7 @@ import com.kaching123.tcr.model.Permission;
 public abstract class BaseOnHoldDialogFragment extends StyledDialogFragment {
 
     protected boolean printToKitchenFlag, printToKdsFlag;
+    protected ArrayList<String> itemsPrinterAlias = new ArrayList<>();
 
     protected class KitchenKitchenPrintCallback extends PrintItemsForKitchenCommand.BaseKitchenPrintCallback {
 
@@ -30,12 +33,17 @@ public abstract class BaseOnHoldDialogFragment extends StyledDialogFragment {
 
             @Override
             public void onRetry(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
-                printItemsToKitchen(fromPrinter, false, ignorePaperEnd, searchByMac);
+                printItemsToKitchen(fromPrinter, false, ignorePaperEnd, searchByMac, itemsPrinterAlias);
             }
 
             @Override
             public void onSkip(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
-                onPrintSuccess();
+                itemsPrinterAlias.remove(fromPrinter);
+                if (itemsPrinterAlias.size() > 0) {
+                    printItemsToKitchen(null, false, ignorePaperEnd, searchByMac, itemsPrinterAlias);
+                } else {
+                    onPrintSuccess();
+                }
             }
         };
 
@@ -176,6 +184,6 @@ public abstract class BaseOnHoldDialogFragment extends StyledDialogFragment {
     }
 
     protected abstract void onPositiveHandler();
-    protected abstract void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac);
+    protected abstract void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac, ArrayList<String> printerAliases);
     protected abstract void printItemToKds();
 }

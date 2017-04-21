@@ -9,7 +9,10 @@ import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemView.IQtyListener;
 import com.kaching123.tcr.model.payment.HistoryDetailedOrderItemModel;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -32,6 +35,14 @@ public class HistoryDetailedOrderItemAdapter extends ObjectsCursorAdapter<Histor
     protected View newView(int position, ViewGroup parent) {
         return HistoryDetailedOrderItemView_.build(getContext()).setListener(itemListener).setCallback(watcher);//.setHost(this.host);
 
+    }
+
+    public ArrayList<String> getPrinterAliasItems(){
+        HashSet<String> set = new HashSet<>();
+        for (int i = 0; i < getCount(); i++) {
+            set.add(getItem(i).saleItemModel.kitchenPrinterGuid);
+        }
+        return new ArrayList<>(set);
     }
 
     @Override
