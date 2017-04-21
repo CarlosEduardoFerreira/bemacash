@@ -157,7 +157,7 @@ public final class OrderTotalPriceCalculator {
 
             BigDecimal itemFinalPrice2 = getSubTotal(i.qty, itemFinalPrice);
 
-            BigDecimal tax2 = getSubTotal(i.qty, itemFinalTax);
+            BigDecimal tax2 = i.qty == null || itemFinalTax == null ? BigDecimal.ZERO : i.qty.multiply(itemFinalTax).setScale(5, RoundingMode.UP);
             totalItemTaxVatValue = totalItemTaxVatValue.add(tax2);
             if (BuildConfig.DEBUG) {
                 Logger.d("TotalCost: %s [%s * %s] = %s;\tdiscount = %s (%s)\tafter discount = %s (%s);\ttax = %s/%s (%s%%);\t final price = %s/%s",
