@@ -97,7 +97,7 @@ public final class CalculationUtil {
     }
 
     public static BigDecimal getTaxVatValue(BigDecimal itemSubTotal, BigDecimal taxVATPercent) {
-        return getTaxVatValueNoScale(itemSubTotal, taxVATPercent).setScale(RESULT_SCALE, MONEY_ROUNDING);
+        return getTaxVatValueNoScale(itemSubTotal, taxVATPercent).setScale(5, MONEY_ROUNDING);
     }
 
     public static BigDecimal getTaxVatValueNoScale(BigDecimal itemSubTotal, BigDecimal taxVATPercent) {
