@@ -692,7 +692,7 @@
     <string name="sale_item_limit_error_dialog_title">Error</string>
     <string name="error_empty_department">Warning</string>
     <string name="warning_dialog_title">Warning</string>
-    <string name="warning_delete_employee">Please goto back office to delete the employee</string>
+    <string name="warning_delete_employee">Please go to back office to delete the employee</string>
     <string name="warning_transaction_upload_fail">Sale transaction upload fail, please check the credentials.</string>
     <string name="warning_main_upload_fail">Upload data fails, please check the credentials.</string>
     <string name="warning_employee_upload_fail">Employee info upload fail, please check the credentials.</string>
