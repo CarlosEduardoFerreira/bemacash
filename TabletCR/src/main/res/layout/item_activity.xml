@@ -60,6 +60,8 @@
             android:background="@drawable/save_btn_bg"
             android:paddingBottom="6dp"
             android:text="@string/btn_duplicate"
+            android:gravity="center"
+            android:textStyle="bold"
             android:textSize="26sp"
             android:visibility="gone" />
 
