@@ -54,6 +54,11 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
     protected void newItem(){}
 
     @Override
+    public void duplicate() {
+        init();
+    }
+
+    @Override
     protected void setViews() {
 
         qtyViews = new EditText[]{availableQty, minimumQty, recommendedQty};
@@ -156,7 +161,9 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
 
         if (model.isStockTracking) {
             limitQty.setChecked(model.limitQty);
-            showQuantity(availableQty, getItemProvider().getQtyInfo().availableQty, model.isPcsUnit());
+            showQuantity(availableQty,
+                    getItemProvider().isDuplicate() ? model.availableQty : getItemProvider().getQtyInfo().availableQty,
+                    model.isPcsUnit());
             showQuantity(minimumQty, model.minimumQty, model.isPcsUnit());
             showQuantity(recommendedQty, model.recommendedQty, model.isPcsUnit());
         } else {

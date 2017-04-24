@@ -134,12 +134,24 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
             ItemCodeChooserAlertDialogFragment.show(getActivity(), filterBarcode(getModel().tmpBarcode), this);
         }
 
-        getLoaderManager().initLoader(UNIT_LABEL_LOADER_ID, null, new UnitsLabelLoader());
+        getLoaderManager().restartLoader(UNIT_LABEL_LOADER_ID, null, new UnitsLabelLoader());
     }
 
+    @Override
     public void duplicate() {
+        init();
         eanUpc.setText("");
         productCode.setText("");
+        if (getModel().unitsLabelId != null){
+            int position = unitsLabelAdapter.getPositionById(getModel().unitsLabelId);
+            if (position != AdapterView.INVALID_POSITION)
+                unitsLabel.setSelection(position);
+        } else {
+            unitsLabel.setSelection(0);
+        }
+
+        if (getModel().codeType != null)
+            unitsType.setSelection(getModel().codeType.ordinal() + 1);
     }
 
     @Override

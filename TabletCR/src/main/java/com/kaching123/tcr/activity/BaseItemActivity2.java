@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -14,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,10 +33,7 @@ import com.kaching123.tcr.commands.wireless.CollectUnitsCommand.UnitCallback;
 import com.kaching123.tcr.component.slidingtab.SlidingTabLayout;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
-import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
-import com.kaching123.tcr.fragment.item.ChooseSaveItemActionFragment;
-import com.kaching123.tcr.fragment.item.ItemAdditionalInformationFragment;
 import com.kaching123.tcr.fragment.item.ItemAdditionalInformationFragment_;
 import com.kaching123.tcr.fragment.item.ItemBaseFragment;
 import com.kaching123.tcr.fragment.item.ItemCommonInformationFragment;
@@ -69,16 +67,16 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.ViewById;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TimerTask;
 import java.util.UUID;
 
+import static android.view.View.GONE;
 import static com.kaching123.tcr.activity.BaseItemActivity2_.MODEL_EXTRA;
 import static com.kaching123.tcr.activity.BaseItemActivity2_.MODE_EXTRA;
-import static com.kaching123.tcr.fragment.item.ChooseSaveItemActionFragment.SAVE_ITEM_CHOOSE_ACTION_DIALOG;
 
 /**
  * Created by vkompaniets on 21.07.2016.
@@ -120,8 +118,13 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @ViewById
     protected Button btnDuplicate;
 
+    @ViewById
+    protected View animObj;
+
     @Extra
     protected ItemExModel model;
+
+    protected ItemExModel originalModel;
 
     @Extra
     protected StartMode mode;
@@ -136,8 +139,29 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     private ItemExModel parentItem;
     private ItemMatrixModel parentItemMatrix;
 
+    private String preDuplicateItemGuid;
+    private  AlphaAnimation animationFadeOut;
+
     @AfterViews
     protected void init(){
+        animationFadeOut = new AlphaAnimation(0.0f, 1.0f);
+        animationFadeOut.setDuration(500);
+
+        animationFadeOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                animObj.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        originalModel = new ItemExModel(model);
         duplicateRequest = getIntent().getExtras().getBoolean(DUPLICATE_EXTRA, false);
         if(mode == StartMode.EDIT && !duplicateRequest && model.refType != ItemRefType.Reference) {
             btnDuplicate.setVisibility(View.VISIBLE);
@@ -193,6 +217,16 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @Override
     public boolean isCreate() {
         return StartMode.ADD == mode;
+    }
+
+    @Override
+    public boolean isDuplicate() {
+        return duplicateRequest;
+    }
+
+    @Override
+    public String getPrdeDuplicateModelGuid() {
+        return preDuplicateItemGuid;
     }
 
     @Override
@@ -265,20 +299,28 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
     @Click
     protected void btnDuplicateClicked(){
+        alphaAnim();
         duplicateRequest = true;
 
-        model.guid = UUID.randomUUID().toString();
-        model.description = model.description.concat("-1");
-        model.eanCode = null;
-        model.productCode = null;
+        model = new ItemExModel(originalModel);
+        preDuplicateItemGuid = originalModel.guid;
+
+        model = model.duplicate();
 
         parentItem = null;
         model.referenceItemGuid = null;
 
         commonInformationFragment.duplicate();
-        ((ItemAdditionalInformationFragment)adapter.getItem(1)).duplicate();
+        for (int i = 0; i < adapter.getCount(); i++) {
+            ((ItemBaseFragment)adapter.getItem(i)).duplicate();
+        }
 
-        btnDuplicate.setVisibility(View.GONE);
+        btnDuplicate.setVisibility(GONE);
+    }
+
+    private void alphaAnim(){
+        animObj.setVisibility(View.VISIBLE);
+        animObj.startAnimation(animationFadeOut);
     }
 
     private void exit() {
@@ -435,7 +477,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
         if (count == 0) {
             View counterTextPanel = view.findViewById(R.id.counterValuePanel);
-            counterTextPanel.setVisibility(View.GONE);
+            counterTextPanel.setVisibility(GONE);
         } else {
             TextView textView = (TextView) view.findViewById(R.id.count);
             textView.setText("" + count);

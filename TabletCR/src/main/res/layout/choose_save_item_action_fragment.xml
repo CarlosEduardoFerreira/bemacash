@@ -20,7 +20,7 @@
         android:layout_gravity="center_horizontal"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="30dp"
         android:orientation="vertical">
 
         <CheckBox
@@ -29,6 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
+            android:layout_marginBottom="12dp"
             android:text="@string/btn_no" />
 
         <CheckBox
@@ -36,6 +37,7 @@
             style="@style/CheckBox.Dark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             android:text="@string/btn_yes" />
 
         <CheckBox

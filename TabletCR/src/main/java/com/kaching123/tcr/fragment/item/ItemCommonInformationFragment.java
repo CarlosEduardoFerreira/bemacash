@@ -111,8 +111,24 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         initLoaders();
     }
 
+    @Override
     public void duplicate(){
-        description.setText(getModel().description);
+        init();
+        if (getModel().departmentGuid != null) {
+            department.setSelection(departmentAdapter.getPosition4Id(getModel().departmentGuid));
+        } else {
+            department.setSelection(0);
+        }
+        if (getModel().categoryId != null) {
+            category.setSelection(categoryAdapter.getPosition4Id(getModel().categoryId));
+        } else {
+            category.setSelection(0);
+        }
+        if (getModel().taxGroupGuid != null) {
+            taxGroup.setSelection(taxGroupAdapter.getPosition4Id(getModel().taxGroupGuid));
+        } else {
+            taxGroup.setSelection(0);
+        }
     }
 
     protected void callBemaKeyboard(){

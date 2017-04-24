@@ -31,7 +31,9 @@ public abstract class ItemBaseFragment extends SuperBaseFragment implements Item
 
     @AfterViews
     protected void init(){
-        setViews();
+        if (!getItemProvider().isDuplicate()) {
+            setViews();
+        }
         if (!getItemProvider().isCreate()){
             setModel();
         }else{
@@ -42,4 +44,5 @@ public abstract class ItemBaseFragment extends SuperBaseFragment implements Item
     protected abstract void setViews();
     protected abstract void setModel();
     protected abstract void newItem();
+    public abstract void duplicate();
 }

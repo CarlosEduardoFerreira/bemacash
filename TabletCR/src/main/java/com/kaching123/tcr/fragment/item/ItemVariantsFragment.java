@@ -60,6 +60,10 @@ public class ItemVariantsFragment extends ItemBaseFragment {
     }
 
     @Override
+    public void duplicate() {
+    }
+
+    @Override
     public boolean validateData() {
         return true;
     }

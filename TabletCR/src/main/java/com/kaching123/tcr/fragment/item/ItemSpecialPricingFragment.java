@@ -68,6 +68,12 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
     }
 
     @Override
+    public void duplicate() {
+        init();
+        getLoaderManager().restartLoader(0, null, new TBPLoader());
+    }
+
+    @Override
     public void collectData() {
         for (int i = 0; i < adapter.getCount(); i++){
             TBPWrapper item = adapter.getItem(i);
