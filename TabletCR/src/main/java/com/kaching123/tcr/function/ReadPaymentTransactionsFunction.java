@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.Loader;
+import android.util.Log;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
@@ -74,6 +75,41 @@ public final class ReadPaymentTransactionsFunction {
                 })
                 .build(context);
     }
+
+
+    public static Loader<ArrayList<PaymentTransactionModel>> createLoaderOnlySaleOrderByAmountToRefund(Context context, String orderGuid) {
+        Log.d("BemaCarl13","ReadPaymentTransactionsFunction.createLoaderOnlySaleOrderByAmount.orderGuid: " + orderGuid);
+        orderGuid = orderGuid == null ? "" : orderGuid;
+        return CursorLoaderBuilder.forUri(URI_TRANSACTIONS)
+                //.where("(" + PaymentTransactionTable.STATUS + " = ? OR " + PaymentTransactionTable.STATUS + " = ?)", PaymentStatus.PRE_AUTHORIZED.ordinal(), PaymentStatus.SUCCESS.ordinal())
+                .where("(" + SaleOrderTable.GUID + " = ? or " + SaleOrderTable.PARENT_ID + " = ?)", orderGuid, orderGuid)
+                .transform(new Function<Cursor, ArrayList<PaymentTransactionModel>>() {
+                    @Override
+                    public ArrayList<PaymentTransactionModel> apply(Cursor c) {
+                        ArrayList<PaymentTransactionModel> result = readTransactions(c);
+                        Log.d("BemaCarl13","ReadPaymentTransactionsFunction.createLoaderOnlySaleOrderByAmount.result1: " + result);
+                        /*
+                        result = filter(result, new Predicate<PaymentTransactionModel>() {
+                            @Override
+                            public boolean apply(PaymentTransactionModel p) {
+                                Log.d("BemaCarl13","ReadPaymentTransactionsFunction.createLoaderOnlySaleOrderByAmount.p.amount: " + p.amount);
+                                return p.paymentType == PaymentType.SALE && BigDecimal.ZERO.compareTo(p.availableAmount) == -1;
+                            }
+                        });
+                        /**/
+                        Collections.sort(result, new Comparator<PaymentTransactionModel>() {
+                            @Override
+                            public int compare(PaymentTransactionModel l, PaymentTransactionModel r) {
+                                return l.createTime == null ? -1 : r.createTime == null ? 1 : l.createTime.compareTo(r.createTime);
+                            }
+                        });
+                        Log.d("BemaCarl13","ReadPaymentTransactionsFunction.createLoaderOnlySaleOrderByAmount.result2: " + result);
+                        return result;
+                    }
+                })
+                .build(context);
+    }
+
 
     private static ArrayList<PaymentTransactionModel> filterSaleOnly(ArrayList<PaymentTransactionModel> list) {
         return filter(list, new Predicate<PaymentTransactionModel>() {
@@ -173,6 +209,13 @@ public final class ReadPaymentTransactionsFunction {
                 );
                 model.balance = _decimal(c, c.getColumnIndex(PaymentTransactionTable.BALANCE), BigDecimal.ZERO);
                 String parentGuid = c.getString(c.getColumnIndex(PaymentTransactionTable.PARENT_GUID));
+                Log.d("BemaCarl13","ReadPaymentTransactionsFunction.readTransactions.parentGuid: " + parentGuid);
+                Log.d("BemaCarl13","ReadPaymentTransactionsFunction.readTransactions.model.parentTransactionGuid: " + model.parentTransactionGuid);
+                Log.d("BemaCarl13","ReadPaymentTransactionsFunction.readTransactions.model.amount: " + model.amount);
+                Log.d("BemaCarl13","ReadPaymentTransactionsFunction.readTransactions.model.availableAmount: " + model.availableAmount);
+                Log.d("BemaCarl13","ReadPaymentTransactionsFunction.readTransactions.model.balance: " + model.balance);
+                Log.d("BemaCarl13","ReadPaymentTransactionsFunction.readTransactions.model.cashBack: " + model.cashBack);
+                Log.d("BemaCarl13","ReadPaymentTransactionsFunction.readTransactions.model.changeAmount: " + model.changeAmount);
                 if (parentGuid != null) {
                     List<PaymentTransactionModel> list = childrenTransactions.get(parentGuid);
                     if (list == null) {
@@ -188,7 +231,9 @@ public final class ReadPaymentTransactionsFunction {
         if (closeCursor)
             c.close();
         for (PaymentTransactionModel m : parents) {
+            Log.d("BemaCarl13","ReadPaymentTransactionsFunction.readTransactions.m.availableAmount1: " + m.availableAmount);
             m.availableAmount = m.amount.add(calcAmount(childrenTransactions.get(m.guid)));
+            Log.d("BemaCarl13","ReadPaymentTransactionsFunction.readTransactions.m.availableAmount2: " + m.availableAmount);
         }
         return result;
     }

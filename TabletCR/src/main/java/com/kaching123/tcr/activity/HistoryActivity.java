@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -199,6 +200,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
     @Override
     public void onReturnClick() {
+        Log.d("BemaCarl13","HistoryActivity.onReturnClick");
         if (!getApp().hasPermission(Permission.SALES_RETURN)) {
             PermissionFragment.showCancelable(this, new BaseTempLoginListener(this) {
                 @Override
@@ -229,10 +231,12 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     }
 
     private void startRefund(final ArrayList<PaymentTransactionModel> transactions) {
+        Log.d("BemaCarl13","HistoryActivity.startRefund1");
         if (!checkTransactions(transactions))
             return;
-
+        Log.d("BemaCarl13","HistoryActivity.startRefund2");
         final RefundAmount amount = orderItemsListFragment.getReturnAmount();
+        Log.d("BemaCarl13","HistoryActivity.startRefund.amount: " + amount);
         Logger.d("About to return %s", UiHelper.valueOf(amount.pickedValue));
         Logger.d("Total is %s", UiHelper.valueOf(amount.orderValue));
         if (BigDecimal.ZERO.compareTo(amount.pickedValue) == 0) {
@@ -264,10 +268,11 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     }
 
     private boolean checkTransactions(ArrayList<PaymentTransactionModel> transactions) {
+        Log.d("BemaCarl13","HistoryActivity.checkTransactions.transactions: " + transactions);
         if (transactions != null && !transactions.isEmpty()) {
             return true;
         }
-
+        Log.d("BemaCarl13","HistoryActivity.checkTransactions2");
         AlertDialogFragment.showAlert(this, R.string.error_dialog_title, getString(R.string.error_message_no_payments));
         return false;
     }
@@ -488,7 +493,8 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     private LoaderCallbacks<ArrayList<PaymentTransactionModel>> refundTransactionsLoaderCallback = new LoaderCallbacks<ArrayList<PaymentTransactionModel>>() {
         @Override
         public Loader<ArrayList<PaymentTransactionModel>> onCreateLoader(int loaderId, Bundle args) {
-            return ReadPaymentTransactionsFunction.createLoaderOnlySaleOrderByAmount(HistoryActivity.this, orderItemsListFragment.guid);
+            Log.d("BemaCarl13","HistoryActivity.onLoadFinished.orderItemsListFragment.guid: " + orderItemsListFragment.guid);
+            return ReadPaymentTransactionsFunction.createLoaderOnlySaleOrderByAmountToRefund(HistoryActivity.this, orderItemsListFragment.guid);
         }
 
         @Override
@@ -498,6 +504,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
                 public void run() {
                     getSupportLoaderManager().destroyLoader(0);
                     WaitDialogFragment.hide(HistoryActivity.this);
+                    Log.d("BemaCarl13","HistoryActivity.onLoadFinished.transactions: " + transactions);
                     startRefund(transactions);
                 }
             });
