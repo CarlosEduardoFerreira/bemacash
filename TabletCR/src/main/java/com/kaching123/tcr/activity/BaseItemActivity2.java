@@ -220,6 +220,11 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     }
 
     @Override
+    public ItemExModel getSourceModel() {
+        return originalModel;
+    }
+
+    @Override
     public boolean isCreate() {
         return StartMode.ADD == mode;
     }
@@ -305,9 +310,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         model = new ItemExModel(originalModel);
 
         model = model.duplicate();
-
-        parentItem = null;
-        model.referenceItemGuid = null;
 
         commonInformationFragment.duplicate();
         for (int i = 0; i < adapter.getCount(); i++) {

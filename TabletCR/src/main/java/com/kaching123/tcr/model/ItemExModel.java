@@ -53,6 +53,10 @@ public class ItemExModel extends ItemModel {
         super();
     }
 
+    public ItemExModel(ItemModel model) {
+        super(model);
+    }
+
     public ItemExModel(BigDecimal itemPrice){
         super(UUID.randomUUID().toString(),
                 null,

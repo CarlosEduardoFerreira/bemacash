@@ -25,6 +25,10 @@ public abstract class ItemBaseFragment extends SuperBaseFragment implements Item
         return ((ItemProvider) getActivity()).getModel();
     }
 
+    protected ItemExModel getModelBeforeDuplicate(){
+        return ((ItemProvider) getActivity()).getSourceModel();
+    }
+
     protected ItemProvider getItemProvider(){
         return (ItemProvider) getActivity();
     }

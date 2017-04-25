@@ -442,13 +442,15 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
     private LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            String guid = getItemProvider().isDuplicate() ? getModelBeforeDuplicate().getGuid() : getModel().getGuid();
+            String matrixGuid = getModel().referenceItemGuid;
             switch (id) {
                 case ITEM_MATRIX_LOADER_ID:
                     return CursorLoaderBuilder.forUri(ShopProvider.contentUri(ItemMatrixByParentView.URI_CONTENT))
-                            .where(ItemMatrixByParentView.CHILD_ITEM_GUID + " = ?", getModel().guid).build(getActivity());
+                            .where(ItemMatrixByParentView.CHILD_ITEM_GUID + " = ?", guid).build(getActivity());
                 case ITEM_PARENT_LOADER_ID:
                     return CursorLoaderBuilder.forUri(ShopProvider.contentUri(ItemTable.URI_CONTENT))
-                            .where(ItemTable.GUID + " = ?", getModel().referenceItemGuid).build(getActivity());
+                            .where(ItemTable.GUID + " = ?", matrixGuid).build(getActivity());
                 default:
                     throw new IllegalArgumentException("Unsupported loader id: "
                             + Integer.toHexString(id));
@@ -462,11 +464,18 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
                 case ITEM_MATRIX_LOADER_ID:
                     if (data.moveToFirst()) {
                         referenceItem.setText(data.getString(data.getColumnIndex(ItemMatrixByParentView.ITEM_DESCRIPTION)));
+                        if (getItemProvider().isDuplicate()) {
+                            getModel().referenceItemGuid = data.getString(data.getColumnIndex(ItemMatrixByParentView.PARENT_ITEM_GUID));
+                            getLoaderManager().restartLoader(ITEM_PARENT_LOADER_ID, null, cursorLoaderCallbacks);
+                        }
                     }
                     break;
                 case ITEM_PARENT_LOADER_ID:
                     if (data.moveToFirst()) {
                         referenceItem.setText(data.getString(data.getColumnIndex(ItemTable.DESCRIPTION)));
+                        if (getItemProvider().isDuplicate()) {
+                            getItemProvider().setParentItem(new ItemExModel(new ItemModel(data)));
+                        }
                     }
                 default:
             }

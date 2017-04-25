@@ -2863,6 +2863,7 @@ public abstract class ShopStore {
 
         String ITEM_DESCRIPTION = TABLE_ITEM + "_" + ItemTable.DESCRIPTION;
         String CHILD_ITEM_GUID = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.CHILD_GUID;
+        String PARENT_ITEM_GUID = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.PARENT_GUID;
 
     }
 

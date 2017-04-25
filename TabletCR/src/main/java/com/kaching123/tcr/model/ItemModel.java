@@ -26,6 +26,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._codeType;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
+import static com.kaching123.tcr.model.ContentValuesUtil._itemRefType;
 import static com.kaching123.tcr.model.ContentValuesUtil._max;
 import static com.kaching123.tcr.model.ContentValuesUtil._putDiscount;
 import static com.kaching123.tcr.model.ContentValuesUtil._putEnum;
@@ -277,7 +278,7 @@ public class ItemModel extends BaseItemModel implements Serializable, IValueMode
                 c.getInt(c.getColumnIndex(ItemTable.ELIGIBLE_FOR_COMMISSION)) == 1,
                 new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.COMMISSION))),
                 c.getString(c.getColumnIndex(ItemTable.REFERENCE_ITEM_ID)),
-                ItemRefType.valueOf(c.getString(c.getColumnIndex(ItemTable.ITEM_REF_TYPE))),
+                _itemRefType(c, c.getColumnIndex(ItemTable.ITEM_REF_TYPE)),
                 new BigDecimal(c.getDouble(c.getColumnIndex(ItemTable.LOYALTY_POINTS))),
                 c.getInt(c.getColumnIndex(ItemTable.EXCLUDE_FROM_LOYALTY_PLAN)) == 1,
                 c.getInt(c.getColumnIndex(ItemTable.EBT_ELIGIBLE)) == 1,
