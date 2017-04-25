@@ -327,6 +327,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         Intent resultIntent = new Intent();
         resultIntent.putExtra(MODEL_EXTRA, model);
         resultIntent.putExtra(MODE_EXTRA, mode);
+        resultIntent.putExtra(DUPLICATE_EXTRA, isDuplicate());
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }
@@ -577,7 +578,10 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         BaseItemActivity2_.intent(context).model(model).mode(mode).start();
     }
 
-    public static Intent getIntentToStart(Context context, ItemExModel model, ItemRefType refType, StartMode mode, boolean duplicate){
+    public static Intent getIntentToStart(Context context, ItemExModel model, ItemRefType refType, StartMode mode){
+        return getIntentToStart(context, model, refType, mode, false, null);
+    }
+    public static Intent getIntentToStart(Context context, ItemExModel model, ItemRefType refType, StartMode mode, boolean duplicate, String sourceGuid){
         Intent intent = new Intent(context, BaseItemActivity2_.class);
         boolean isCommonItem = refType == ItemRefType.Simple;
         if (StartMode.ADD == mode){

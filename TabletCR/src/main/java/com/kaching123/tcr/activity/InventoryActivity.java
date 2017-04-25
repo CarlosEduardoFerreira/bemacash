@@ -70,6 +70,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.kaching123.tcr.activity.BaseItemActivity2.DUPLICATE_EXTRA;
 import static com.kaching123.tcr.activity.BaseItemActivity2_.MODEL_EXTRA;
 import static com.kaching123.tcr.activity.BaseItemActivity2_.MODE_EXTRA;
 import static com.kaching123.tcr.util.KeyboardUtils.hideKeyboard;
@@ -157,7 +158,8 @@ public class InventoryActivity extends ScannerBaseActivity {
         itemsFragment.setListener(new BaseItemsPickFragment.IItemListener() {
             @Override
             public void onItemSelected(long id, ItemExModel model) {
-                BaseItemActivity2.start(self(), model, ItemRefType.Simple, StartMode.EDIT);
+                Intent intent = BaseItemActivity2.getIntentToStart(self(), model, ItemRefType.Simple, StartMode.EDIT);
+                startActivityForResult(intent, ADD_ITEM_REQUEST_CODE);
             }
         });
 
@@ -265,9 +267,9 @@ public class InventoryActivity extends ScannerBaseActivity {
     }
 
     private void addSimpleItem() {
-        addSimpleItem(null);
+        addSimpleItem(null, null);
     }
-    private void addSimpleItem(ItemExModel model){
+    private void addSimpleItem(String sourceGuid, ItemExModel model){
         if (inventoryLimitReached()) {
             AlertDialogFragment.showAlert(this, R.string.error_dialog_title, getString(R.string.error_message_max_items_count));
             return;
@@ -285,7 +287,7 @@ public class InventoryActivity extends ScannerBaseActivity {
             duplicate = true;
         }
 
-        Intent intent = BaseItemActivity2.getIntentToStart(self(), exModel, ItemRefType.Simple, startMode, duplicate);
+        Intent intent = BaseItemActivity2.getIntentToStart(self(), exModel, ItemRefType.Simple, startMode, duplicate, sourceGuid);
         startActivityForResult(intent, ADD_ITEM_REQUEST_CODE);
     }
 
@@ -297,7 +299,9 @@ public class InventoryActivity extends ScannerBaseActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     final ItemExModel savedModel = (ItemExModel) data.getSerializableExtra(MODEL_EXTRA);
                     StartMode mode = (StartMode) data.getSerializableExtra(MODE_EXTRA);
-                    if (mode == StartMode.ADD && savedModel.refType == ItemRefType.Simple) {
+                    boolean isDuplicateItem = data.getBooleanExtra(DUPLICATE_EXTRA, false);
+                    if (savedModel.refType == ItemRefType.Simple &&
+                            ((mode == StartMode.ADD) || (mode == StartMode.EDIT && isDuplicateItem))) {
                         ChooseSaveItemActionFragment.show(this, new ChooseSaveItemActionFragment.ChooseSaveItemActionCallback() {
                             @Override
                             public void onConfirm(ChooseSaveItemActionFragment.SaveItemAction action) {
@@ -308,7 +312,7 @@ public class InventoryActivity extends ScannerBaseActivity {
                                         addSimpleItem();
                                         break;
                                     case DUPLICATE:
-                                        addSimpleItem(savedModel.duplicate());
+                                        addSimpleItem(savedModel.getGuid(), savedModel.duplicate());
                                         break;
                                 }
                             }
@@ -317,6 +321,7 @@ public class InventoryActivity extends ScannerBaseActivity {
                 }
                 break;
         }
+        itemsFragment.sortOrderChanged();
     }
 
     private boolean inventoryLimitReached() {
