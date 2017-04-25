@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,7 +72,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.TimerTask;
 import java.util.UUID;
 
 import static android.view.View.GONE;
@@ -90,6 +90,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     public static final int TAG_RESULT_MODIFIER = 3;
 
     public static final String DUPLICATE_EXTRA = "DUPLICATE_TAG";
+    public static final String SOURCE_GUID_EXTRA = "SOURCE_GUID_EXTRA";
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
     static {
@@ -139,14 +140,12 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     private ItemExModel parentItem;
     private ItemMatrixModel parentItemMatrix;
 
-    private String preDuplicateItemGuid;
     private  AlphaAnimation animationFadeOut;
 
     @AfterViews
     protected void init(){
         animationFadeOut = new AlphaAnimation(0.0f, 1.0f);
         animationFadeOut.setDuration(500);
-
         animationFadeOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -161,7 +160,13 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             public void onAnimationRepeat(Animation animation) {
             }
         });
+
         originalModel = new ItemExModel(model);
+        String sourceGuid = getIntent().getExtras().getString(SOURCE_GUID_EXTRA);
+        if (!TextUtils.isEmpty(sourceGuid)) {
+            originalModel.guid = sourceGuid;
+        }
+
         duplicateRequest = getIntent().getExtras().getBoolean(DUPLICATE_EXTRA, false);
         if(mode == StartMode.EDIT && !duplicateRequest && model.refType != ItemRefType.Reference) {
             btnDuplicate.setVisibility(View.VISIBLE);
@@ -222,11 +227,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     @Override
     public boolean isDuplicate() {
         return duplicateRequest;
-    }
-
-    @Override
-    public String getPrdeDuplicateModelGuid() {
-        return preDuplicateItemGuid;
     }
 
     @Override
@@ -303,7 +303,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         duplicateRequest = true;
 
         model = new ItemExModel(originalModel);
-        preDuplicateItemGuid = originalModel.guid;
 
         model = model.duplicate();
 
@@ -593,6 +592,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         intent.putExtra(MODEL_EXTRA, model);
         intent.putExtra(MODE_EXTRA, mode);
         intent.putExtra(DUPLICATE_EXTRA, duplicate);
+        intent.putExtra(SOURCE_GUID_EXTRA, sourceGuid);
         return intent;
     }
 

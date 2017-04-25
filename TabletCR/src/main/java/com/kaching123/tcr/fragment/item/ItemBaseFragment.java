@@ -31,9 +31,7 @@ public abstract class ItemBaseFragment extends SuperBaseFragment implements Item
 
     @AfterViews
     protected void init(){
-        if (!getItemProvider().isDuplicate()) {
-            setViews();
-        }
+        setViews();
         if (!getItemProvider().isCreate()){
             setModel();
         }else{
