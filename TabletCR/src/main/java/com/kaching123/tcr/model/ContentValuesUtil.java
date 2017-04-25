@@ -45,7 +45,7 @@ public final class ContentValuesUtil {
 
     private static ThreadLocal<DecimalFormat> decimalFormat = new ThreadLocal<DecimalFormat>() {
         protected DecimalFormat initialValue() {
-            DecimalFormat format = new DecimalFormat("0.000");
+            DecimalFormat format = new DecimalFormat("0.00000");
             format.setDecimalFormatSymbols(otherSymbols);
             format.setParseBigDecimal(true);
             return format;
