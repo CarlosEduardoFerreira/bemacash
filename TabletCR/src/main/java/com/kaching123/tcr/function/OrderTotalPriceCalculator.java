@@ -153,9 +153,8 @@ public final class OrderTotalPriceCalculator {
                 itemFinalPrice = itemFinalPrice.add(itemFinalTax);
             }
 
-            itemFinalPrice = CalculationUtil.value(itemFinalPrice);
-
-            BigDecimal itemFinalPrice2 = getSubTotal(i.qty, itemFinalPrice);
+            BigDecimal itemFinalPrice2 = i.qty.multiply(itemFinalPrice);
+            itemFinalPrice2 = itemFinalPrice2.setScale(5, RoundingMode.UP);
 
             BigDecimal tax2 = i.qty == null || itemFinalTax == null ? BigDecimal.ZERO : i.qty.multiply(itemFinalTax).setScale(5, RoundingMode.UP);
             totalItemTaxVatValue = totalItemTaxVatValue.add(tax2);
