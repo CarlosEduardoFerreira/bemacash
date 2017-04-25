@@ -36,9 +36,9 @@ import static com.kaching123.tcr.store.ShopSchemaEx.Trigger.trigger;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyForeignKeys;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTmpFields;
 import static com.kaching123.tcr.store.ShopSchemaEx.applyTriggers;
-import static com.kaching123.tcr.store.migration.IUpdateContainer.VERSION10;
+import static com.kaching123.tcr.store.migration.IUpdateContainer.VERSION10_1;
 
-@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = VERSION10)
+@Schema(className = "ShopSchema", dbName = "shop.db", dbVersion = VERSION10_1)
 @Provider(name = "ShopProvider", authority = BuildConfig.PROVIDER_AUTHORITY, schemaClass = "ShopSchema", openHelperClass = "ShopOpenHelper")
 public abstract class ShopStore {
 
@@ -2863,6 +2863,7 @@ public abstract class ShopStore {
 
         String ITEM_DESCRIPTION = TABLE_ITEM + "_" + ItemTable.DESCRIPTION;
         String CHILD_ITEM_GUID = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.CHILD_GUID;
+        String PARENT_ITEM_GUID = TABLE_ITEM_MATRIX + "_" + ItemMatrixTable.PARENT_GUID;
 
     }
 

@@ -53,6 +53,10 @@ public class ItemExModel extends ItemModel {
         super();
     }
 
+    public ItemExModel(ItemModel model) {
+        super(model);
+    }
+
     public ItemExModel(BigDecimal itemPrice){
         super(UUID.randomUUID().toString(),
                 null,
@@ -257,6 +261,33 @@ public class ItemExModel extends ItemModel {
         this.tax2 = tax2;
         this.shortCut = shortCut;
 
+    }
+
+    public ItemExModel(ItemExModel itemModel) {
+        super(itemModel);
+        this.modifiersCount = itemModel.modifiersCount;
+        this.addonsCount = itemModel.addonsCount;
+        this.optionalCount = itemModel.optionalCount;
+        this.departmentGuid = itemModel.departmentGuid;
+        this.tax = itemModel.tax;
+        this.tax2 = itemModel.tax2;
+        this.shortCut = itemModel.shortCut;
+        this.tmpUnit = itemModel.tmpUnit;
+        this.tmpBarcode = itemModel.tmpBarcode;
+        this.currentPriceLevel = itemModel.currentPriceLevel;
+        this.tmpAgeVerified = itemModel.tmpAgeVerified;
+        this.matrixGuid = itemModel.matrixGuid;
+        this.isAComposisiton = itemModel.isAComposisiton;
+        this.isAComposer = itemModel.isAComposer;
+        this.isIncentive = itemModel.isIncentive;
+    }
+
+    public ItemExModel duplicate() {
+        guid = UUID.randomUUID().toString();
+        description = description.concat("-1");
+        eanCode = null;
+        productCode = null;
+        return this;
     }
 
     public int getTmpAgeVerified() {

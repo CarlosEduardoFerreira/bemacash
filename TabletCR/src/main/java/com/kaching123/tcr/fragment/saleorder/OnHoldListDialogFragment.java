@@ -89,6 +89,9 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
     @FragmentArg
     protected String argOrderTitle;
 
+    @FragmentArg
+    protected ArrayList<String> kitchenAliases;
+
     @ViewById
     protected LinearLayout searchBlock;
 
@@ -125,6 +128,8 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
         isOnHoldOrdersDefined = app.getShopInfo().definedOnHold;
         metrics = new DisplayMetrics();
         defineDialogAndGridItemsSize(getDialog().getWindow());
+
+        itemsPrinterAlias = kitchenAliases;
 
         gridAdapter = new GridAdapter(getContext(), isOnHoldOrdersDefined);
         gridView.setAdapter(gridAdapter);
@@ -163,7 +168,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
                     switch (argAction) {
                         case ADD_ORDER:
                             if(clickedDefinedOnHold != null && gridAdapter.getOnHoldOrderByDefinedGuid(clickedDefinedOnHold.getGuid()) == null) {
-                                printItemsToKitchen(null, false, false, false);
+                                printItemsToKitchen(null, false, false, false, itemsPrinterAlias);
                                 printItemToKds();
                             } else {
                                 Toast.makeText(getContext(), R.string.defined_on_hold_busy, Toast.LENGTH_LONG).show();
@@ -295,7 +300,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
     }
 
     @Override
-    protected void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
+    protected void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac, ArrayList<String> printerGuids) {
         printToKitchenFlag = false;
         Logger.e("CEF.HoldFragmentDialog.printItemsToKitchen:printOnholdOrders " + getApp().getShopInfo().printOnholdOrders);
         /*
@@ -312,7 +317,7 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
             title = clickedOrder.getHoldName();
         }
         PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, argOrderGuid, fromPrinter, skip,
-                new KitchenKitchenPrintCallback(), false, title, false);
+                new KitchenKitchenPrintCallback(), false, title, false, printerGuids);
     }
 
     @Override

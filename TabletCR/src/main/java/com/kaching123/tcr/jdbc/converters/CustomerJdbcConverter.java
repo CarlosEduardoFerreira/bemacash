@@ -11,13 +11,11 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
-import static com.kaching123.tcr.jdbc.JdbcUtil._jdbcDate;
 
 /**
  * Created by pkabakov on 10.02.14.

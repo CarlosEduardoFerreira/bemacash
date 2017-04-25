@@ -9,7 +9,9 @@ import com.kaching123.tcr.model.ItemMatrixModel;
  */
 public interface ItemProvider {
     boolean isCreate();
+    boolean isDuplicate();
     ItemExModel getModel();
+    ItemExModel getSourceModel();
     ItemQtyInfo getQtyInfo();
     void setParentItem(ItemExModel parent);
     void setParentMatrixItem(ItemMatrixModel parentMatrixItem);

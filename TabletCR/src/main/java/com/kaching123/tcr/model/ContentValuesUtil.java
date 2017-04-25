@@ -45,7 +45,7 @@ public final class ContentValuesUtil {
 
     private static ThreadLocal<DecimalFormat> decimalFormat = new ThreadLocal<DecimalFormat>() {
         protected DecimalFormat initialValue() {
-            DecimalFormat format = new DecimalFormat("0.000");
+            DecimalFormat format = new DecimalFormat("0.00000");
             format.setDecimalFormatSymbols(otherSymbols);
             format.setParseBigDecimal(true);
             return format;
@@ -241,6 +241,7 @@ public final class ContentValuesUtil {
     public static DiscountType _discountType(Cursor c, int index) {
         return c.isNull(index) ? null : DiscountType.valueOf(c.getInt(index));
     }
+
 
     public static OrderStatus _orderStatus(Cursor c, int index) {
         return c.isNull(index) ? null : OrderStatus.values()[(c.getInt(index))];

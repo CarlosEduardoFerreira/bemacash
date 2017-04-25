@@ -121,6 +121,7 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     boolean digital_signature   = false;    // pax signature bitmap
     String  signature_receipt   = "SHORT";  // manual signature
     boolean signaturePrintLimit = false;    // Require Signature on Transactions Higher Than:
+    boolean firstPrint = true;
 
     FragmentActivity activity;
 
@@ -166,10 +167,6 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
             change.setVisibility(View.VISIBLE);
 
             change.setText(getString(R.string.blackstone_change_charge_finish, UiHelper.priceFormat(changeAmount)));
-        }
-
-        if (kitchenPrintStatus != KitchenPrintStatus.PRINTED) {
-            printItemsToKitchen(null, false, false, false);
         }
 
         printBox.setChecked(getApp().getPrintReceiptDefault());
@@ -230,6 +227,10 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
     @Override
     protected void onOrderDataLoaded() {
         super.onOrderDataLoaded();
+        if (firstPrint && kitchenPrintStatus != KitchenPrintStatus.PRINTED) {
+            firstPrint= false;
+            printItemsToKitchen(null, false, false, false, itemsPrinterAlias);
+        }
         if (customer != null && TextUtils.isEmpty(customer.email)) {
             emailBox.setChecked(false);
             emailBox.setEnabled(false);
@@ -362,9 +363,9 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
         printReceipts();
     }
 
-    private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
+    private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac, ArrayList<String> printerAliases) {
         WaitDialogFragment.show(getActivity(), getString(R.string.wait_printing));
-        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, null, true);
+        PrintItemsForKitchenCommand.start(getActivity(), skipPaperWarning, searchByMac, orderGuid, fromPrinter, skip, new KitchenKitchenPrintCallback(), false, null, true, printerAliases);
     }
 
     public static void show(FragmentActivity context, String orderGuid, IFinishConfirmListener listener, ArrayList<PaymentTransactionModel> transactions, KitchenPrintStatus kitchenPrintStatus, BigDecimal changeAmount, ReceiptType debitGateway, boolean isPrinterTwoCopiesReceipt, ArrayList<PrepaidReleaseResult> releaseResultList, ArrayList<GiftCardBillingResult> giftCardResults) {
@@ -536,12 +537,17 @@ public class PayPrintAndFinishFragmentDialog extends PrintAndFinishFragmentDialo
 
             @Override
             public void onRetry(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
-                printItemsToKitchen(fromPrinter, false, ignorePaperEnd, searchByMac);
+                printItemsToKitchen(fromPrinter, false, ignorePaperEnd, searchByMac, itemsPrinterAlias);
             }
 
             @Override
             public void onSkip(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
-                printItemsToKitchen(fromPrinter, true, ignorePaperEnd, searchByMac);
+                itemsPrinterAlias.remove(fromPrinter);
+                if (itemsPrinterAlias.size() > 0) {
+                    printItemsToKitchen(null, false, ignorePaperEnd, searchByMac, itemsPrinterAlias);
+                } else {
+                    printItemsToKitchen(fromPrinter, true, ignorePaperEnd, searchByMac, itemsPrinterAlias);
+                }
             }
         };
 

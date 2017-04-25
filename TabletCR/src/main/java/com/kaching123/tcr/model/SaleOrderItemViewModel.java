@@ -48,6 +48,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
 
     public boolean isKitchenPrintable;
     public boolean isPrepaidItem;
+    public String kitchenPrinterGuid;
     public boolean isGiftCard;
     public boolean locked;
 
@@ -62,6 +63,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
                                   DiscountType orderDiscountType,
                                   BigDecimal orderTransactionFee,
                                   boolean isKitchenPrintable,
+                                  String kitchenPrinterGuid,
                                   boolean isPrepaidItem,
                                   boolean isGiftCard,
                                   TaxGroupModel taxGroup1,
@@ -80,6 +82,7 @@ public class SaleOrderItemViewModel implements IOrderItem, Serializable {
         this.isKitchenPrintable = isKitchenPrintable;
         this.isSerializable = isSerializable;
         this.isPrepaidItem = isPrepaidItem;
+        this.kitchenPrinterGuid = kitchenPrinterGuid;
         this.isGiftCard = isGiftCard;
         this.taxGroup1 = taxGroup1;
         this.taxGroup2 = taxGroup2;

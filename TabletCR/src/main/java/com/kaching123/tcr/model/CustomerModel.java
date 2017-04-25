@@ -109,7 +109,6 @@ public class CustomerModel implements IValueModel, Serializable {
         this.loyaltyPlanId = loyaltyPlanId;
         this.loyaltyPoints = loyaltyPoints;
         this.loyaltyBarcode = loyaltyBarcode;
-
         this.mIgnoreFields = ignoreFields;
     }
 

@@ -72,13 +72,21 @@ public class ItemPrintFragment extends ItemBaseFragment {
         });
 
         getLoaderManager().restartLoader(0, null, new PrinterAliasLoader());
-        getLoaderManager().initLoader(KDS_ALIAS_LOADER_ID, null, new KDSAliasLoader());
+        getLoaderManager().restartLoader(KDS_ALIAS_LOADER_ID, null, new KDSAliasLoader());
 
     }
 
     @Override
     protected void setModel() {
 
+    }
+
+    @Override
+    public void duplicate() {
+        init();
+        if (getModel().printerAliasGuid != null) {
+            kitchen.setSelection(kitchenAdapter.getPosition(getModel().printerAliasGuid));
+        }
     }
 
     @Override

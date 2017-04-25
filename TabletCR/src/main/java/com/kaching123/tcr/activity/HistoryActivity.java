@@ -121,6 +121,7 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
     @Extra
     protected Boolean showOpenedTransactions;
 
+    protected ArrayList<String> kitchenAliases = new ArrayList<>();
 
     public static void start(Context context) {
         HistoryActivity_.intent(context).start();
@@ -354,13 +355,15 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
     @Override
     public void onReprintKitchenClick() {
-        printItemsToKitchen(null, false, false, false);
+        kitchenAliases = orderItemsListFragment.adapter.getPrinterAliasItems();
+        printItemsToKitchen(null, false, false, false, kitchenAliases);
     }
 
-    private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac) {
+    private void printItemsToKitchen(String fromPrinter, boolean skip, boolean skipPaperWarning, boolean searchByMac, ArrayList<String> printerAliases) {
         WaitDialogFragment.show(this, getString(R.string.wait_printing));
 
-        PrintItemsForKitchenCommand.start(this, skipPaperWarning, searchByMac, orderItemsListFragment.guid, fromPrinter, skip, new KitchenPrintCallback(), true, null, false);
+        PrintItemsForKitchenCommand.start(this, skipPaperWarning, searchByMac, orderItemsListFragment.guid,
+                fromPrinter, skip, new KitchenPrintCallback(), true, null, false, printerAliases);
     }
 
     private void reprintOrder(boolean skipPaperWarning, boolean searchByMac) {
@@ -649,12 +652,17 @@ public class HistoryActivity extends ScannerBaseActivity implements ILoader, His
 
             @Override
             public void onRetry(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
-                printItemsToKitchen(fromPrinter, false, ignorePaperEnd, searchByMac);
+                printItemsToKitchen(fromPrinter, false, ignorePaperEnd, searchByMac, kitchenAliases);
             }
 
             @Override
             public void onSkip(String fromPrinter, boolean ignorePaperEnd, boolean searchByMac) {
-                printItemsToKitchen(fromPrinter, true, ignorePaperEnd, searchByMac);
+                kitchenAliases.remove(fromPrinter);
+                if (kitchenAliases.size() > 0) {
+                    printItemsToKitchen(fromPrinter, false, ignorePaperEnd, searchByMac, kitchenAliases);
+                } else {
+                    printItemsToKitchen(fromPrinter, true, ignorePaperEnd, searchByMac, kitchenAliases);
+                }
             }
         };
 
