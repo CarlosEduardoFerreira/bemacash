@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseItemActivity2;
 import com.kaching123.tcr.activity.UnitLabelActivity;
 import com.kaching123.tcr.adapter.UnitsLabelAdapter;
 import com.kaching123.tcr.commands.wireless.DropUnitsCommand;
@@ -169,6 +170,9 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
         excludeFromLoyaltyPlan.setChecked(model.excludeFromLoyaltyPlan);
         ebtEligible.setChecked(model.isEbtEligible);
         hasNotes.setChecked(model.hasNotes);
+        if (getItemProvider().isDuplicate()) {
+            ((BaseItemActivity2) getActivity()).duplicateSave();
+        }
     }
 
     @Override
@@ -476,6 +480,9 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
                         if (getItemProvider().isDuplicate()) {
                             getItemProvider().setParentItem(new ItemExModel(new ItemModel(data)));
                         }
+                    }
+                    if (getItemProvider().isDuplicate()) {
+                        ((BaseItemActivity2) getActivity()).duplicateSave();
                     }
                 default:
             }
