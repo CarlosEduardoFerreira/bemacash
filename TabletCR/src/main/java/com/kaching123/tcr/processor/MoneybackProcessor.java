@@ -347,7 +347,7 @@ public class MoneybackProcessor {
     }
 
     private void proceedToRefund(FragmentActivity context, PaymentMethod method, List<PaymentTransactionModel> transactions, BigDecimal pendingAmountToReturn, User user) {
-        pendingAmountToReturn = pendingAmountToReturn.setScale(5, RoundingMode.UP);
+        pendingAmountToReturn = pendingAmountToReturn.setScale(2, RoundingMode.UP);
         switch (method) {
             case CASH:
                 ArrayList<PaymentTransactionModel> blackstoneTransactions = new ArrayList<PaymentTransactionModel>();
