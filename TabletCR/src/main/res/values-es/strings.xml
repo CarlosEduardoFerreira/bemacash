@@ -603,7 +603,7 @@
   <string name="dashboard_activity_total_sales_debit_label">Debito </string>
   <string name="dashboard_activity_total_sales_ebt_label">EBT</string>
   <string name="dashboard_activity_total_sales_other_label">Otros</string>
-  <string name="dashboard_activity_register_button_label">Registro</string>
+  <string name="dashboard_activity_register_button_label">Registradora</string>
   <string name="dashboard_activity_inventory_button_label">Inventario</string>
   <string name="dashboard_activity_reports_button_label">Reportes</string>
   <string name="dashboard_activity_no_sale_button_label">No Venta</string>

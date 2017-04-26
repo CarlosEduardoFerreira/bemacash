@@ -18,7 +18,7 @@ public final class CalculationUtil {
     public static final BigDecimal ONE_HUNDRED = new BigDecimal("100.00");
     public static final BigDecimal ONE_HOUR = new BigDecimal(60);
     private final static int PERCENT_SCALE = 3;
-    private final static int RESULT_SCALE = 3;
+    private final static int RESULT_SCALE = 5;
     private final static int QUANTITY_SCALE = 3;
     private final static RoundingMode MONEY_ROUNDING = RoundingMode.UP;
 
