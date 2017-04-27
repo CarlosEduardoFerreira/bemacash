@@ -816,7 +816,7 @@
   <string name="employee_hourly_rate_label">Tarifa por hora</string>
   <string name="employee_tips_eligible_label">Recibe Propina</string>
   <string name="employee_commissions_eligible_label">Elegible Comisión </string>
-  <string name="employee_commissions_label">Comisión:</string>stringgggg
+  <string name="employee_commissions_label">Comisión:</string>
   <string name="employee_preset_label">Programar</string>
   <string name="employee_status_label">Estado</string>
   <string name="employee_status_label_active">Activo</string>
