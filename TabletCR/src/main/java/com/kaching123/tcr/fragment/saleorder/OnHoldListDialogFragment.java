@@ -564,6 +564,10 @@ public class OnHoldListDialogFragment extends BaseOnHoldDialogFragment {
         DialogUtil.show(context, DIALOG_NAME, OnHoldListDialogFragment_.builder().argAction(action).argOrderGuid(orderGuid).argOrderTitle(orderTitle).build()).setListener(listener);
     }
 
+    public static void show(FragmentActivity context, String orderGuid, String orderTitle, HoldOnAction action, ArrayList<String> diffKitchenAliases, IHoldListener listener) {
+        DialogUtil.show(context, DIALOG_NAME, OnHoldListDialogFragment_.builder().argAction(action).argOrderGuid(orderGuid).kitchenAliases(diffKitchenAliases).argOrderTitle(orderTitle).build()).setListener(listener);
+    }
+
     private BroadcastReceiver syncGapReceiver = new BroadcastReceiver() {
 
         @Override
