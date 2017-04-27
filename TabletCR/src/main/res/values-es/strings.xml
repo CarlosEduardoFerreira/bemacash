@@ -278,7 +278,7 @@
   <string name="btn_skip">Omitir</string>
   <string name="btn_view">View</string>
   <string name="btn_release">Release Note</string>
-  <string name="btn_save">Guardar Cambios</string>
+  <string name="btn_save">Guardar</string>
   <string name="btn_select">Seleccionar</string>
   <string name="btn_update">Actualizar</string>
   <string name="btn_close">Cerrar </string>
@@ -802,7 +802,7 @@
   <string name="employee_first_name_label">Nombre</string>
   <string name="employee_last_name_label">Apellido</string>
   <string name="employee_street_label">Calle</string>
-  <string name="employee_complementary_label">Datos adicionales de dirección</string>
+  <string name="employee_complementary_label">Datos adicionales \nde dirección</string>
   <string name="employee_city_label">Ciudad</string>
   <string name="employee_state_label">Estado</string>
   <string name="employee_country_label">Pa\u00EDs</string>
@@ -810,13 +810,13 @@
   <string name="employee_email_label">Correo electrónico </string>
   <string name="employee_phone_label">Número telefónico </string>
   <string name="employee_profile_label">Perfil</string>
-  <string name="employee_login_label">Acceso al sistema</string>
+  <string name="employee_login_label">Acceso al \nsistema</string>
   <string name="employee_password_label">Clave de acceso </string>
-  <string name="employee_confirm_password_label">Confirmar clave de acceso</string>
+  <string name="employee_confirm_password_label">Confirmar clave \nde acceso</string>
   <string name="employee_hourly_rate_label">Tarifa por hora</string>
   <string name="employee_tips_eligible_label">Recibe Propina</string>
   <string name="employee_commissions_eligible_label">Elegible Comisión </string>
-  <string name="employee_commissions_label">Comisión:</string>
+  <string name="employee_commissions_label">Comisión:</string>stringgggg
   <string name="employee_preset_label">Programar</string>
   <string name="employee_status_label">Estado</string>
   <string name="employee_status_label_active">Activo</string>
@@ -1669,7 +1669,7 @@
   <string name="button_print_receipt">Imprimir Ticket</string>
   <string name="button_kitchen_receipt">Ticket Cocina</string>
   <string name="button_add_tips">Añadir Propina</string>
-  <string name="button_save">Salvar</string>
+  <string name="button_save">Guardar</string>
   <string name="button_exact">Exacto</string>
   <string name="button_add_to_order">Add to Order</string>
   <string name="button_cancel">Cancel</string>
