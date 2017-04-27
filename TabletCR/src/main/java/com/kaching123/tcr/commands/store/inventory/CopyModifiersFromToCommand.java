@@ -10,6 +10,7 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.jdbc.converters.JdbcConverter;
+import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
@@ -18,6 +19,7 @@ import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -26,6 +28,7 @@ import java.util.UUID;
 
 public class CopyModifiersFromToCommand extends AsyncCommand {
     private static final Uri URI_MODIFIERS = ShopProvider.getContentUri(ShopStore.ModifierTable.URI_CONTENT);
+    private static final Uri URI_MODIFIERS_GROUP = ShopProvider.contentUri(ShopStore.ModifierGroupTable.URI_CONTENT);
 
     private static final String ARG_ITEM_FROM = "ARG_ITEM_FROM";
     private static final String ARG_ITEM_TO = "ARG_ITEM_TO";
@@ -42,30 +45,53 @@ public class CopyModifiersFromToCommand extends AsyncCommand {
         itemTo = getStringArg(ARG_ITEM_TO);
 
         operations = new ArrayList<ContentProviderOperation>();
-        sql = batchInsert(ModifierModel.class);
+        sql = batchInsert(ModifierGroupModel.class);
 
-        Cursor c = ProviderAction.query(URI_MODIFIERS)
+        Cursor groupCursor = ProviderAction.query(URI_MODIFIERS_GROUP)
+                .where(ShopStore.ModifierGroupTable.ITEM_GUID + " = ?", itemFrom)
+                .perform(getContext());
+
+        ArrayList<ModifierGroupModel> modifGroups = new ArrayList<>();
+        if (groupCursor != null && groupCursor.moveToFirst()) {
+            do {
+                modifGroups.add(new ModifierGroupModel(groupCursor));
+            }while (groupCursor.moveToNext());
+            groupCursor.close();
+        }
+
+        Cursor modifCursor = ProviderAction.query(URI_MODIFIERS)
                 .where(ShopStore.ModifierTable.ITEM_GUID + " = ?", itemFrom)
                 .perform(getContext());
 
         ArrayList<ModifierModel> modifierModels = new ArrayList<>();
-        if (c != null && c.moveToFirst()) {
+        if (modifCursor != null && modifCursor.moveToFirst()) {
             do {
-                modifierModels.add(new ModifierModel(c));
-            }while (c.moveToNext());
-            c.close();
+                modifierModels.add(new ModifierModel(modifCursor));
+            }while (modifCursor.moveToNext());
+            modifCursor.close();
         }
 
-        JdbcConverter<ModifierModel> jdbc = JdbcFactory.getConverter(ShopStore.ModifierTable.TABLE_NAME);
+        HashMap<String, String> modifGroupOldToNewGuids = new HashMap<>();
+
+        for (ModifierGroupModel modifGroup : modifGroups) {
+            modifGroupOldToNewGuids.put(modifGroup.guid, UUID.randomUUID().toString());
+            modifGroup.guid = modifGroupOldToNewGuids.get(modifGroup.guid);
+            modifGroup.itemGuid = itemTo;
+            operations.add(ContentProviderOperation.newInsert(URI_MODIFIERS_GROUP)
+                    .withValues(modifGroup.toValues())
+                    .build());
+            sql.add(JdbcFactory.getConverter(modifGroup).insertSQL(modifGroup, getAppCommandContext()));
+        }
 
         for (ModifierModel modifierModel : modifierModels) {
             modifierModel.modifierGuid = UUID.randomUUID().toString();
             modifierModel.itemGuid = itemTo;
+            modifierModel.modifierGroupGuid = modifGroupOldToNewGuids.get(modifierModel.modifierGroupGuid);
 
             operations.add(ContentProviderOperation.newInsert(URI_MODIFIERS)
                     .withValues(modifierModel.toValues())
                     .build());
-            sql.add(jdbc.insertSQL(modifierModel, this.getAppCommandContext()));
+            sql.add(JdbcFactory.getConverter(modifierModel).insertSQL(modifierModel, getAppCommandContext()));
         }
 
         return succeeded();

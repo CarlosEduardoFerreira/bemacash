@@ -47,7 +47,6 @@ import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemMatrixByParentView;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.UnitLabelTable;
-import com.kaching123.tcr.util.StringUtils;
 import com.kaching123.tcr.util.Validator;
 
 import org.androidannotations.annotations.AfterTextChange;
@@ -93,6 +92,10 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
 
     private boolean duplicateEanUpc;
     private boolean duplicateProductCode;
+
+    private boolean unitsLabelLoaded;
+    private boolean referenceItemReady;
+    private boolean duplicated;
 
     @Override
     protected void newItem(){}
@@ -140,9 +143,23 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
 
     @Override
     public void duplicate() {
+        if (unitsLabelAdapter != null && unitsType.getAdapter() != null) {
+            setModel();
+            eanUpc.setText("");
+            productCode.setText("");
+            duplicateNextStep();
+            return;
+        }
         init();
         eanUpc.setText("");
         productCode.setText("");
+    }
+
+    private void duplicateNextStep(){
+        if (duplicated) {
+            return;
+        }
+        duplicated = true;
         if (getModel().unitsLabelId != null){
             int position = unitsLabelAdapter.getPositionById(getModel().unitsLabelId);
             if (position != AdapterView.INVALID_POSITION)
@@ -153,6 +170,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
 
         if (getModel().codeType != null)
             unitsType.setSelection(getModel().codeType.ordinal() + 1);
+        ((BaseItemActivity2) getActivity()).additionalInfoReady();
     }
 
     @Override
@@ -170,9 +188,6 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
         excludeFromLoyaltyPlan.setChecked(model.excludeFromLoyaltyPlan);
         ebtEligible.setChecked(model.isEbtEligible);
         hasNotes.setChecked(model.hasNotes);
-        if (getItemProvider().isDuplicate()) {
-            ((BaseItemActivity2) getActivity()).duplicateSave();
-        }
     }
 
     @Override
@@ -351,6 +366,12 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
                 if (position != AdapterView.INVALID_POSITION)
                     unitsLabel.setSelection(position);
             }
+            if(((BaseItemActivity2)getActivity()).isDuplicate()) {
+                unitsLabelLoaded = true;
+                if (referenceItemReady) {
+                    duplicateNextStep();
+                }
+            }
         }
 
         @Override
@@ -481,8 +502,11 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
                             getItemProvider().setParentItem(new ItemExModel(new ItemModel(data)));
                         }
                     }
-                    if (getItemProvider().isDuplicate()) {
-                        ((BaseItemActivity2) getActivity()).duplicateSave();
+                    if(((BaseItemActivity2)getActivity()).isDuplicate()) {
+                        referenceItemReady = true;
+                        if (unitsLabelLoaded) {
+                            duplicateNextStep();
+                        }
                     }
                 default:
             }

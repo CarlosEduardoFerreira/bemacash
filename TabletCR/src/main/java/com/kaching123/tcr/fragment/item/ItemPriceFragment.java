@@ -12,6 +12,7 @@ import android.widget.TableRow;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseItemActivity2;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.PercentFormatInputFilter;
@@ -67,10 +68,14 @@ public class ItemPriceFragment extends ItemBaseFragment {
         init();
         priceType.setSelection(getPriceTypeSelected());
         discountType.setSelection(getDiscountTypeSelected());
+        ((BaseItemActivity2) getActivity()).priceInfoSetuped();
     }
 
     @Override
     protected void setViews() {
+        if (priceType.getAdapter() != null && discountType.getAdapter() != null) {
+            return;
+        }
         ArrayAdapter<PriceType> priceTypeAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item_light, PriceType.values());
         priceTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         priceType.setAdapter(priceTypeAdapter);

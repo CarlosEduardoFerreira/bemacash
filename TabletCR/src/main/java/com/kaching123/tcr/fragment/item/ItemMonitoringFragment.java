@@ -56,6 +56,7 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
     @Override
     public void duplicate() {
         init();
+        ((BaseItemActivity2) getActivity()).monitoringInfoSetuped();
     }
 
     @Override

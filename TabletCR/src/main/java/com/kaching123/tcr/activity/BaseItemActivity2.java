@@ -3,16 +3,12 @@ package com.kaching123.tcr.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -25,14 +21,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.adapter.ItemPagerAdapter;
 import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
-import com.kaching123.tcr.commands.store.inventory.AddModifierCommand;
 import com.kaching123.tcr.commands.store.inventory.AddReferenceItemCommand;
 import com.kaching123.tcr.commands.store.inventory.AddVariantMatrixItemsCommand;
-import com.kaching123.tcr.commands.store.inventory.CopyModifiersCommand;
 import com.kaching123.tcr.commands.store.inventory.CopyModifiersFromToCommand;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditItemCommand;
@@ -59,19 +52,13 @@ import com.kaching123.tcr.model.ComposerExModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMatrixModel;
 import com.kaching123.tcr.model.ItemRefType;
-import com.kaching123.tcr.model.ModifierExModel;
-import com.kaching123.tcr.model.ModifierModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.StartMode;
 import com.kaching123.tcr.model.Unit;
 import com.kaching123.tcr.model.Unit.Status;
-import com.kaching123.tcr.model.converter.ModifierExFunction;
-import com.kaching123.tcr.model.converter.ModifierFunction;
 import com.kaching123.tcr.store.ShopProvider;
-import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.composer.AddComposerCommand;
 import com.kaching123.tcr.store.composer.CollectComposersCommand;
 import com.kaching123.tcr.store.composer.CollectComposersCommand.ComposerCallback;
 
@@ -161,11 +148,15 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
     private  AlphaAnimation animationFadeOut;
     private boolean addonsCopied;
-    private int stepDataReadyCounter;
+    private boolean commonInfoReady;
+    private boolean additionalInfoReady;
+    private boolean monitoringInfoReady;
+    private boolean specialPriceInfoReady;
+    private boolean printerInfoReady;
+    private boolean priceInfoReady;
 
     @AfterViews
     protected void init(){
-        stepDataReadyCounter = 0;
         animationFadeOut = new AlphaAnimation(0.0f, 1.0f);
         animationFadeOut.setDuration(500);
         animationFadeOut.setAnimationListener(new Animation.AnimationListener() {
@@ -190,9 +181,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         }
 
         duplicateRequest = getIntent().getExtras().getBoolean(DUPLICATE_EXTRA, false);
-        if (duplicateRequest) {
-           duplicateSave();
-        }
+
         if(mode == StartMode.EDIT && !duplicateRequest && model.refType != ItemRefType.Reference) {
             btnDuplicate.setVisibility(View.VISIBLE);
         }
@@ -327,9 +316,64 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         exit();
     }
 
+    public void commonInfoReady() {
+        if (duplicateRequest) {
+            commonInfoReady = true;
+            if (monitoringInfoReady && specialPriceInfoReady &&
+                    priceInfoReady && additionalInfoReady && printerInfoReady) {
+                duplicateSave();
+            }
+        }
+    }
+    public void printerInfoReady() {
+        if (duplicateRequest) {
+            printerInfoReady = true;
+            if (monitoringInfoReady && specialPriceInfoReady &&
+                    priceInfoReady && additionalInfoReady && commonInfoReady) {
+                duplicateSave();
+            }
+        }
+    }
+    public void additionalInfoReady() {
+        if (duplicateRequest) {
+            additionalInfoReady = true;
+            if (monitoringInfoReady && specialPriceInfoReady &&
+                    priceInfoReady && commonInfoReady && printerInfoReady) {
+                duplicateSave();
+            }
+        }
+    }
+    public void monitoringInfoSetuped() {
+        if (duplicateRequest) {
+            monitoringInfoReady = true;
+            if (additionalInfoReady && specialPriceInfoReady &&
+                    priceInfoReady && commonInfoReady && printerInfoReady) {
+                duplicateSave();
+            }
+        }
+    }
+    public void priceInfoSetuped() {
+        if (duplicateRequest) {
+            priceInfoReady = true;
+            if (additionalInfoReady && specialPriceInfoReady &&
+                    monitoringInfoReady && commonInfoReady && printerInfoReady) {
+                duplicateSave();
+            }
+        }
+    }
+    public void specialPriceInfoReady() {
+        if (duplicateRequest) {
+            specialPriceInfoReady = true;
+            if (additionalInfoReady && priceInfoReady &&
+                    monitoringInfoReady && commonInfoReady && printerInfoReady) {
+                duplicateSave();
+            }
+        }
+    }
+
     public void duplicateSave() {
-        stepDataReadyCounter++;
-        if(stepDataReadyCounter >= 3) {
+        if(duplicateRequest && !addonsCopied) {
+            addonsCopied = true;
             collectData();
             saveReference();
             AddItemCommand.start(self(), model, new AddItemCommand.AddItemCommandCallback() {
@@ -360,7 +404,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         for (int i = 0; i < adapter.getCount(); i++) {
             ((ItemBaseFragment)adapter.getItem(i)).duplicate();
         }
-        duplicateSave();
 
         btnDuplicate.setVisibility(GONE);
     }
