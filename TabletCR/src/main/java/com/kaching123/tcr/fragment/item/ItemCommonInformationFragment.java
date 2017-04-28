@@ -119,12 +119,10 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
 
     @Override
     public void duplicate(){
-        if(departmentAdapter != null && categoryAdapter!= null) {
+        if(departmentAdapter != null && categoryAdapter != null) {
             setModel();
             duplicateNextStep();
-            return;
         }
-        init();
     }
 
     public void duplicateNextStep(){
@@ -132,6 +130,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
             return;
         }
         duplicated = true;
+
         if (getModel().departmentGuid != null) {
             department.setSelection(departmentAdapter.getPosition4Id(getModel().departmentGuid));
         } else {

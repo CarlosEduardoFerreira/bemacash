@@ -72,9 +72,7 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
     public void duplicate() {
         if (adapter != null) {
             ((BaseItemActivity2) getActivity()).specialPriceInfoReady();
-            return;
         }
-        init();
     }
 
     @Override

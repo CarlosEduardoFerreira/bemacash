@@ -85,7 +85,6 @@ public class ItemPrintFragment extends ItemBaseFragment {
     @Override
     public void duplicate() {
         if (kitchenAdapter == null && kdsAliasAdapter == null) {
-            init();
             return;
         }
         if (getModel().printerAliasGuid != null) {

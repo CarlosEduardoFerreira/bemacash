@@ -77,6 +77,7 @@ public class CopyModifiersFromToCommand extends AsyncCommand {
             modifGroupOldToNewGuids.put(modifGroup.guid, UUID.randomUUID().toString());
             modifGroup.guid = modifGroupOldToNewGuids.get(modifGroup.guid);
             modifGroup.itemGuid = itemTo;
+            modifGroup.orderNum = ModifierGroupModel.getMaxOrderNum(getContext(), modifGroup.itemGuid) + 1;
             operations.add(ContentProviderOperation.newInsert(URI_MODIFIERS_GROUP)
                     .withValues(modifGroup.toValues())
                     .build());
@@ -87,7 +88,7 @@ public class CopyModifiersFromToCommand extends AsyncCommand {
             modifierModel.modifierGuid = UUID.randomUUID().toString();
             modifierModel.itemGuid = itemTo;
             modifierModel.modifierGroupGuid = modifGroupOldToNewGuids.get(modifierModel.modifierGroupGuid);
-
+            modifierModel.orderNum = ModifierModel.getMaxOrderNum(getContext(), modifierModel.type, modifierModel.itemGuid, modifierModel.modifierGroupGuid) + 1;
             operations.add(ContentProviderOperation.newInsert(URI_MODIFIERS)
                     .withValues(modifierModel.toValues())
                     .build());

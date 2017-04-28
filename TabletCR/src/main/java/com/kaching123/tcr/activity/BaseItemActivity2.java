@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -26,6 +28,7 @@ import com.kaching123.tcr.adapter.ItemPagerAdapter;
 import com.kaching123.tcr.commands.store.inventory.AddItemCommand;
 import com.kaching123.tcr.commands.store.inventory.AddReferenceItemCommand;
 import com.kaching123.tcr.commands.store.inventory.AddVariantMatrixItemsCommand;
+import com.kaching123.tcr.commands.store.inventory.CopyItemWithReferences;
 import com.kaching123.tcr.commands.store.inventory.CopyModifiersFromToCommand;
 import com.kaching123.tcr.commands.store.inventory.DeleteItemCommand;
 import com.kaching123.tcr.commands.store.inventory.EditItemCommand;
@@ -37,6 +40,7 @@ import com.kaching123.tcr.component.slidingtab.SlidingTabLayout;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
+import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.item.ItemAdditionalInformationFragment_;
 import com.kaching123.tcr.fragment.item.ItemBaseFragment;
 import com.kaching123.tcr.fragment.item.ItemCommonInformationFragment;
@@ -61,6 +65,8 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.composer.CollectComposersCommand;
 import com.kaching123.tcr.store.composer.CollectComposersCommand.ComposerCallback;
+import com.telly.groundy.annotations.OnSuccess;
+import com.telly.groundy.annotations.Param;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -74,6 +80,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -145,7 +152,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
     private ItemExModel parentItem;
     private ItemMatrixModel parentItemMatrix;
-
+    private String sourceGuid;
     private  AlphaAnimation animationFadeOut;
     private boolean addonsCopied;
     private boolean commonInfoReady;
@@ -154,6 +161,26 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     private boolean specialPriceInfoReady;
     private boolean printerInfoReady;
     private boolean priceInfoReady;
+    private boolean readyExit = true;
+    private boolean waitingExit;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        originalModel = new ItemExModel(model);
+        sourceGuid = getIntent().getExtras().getString(SOURCE_GUID_EXTRA);
+        if (!TextUtils.isEmpty(sourceGuid)) {
+            originalModel.guid = sourceGuid;
+        }
+        duplicateRequest = getIntent().getExtras().getBoolean(DUPLICATE_EXTRA, false);
+//        if (TextUtils.isEmpty(sourceGuid) && duplicateRequest) {
+//            readyExit = false;
+//        }
+
+        if (!TextUtils.isEmpty(sourceGuid) && duplicateRequest) {
+            CopyItemWithReferences.start(getApplicationContext(), sourceGuid, model);
+        }
+    }
 
     @AfterViews
     protected void init(){
@@ -173,14 +200,6 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             public void onAnimationRepeat(Animation animation) {
             }
         });
-
-        originalModel = new ItemExModel(model);
-        String sourceGuid = getIntent().getExtras().getString(SOURCE_GUID_EXTRA);
-        if (!TextUtils.isEmpty(sourceGuid)) {
-            originalModel.guid = sourceGuid;
-        }
-
-        duplicateRequest = getIntent().getExtras().getBoolean(DUPLICATE_EXTRA, false);
 
         if(mode == StartMode.EDIT && !duplicateRequest && model.refType != ItemRefType.Reference) {
             btnDuplicate.setVisibility(View.VISIBLE);
@@ -307,6 +326,11 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
     @Click
     protected void btnSaveClicked(){
+//        if (!readyExit) {
+//            WaitDialogFragment.show(this, getString(R.string.employee_edit_wait_msg));
+//            waitingExit = true;
+//            return;
+//        }
         if (!validateData())
             return;
 
@@ -376,19 +400,22 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             addonsCopied = true;
             collectData();
             saveReference();
-            AddItemCommand.start(self(), model, new AddItemCommand.AddItemCommandCallback() {
+            AddItemCommand.start(getApplicationContext(), model, new AddItemCommand.AddItemCommandCallback() {
                 @Override
                 protected void handleSuccess() {
                     CopyModifiersFromToCommand.start(getApplicationContext(), originalModel.guid, model.guid);
-//                    AddComposerCommand
                 }
 
                 @Override
                 protected void handleFailure() {
-
                 }
             });
         }
+//        readyExit = true;
+//        if(waitingExit) {
+//            WaitDialogFragment.hide(this);
+//            btnSaveClicked();
+//        }
     }
 
     @Click
@@ -399,6 +426,8 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
         model = new ItemExModel(originalModel);
 
         model = model.duplicate();
+
+        readyExit = false;
 
         commonInformationFragment.duplicate();
         for (int i = 0; i < adapter.getCount(); i++) {
@@ -427,13 +456,13 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             if (model.isReferenceItem()){
                 AddReferenceItemCommand.start(self(), model, null);
             }else{
-                AddItemCommand.start(self(), model, null);
+                AddItemCommand.start(getApplicationContext(), model, null);
             }
         }else{
             if (model.isReferenceItem()){
                 EditReferenceItemCommand.start(self(), model, null);
             }else{
-                EditItemCommand.start(self(), model, null);
+                EditItemCommand.start(getApplicationContext(), model, null);
             }
         }
     }
@@ -449,9 +478,9 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
                 );
                 ArrayList<ItemMatrixModel> matrix = new ArrayList<>(1);
                 matrix.add(parentItemMatrix);
-                AddVariantMatrixItemsCommand.start(self(), matrix);
+                AddVariantMatrixItemsCommand.start(getApplicationContext(), matrix);
             }else{ //matrix variant was selected, update it
-                EditVariantMatrixItemCommand.start(self(), parentItemMatrix);
+                EditVariantMatrixItemCommand.start(getApplicationContext(), parentItemMatrix);
             }
             model.referenceItemGuid = null;  //surprise!
         }

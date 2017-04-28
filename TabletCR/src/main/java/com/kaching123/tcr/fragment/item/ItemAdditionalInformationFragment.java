@@ -143,16 +143,13 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
 
     @Override
     public void duplicate() {
-        if (unitsLabelAdapter != null && unitsType.getAdapter() != null) {
+        if (unitsLabelAdapter != null && unitsType != null && unitsType.getAdapter() != null) {
             setModel();
             eanUpc.setText("");
             productCode.setText("");
-            duplicateNextStep();
-            return;
+            unitsLabelLoaded = true;
+            getLoaderManager().restartLoader(ITEM_MATRIX_LOADER_ID, null, cursorLoaderCallbacks);
         }
-        init();
-        eanUpc.setText("");
-        productCode.setText("");
     }
 
     private void duplicateNextStep(){
@@ -160,6 +157,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
             return;
         }
         duplicated = true;
+
         if (getModel().unitsLabelId != null){
             int position = unitsLabelAdapter.getPositionById(getModel().unitsLabelId);
             if (position != AdapterView.INVALID_POSITION)
