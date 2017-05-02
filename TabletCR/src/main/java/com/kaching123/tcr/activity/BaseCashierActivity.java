@@ -29,6 +29,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -2880,6 +2881,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         protected void onSuccess(String saleItemGuid) {
             if (displayBinder != null)
                 displayBinder.startCommand(new DisplaySaleItemCommand(saleItemGuid));
+            Log.d("BemaCarl15", "BaseCashierActivity 2884");
             ApplyMultipleDiscountCommand.start(self(), orderGuid, new ArrayList<>(discountBundles));
         }
     };
@@ -3048,6 +3050,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                 isItemWithPrefixedBarCodeAlreadyWeighed = false;
             }
             if (discountBundles != null && !discountBundles.isEmpty()){
+                Log.d("BemaCarl15", "BaseCashierActivity 3053");
                 ApplyMultipleDiscountCommand.start(self(), orderGuid, new ArrayList<>(discountBundles));
             }
         }

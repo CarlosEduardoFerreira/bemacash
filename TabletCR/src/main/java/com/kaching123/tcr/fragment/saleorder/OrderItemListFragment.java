@@ -796,6 +796,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         protected void onSuccess(String saleItemGuid) {
             if (getDisplayBinder() != null)
                 getDisplayBinder().startCommand(new DisplaySaleItemCommand(saleItemGuid));
+            Log.d("BemaCarl15", "OrderItemListFragment 799");
             ApplyMultipleDiscountCommand.start(getActivity(), orderGuid, null);
         }
     };
