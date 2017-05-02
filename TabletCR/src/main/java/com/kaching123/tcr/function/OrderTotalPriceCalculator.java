@@ -215,10 +215,6 @@ public final class OrderTotalPriceCalculator {
                 calcDiscountVal = calcDiscountVal.add(qtyOrderDiscount);
                 Logger.d("TotalCost: item order discount %s %s(%s) * %s = %s; * %s = %s", i.description, itemFinalPrice, itemDiscount, tmpOderDiscountPercent, itemOrderDiscount, i.qty, qtyOrderDiscount);
             }
-            Log.d("BemaCarl15", "OrderTotalPriceCalculator.calcItemOrderDiscount.itemDiscount: " + itemDiscount);
-            Log.d("BemaCarl15", "OrderTotalPriceCalculator.calcItemOrderDiscount.itemFinalPrice: " + itemFinalPrice);
-            Log.d("BemaCarl15", "OrderTotalPriceCalculator.calcItemOrderDiscount.itemOrderDiscount4: " + itemOrderDiscount);
-            Log.d("BemaCarl15", "OrderTotalPriceCalculator.calcItemOrderDiscount.calcDiscountVal: " + calcDiscountVal);
             calcItems.add(new CalcItemInfo(i, itemFinalPrice, itemDiscount, itemOrderDiscount));
         }
         /*
