@@ -20,6 +20,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._enum;
 import static com.kaching123.tcr.model.ContentValuesUtil._max;
+import static com.kaching123.tcr.model.ContentValuesUtil._modifierType;
 
 /**
  * Created by gdubina on 06/11/13.
@@ -68,7 +69,7 @@ public class ModifierModel implements IValueModel, IOrderedModel, Serializable {
         this(
                 c.getString(c.getColumnIndex(ModifierTable.MODIFIER_GUID)),
                 c.getString(c.getColumnIndex(ModifierTable.ITEM_GUID)),
-                _enum(ModifierType.class, c.getString(c.getColumnIndex(ModifierTable.TYPE)), ModifierType.ADDON),
+                _modifierType(c, c.getColumnIndex(ModifierTable.TYPE)),
                 c.getString(c.getColumnIndex(ModifierTable.TITLE)),
                 new BigDecimal(c.getDouble(c.getColumnIndex(ModifierTable.EXTRA_COST))),
                 c.getString(c.getColumnIndex(ModifierTable.ITEM_SUB_GUID)),

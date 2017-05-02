@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseItemActivity2;
 import com.kaching123.tcr.activity.KDSAliasActivity;
 import com.kaching123.tcr.activity.PrinterAliasActivity.PrinterAliasConverter;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
@@ -83,10 +84,13 @@ public class ItemPrintFragment extends ItemBaseFragment {
 
     @Override
     public void duplicate() {
-        init();
+        if (kitchenAdapter == null && kdsAliasAdapter == null) {
+            return;
+        }
         if (getModel().printerAliasGuid != null) {
             kitchen.setSelection(kitchenAdapter.getPosition(getModel().printerAliasGuid));
         }
+        ((BaseItemActivity2) getActivity()).printerInfoReady();
     }
 
     @Override
@@ -271,6 +275,9 @@ public class ItemPrintFragment extends ItemBaseFragment {
 
             if (getModel().printerAliasGuid != null) {
                 kitchen.setSelection(kitchenAdapter.getPosition(getModel().printerAliasGuid));
+            }
+            if(((BaseItemActivity2)getActivity()).isDuplicate()) {
+                ((BaseItemActivity2) getActivity()).printerInfoReady();
             }
         }
 

@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseItemActivity2;
 import com.kaching123.tcr.activity.UnitLabelActivity;
 import com.kaching123.tcr.adapter.UnitsLabelAdapter;
 import com.kaching123.tcr.commands.wireless.DropUnitsCommand;
@@ -46,7 +47,6 @@ import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.ItemMatrixByParentView;
 import com.kaching123.tcr.store.ShopStore.ItemTable;
 import com.kaching123.tcr.store.ShopStore.UnitLabelTable;
-import com.kaching123.tcr.util.StringUtils;
 import com.kaching123.tcr.util.Validator;
 
 import org.androidannotations.annotations.AfterTextChange;
@@ -92,6 +92,10 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
 
     private boolean duplicateEanUpc;
     private boolean duplicateProductCode;
+
+    private boolean unitsLabelLoaded;
+    private boolean referenceItemReady;
+    private boolean duplicated;
 
     @Override
     protected void newItem(){}
@@ -139,9 +143,21 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
 
     @Override
     public void duplicate() {
-        init();
-        eanUpc.setText("");
-        productCode.setText("");
+        if (unitsLabelAdapter != null && unitsType != null && unitsType.getAdapter() != null) {
+            setModel();
+            eanUpc.setText("");
+            productCode.setText("");
+            unitsLabelLoaded = true;
+            getLoaderManager().restartLoader(ITEM_MATRIX_LOADER_ID, null, cursorLoaderCallbacks);
+        }
+    }
+
+    private void duplicateNextStep(){
+        if (duplicated) {
+            return;
+        }
+        duplicated = true;
+
         if (getModel().unitsLabelId != null){
             int position = unitsLabelAdapter.getPositionById(getModel().unitsLabelId);
             if (position != AdapterView.INVALID_POSITION)
@@ -152,6 +168,7 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
 
         if (getModel().codeType != null)
             unitsType.setSelection(getModel().codeType.ordinal() + 1);
+        ((BaseItemActivity2) getActivity()).additionalInfoReady();
     }
 
     @Override
@@ -347,6 +364,12 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
                 if (position != AdapterView.INVALID_POSITION)
                     unitsLabel.setSelection(position);
             }
+            if(((BaseItemActivity2)getActivity()).isDuplicate()) {
+                unitsLabelLoaded = true;
+                if (referenceItemReady) {
+                    duplicateNextStep();
+                }
+            }
         }
 
         @Override
@@ -475,6 +498,12 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
                         referenceItem.setText(data.getString(data.getColumnIndex(ItemTable.DESCRIPTION)));
                         if (getItemProvider().isDuplicate()) {
                             getItemProvider().setParentItem(new ItemExModel(new ItemModel(data)));
+                        }
+                    }
+                    if(((BaseItemActivity2)getActivity()).isDuplicate()) {
+                        referenceItemReady = true;
+                        if (unitsLabelLoaded) {
+                            duplicateNextStep();
                         }
                     }
                 default:

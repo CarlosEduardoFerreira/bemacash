@@ -2294,7 +2294,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     public void onHold() {
         boolean isDefinedOnHold = app.getShopInfo().definedOnHold;
         if(isDefinedOnHold) {
-            OnHoldListDialogFragment.show(this, this.orderGuid, this.orderTitle, OnHoldListDialogFragment.HoldOnAction.ADD_ORDER, new IHoldListener() {
+            OnHoldListDialogFragment.show(this, this.orderGuid, this.orderTitle, OnHoldListDialogFragment.HoldOnAction.ADD_ORDER, new ArrayList<String>(orderItemListFragment.printerAlias()), new IHoldListener() {
                 @Override
                 public void onSwap2Order(String holdName, String holdPhone, OnHoldStatus status, String nextOrderGuid, String definedOnHoldGuid) {
                     onSwap2OrderAction(BaseCashierActivity.this.orderTitle, null, null, null, definedOnHoldGuid);

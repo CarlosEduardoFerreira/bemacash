@@ -12,6 +12,7 @@ import android.widget.TableRow;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseItemActivity2;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
 import com.kaching123.tcr.component.PercentFormatInputFilter;
@@ -64,9 +65,12 @@ public class ItemPriceFragment extends ItemBaseFragment {
 
     @Override
     public void duplicate() {
-        init();
-        priceType.setSelection(getPriceTypeSelected());
-        discountType.setSelection(getDiscountTypeSelected());
+        if (priceType != null && priceType.getAdapter() != null &&
+                discountType != null && discountType.getAdapter() != null) {
+            priceType.setSelection(getPriceTypeSelected());
+            discountType.setSelection(getDiscountTypeSelected());
+            ((BaseItemActivity2) getActivity()).priceInfoSetuped();
+        }
     }
 
     @Override

@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseItemActivity2;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.component.BrandTextWatcher;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
@@ -69,8 +70,9 @@ public class ItemSpecialPricingFragment extends ItemBaseFragment {
 
     @Override
     public void duplicate() {
-        init();
-        getLoaderManager().restartLoader(0, null, new TBPLoader());
+        if (adapter != null) {
+            ((BaseItemActivity2) getActivity()).specialPriceInfoReady();
+        }
     }
 
     @Override

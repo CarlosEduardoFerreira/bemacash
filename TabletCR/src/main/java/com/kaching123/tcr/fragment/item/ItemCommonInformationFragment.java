@@ -29,6 +29,7 @@ import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseItemActivity2;
 import com.kaching123.tcr.adapter.SpinnerAdapter;
 import com.kaching123.tcr.component.CurrencyFormatInputFilter;
 import com.kaching123.tcr.component.CurrencyTextWatcher;
@@ -82,6 +83,11 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
     private static final int CATEGORY_LOADER_ID = 1;
     private static final int TAX_GROUP_LOADER_ID = 2;
 
+    private boolean departmantLoaded;
+    private boolean categoryLoaded;
+    private boolean taxLoaded;
+    private boolean duplicated;
+
     protected DepartmentSpinnerAdapter departmentAdapter;
     protected CategorySpinnerAdapter categoryAdapter;
     protected TaxGroupSpinnerAdapter taxGroupAdapter;
@@ -113,7 +119,18 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
 
     @Override
     public void duplicate(){
-        init();
+        if(departmentAdapter != null && categoryAdapter != null) {
+            setModel();
+            duplicateNextStep();
+        }
+    }
+
+    public void duplicateNextStep(){
+        if (duplicated) {
+            return;
+        }
+        duplicated = true;
+
         if (getModel().departmentGuid != null) {
             department.setSelection(departmentAdapter.getPosition4Id(getModel().departmentGuid));
         } else {
@@ -129,6 +146,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
         } else {
             taxGroup.setSelection(0);
         }
+        ((BaseItemActivity2)getActivity()).commonInfoReady();
     }
 
     protected void callBemaKeyboard(){
@@ -275,14 +293,33 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
                 departmentAdapter.changeCursor(data);
                 if (getModel().departmentGuid != null)
                     department.setSelection(departmentAdapter.getPosition4Id(getModel().departmentGuid));
+                if(((BaseItemActivity2)getActivity()).isDuplicate()) {
+                    departmantLoaded = true;
+                    if (categoryLoaded && taxLoaded) {
+                        duplicateNextStep();
+                    }
+                }
                 break;
             case CATEGORY_LOADER_ID:
                 categoryAdapter.changeCursor(data);
                 if (getModel().categoryId != null)
                     category.setSelection(categoryAdapter.getPosition4Id(getModel().categoryId));
+
+                if(((BaseItemActivity2)getActivity()).isDuplicate()) {
+                    categoryLoaded = true;
+                    if (departmantLoaded && taxLoaded) {
+                        duplicateNextStep();
+                    }
+                }
                 break;
             case TAX_GROUP_LOADER_ID:
                 onTaxGroupLoaded(data);
+                if (((BaseItemActivity2)getActivity()).isDuplicate()) {
+                    taxLoaded = true;
+                    if (departmantLoaded && categoryLoaded) {
+                        duplicateNextStep();
+                    }
+                }
                 break;
         }
     }

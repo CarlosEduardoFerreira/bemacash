@@ -32,7 +32,9 @@ public class AddVariantMatrixItemsCommand extends AsyncCommand {
 
     @Override
     protected TaskResult doCommand() {
-        models = (ArrayList<ItemMatrixModel>) getArgs().getSerializable(ARG_VARIANT_MATRIX);
+        if (models == null) {
+            models = (ArrayList<ItemMatrixModel>) getArgs().getSerializable(ARG_VARIANT_MATRIX);
+        }
         JdbcConverter<ItemMatrixModel> jdbc = JdbcFactory.getConverter(ItemMatrixTable.TABLE_NAME);
         operations = new ArrayList<>();
         sql = batchInsert(ItemMatrixModel.class);
@@ -74,6 +76,11 @@ public class AddVariantMatrixItemsCommand extends AsyncCommand {
 
     public static void start(Context context, ArrayList<ItemMatrixModel> models) {
         create(AddVariantMatrixItemsCommand.class).arg(ARG_VARIANT_MATRIX, models).queueUsing(context);
+    }
+
+    public SyncResult sync(Context context, ArrayList<ItemMatrixModel> models, IAppCommandContext appCommandContext){
+        this.models = models;
+        return syncDependent(context, appCommandContext);
     }
 
 }
