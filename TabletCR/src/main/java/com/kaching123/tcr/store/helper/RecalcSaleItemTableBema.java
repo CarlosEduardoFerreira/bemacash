@@ -127,11 +127,12 @@ public class RecalcSaleItemTableBema extends ProviderHelper {
         ArrayList<ContentValues> values = new ArrayList<ContentValues>();
         SaleOrderCostInfo orderInfo;
         while((orderInfo = result.getNextOrderInfo()) != null) {
+            FastOrderTotalQuery.SaleOrderCostInfo cost = orderInfo;
             ContentValues v = new ContentValues(4);
             v.put(SaleOrderTable.GUID, orderInfo.guid);
-            v.put(SaleOrderTable.TML_TOTAL_PRICE, _decimal(orderInfo.totalPrice));
-            v.put(SaleOrderTable.TML_TOTAL_TAX, _decimal(orderInfo.totalTax));
-            v.put(SaleOrderTable.TML_TOTAL_DISCOUNT, _decimal(orderInfo.totalDiscount));
+            v.put(SaleOrderTable.TML_TOTAL_PRICE, _decimal(cost.totalPrice));
+            v.put(SaleOrderTable.TML_TOTAL_TAX, _decimal(cost.totalTax));
+            v.put(SaleOrderTable.TML_TOTAL_DISCOUNT, _decimal(cost.totalDiscount));
             Log.d(TAG, "RecalcSaleItemTable.bulkRecalcSaleItemTable3.orderInfo.totalPrice: " + orderInfo.totalPrice);
             Log.d(TAG, "RecalcSaleItemTable.bulkRecalcSaleItemTable3.orderInfo.totalTax: " + orderInfo.totalTax);
             Log.d(TAG, "RecalcSaleItemTable.bulkRecalcSaleItemTable3.orderInfo.totalDiscount: " + orderInfo.totalDiscount);
