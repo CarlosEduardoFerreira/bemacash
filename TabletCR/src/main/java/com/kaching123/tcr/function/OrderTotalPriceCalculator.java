@@ -1,5 +1,7 @@
 package com.kaching123.tcr.function;
 
+import android.util.Log;
+
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.TcrApplication;
@@ -124,6 +126,7 @@ public final class OrderTotalPriceCalculator {
 
         /* calculate item order discount */
         Logger.d("TotalCost: --------------------- ");
+        Log.d("BemaCarl15", "OrderTotalPriceCalculator.calculate.tmpOderDiscountVal1: " + tmpOderDiscountVal);
         ArrayList<CalcItemInfo> calcItems = calcItemOrderDiscount(map, tmpOderDiscountVal, tmpOderDiscountPercent, handler);
 
         BigDecimal totalOrderPrice = BigDecimal.ZERO;
@@ -199,20 +202,24 @@ public final class OrderTotalPriceCalculator {
         if (saleItemsInfo.size() == 0) {
             return calcItems;
         }
-
+        Log.d("BemaCarl15", "OrderTotalPriceCalculator.calculate.tmpOderDiscountVal2: " + tmpOderDiscountVal);
         BigDecimal calcDiscountVal = BigDecimal.ZERO;
+        BigDecimal cem = new BigDecimal("100");
         for (SaleItemInfo i : saleItemsInfo) {
             BigDecimal itemDiscount = CalculationUtil.getDiscountValue(i.totalPrice, i.discount, i.discountType);
             BigDecimal itemFinalPrice = i.totalPrice.subtract(itemDiscount);
             BigDecimal itemOrderDiscount = BigDecimal.ZERO;
             if (BigDecimal.ZERO.compareTo(tmpOderDiscountVal) != 0 && i.discountable) {
-                itemOrderDiscount = CalculationUtil.getDiscountValue(itemFinalPrice, tmpOderDiscountPercent, DiscountType.PERCENT);
+                //itemOrderDiscount = CalculationUtil.getDiscountValue(itemFinalPrice, tmpOderDiscountPercent, DiscountType.PERCENT);
+                itemOrderDiscount = itemFinalPrice.divide(cem, BigDecimal.ROUND_HALF_UP).multiply(tmpOderDiscountPercent);
+                Log.d("BemaCarl15", "OrderTotalPriceCalculator.calcItemOrderDiscount.itemOrderDiscount3: " + itemOrderDiscount);
                 BigDecimal qtyOrderDiscount = getSubTotal(i.qty, itemOrderDiscount);
                 calcDiscountVal = calcDiscountVal.add(qtyOrderDiscount);
                 Logger.d("TotalCost: item order discount %s %s(%s) * %s = %s; * %s = %s", i.description, itemFinalPrice, itemDiscount, tmpOderDiscountPercent, itemOrderDiscount, i.qty, qtyOrderDiscount);
             }
             calcItems.add(new CalcItemInfo(i, itemFinalPrice, itemDiscount, itemOrderDiscount));
         }
+        /*
         Logger.d("TotalCost: order discount by items = %s", calcDiscountVal);
         Collections.sort(calcItems, new Comparator<CalcItemInfo>() {
             @Override
@@ -220,26 +227,30 @@ public final class OrderTotalPriceCalculator {
                 return -1 * (l.itemOderDiscount == null ? -1 : r.itemOderDiscount == null ? 1 : l.itemOderDiscount.compareTo(r.itemOderDiscount));
             }
         });
-        CalcItemInfo biggestOrderDiscount = calcItems.get(0);
+        /**/
+        //CalcItemInfo biggestOrderDiscount = calcItems.get(0);
 
-        BigDecimal discountDiff = tmpOderDiscountVal.subtract(calcDiscountVal);
-        Logger.d("TotalCost: need adjust %s", discountDiff);
+        //BigDecimal discountDiff = tmpOderDiscountVal.subtract(calcDiscountVal);
+        //Logger.d("TotalCost: need adjust %s", discountDiff);
 
-        BigDecimal qty = biggestOrderDiscount.itemInfo.qty;
-        BigDecimal qtyInt = qty.setScale(0, RoundingMode.DOWN);
-        if (discountDiff.compareTo(BigDecimal.ZERO) == 0)
-            return calcItems;
+        //BigDecimal qty = biggestOrderDiscount.itemInfo.qty;
+        //BigDecimal qtyInt = qty.setScale(0, RoundingMode.DOWN);
+        //if (discountDiff.compareTo(BigDecimal.ZERO) == 0)
+            //return calcItems;
 
-        BigDecimal cents = discountDiff.multiply(CalculationUtil.ONE_HUNDRED).setScale(0, RoundingMode.HALF_UP);
-        BigDecimal centsAbs = cents.abs();
-        boolean negative = cents.compareTo(BigDecimal.ZERO) == -1;
-
+        //BigDecimal cents = discountDiff.multiply(CalculationUtil.ONE_HUNDRED).setScale(0, RoundingMode.HALF_UP);
+        //BigDecimal centsAbs = cents.abs();
+        //boolean negative = cents.compareTo(BigDecimal.ZERO) == -1;
+        //Log.d("BemaCarl15", "OrderTotalPriceCalculator.calcItemOrderDiscount.centsAbs: " + centsAbs);
+        //Log.d("BemaCarl15", "OrderTotalPriceCalculator.calcItemOrderDiscount.qty: " + qty);
+        //Log.d("BemaCarl15", "OrderTotalPriceCalculator.calcItemOrderDiscount.qtyInt: " + qtyInt);
         //qty is integer:  > 0 and doesn't have decimal part; cents != qty
-        if (centsAbs.compareTo(qty) != 0 && qty.compareTo(BigDecimal.ONE) == 1 && qtyInt.compareTo(qty) == 0) {
+        /*if (centsAbs.compareTo(qty) != 0 && qty.compareTo(BigDecimal.ONE) == 1 && qtyInt.compareTo(qty) == 0 || false) {
             BigDecimal oneCent = negative ? ONE_CENT_NEGATIVE : ONE_CENT;
             CalcItemInfo splitedItem;
             Logger.d("TotalCost: cents and qty  = %s %s", centsAbs, qty);
             //cents > qty
+
             if (centsAbs.compareTo(qty) == 1) {
                 int d = centsAbs.intValue() / qty.intValue();
                 BigDecimal firstAdjust = d > 0 ? oneCent.multiply(new BigDecimal(d)) : oneCent;
@@ -263,13 +274,15 @@ public final class OrderTotalPriceCalculator {
                 handler2.splitItem(splitedItem.itemInfo);
             }
 
-        } else {
-            Logger.d("TotalCost: adjust default");
-            BigDecimal diff = CalculationUtil.divide(discountDiff, biggestOrderDiscount.itemInfo.qty, 3);
-            Logger.d("TotalCost: adjust diff %s/%s = %s", discountDiff, biggestOrderDiscount.itemInfo.qty, diff);
-            updateDiscount(biggestOrderDiscount, diff);
-        }
-        Logger.d("TotalCost:\t");
+        /**///} else {
+            //Logger.d("TotalCost: adjust default");
+            //BigDecimal diff = CalculationUtil.divide(discountDiff, biggestOrderDiscount.itemInfo.qty, 3);
+            //Logger.d("TotalCost: adjust diff %s/%s = %s", discountDiff, biggestOrderDiscount.itemInfo.qty, diff);
+            //updateDiscount(biggestOrderDiscount, diff);
+        //}/**/
+        //Log.d("BemaCarl15", "OrderTotalPriceCalculator.calcItemOrderDiscount.diff: " + diff);
+        //Log.d("BemaCarl15", "OrderTotalPriceCalculator.calcItemOrderDiscount.discountDiff: " + discountDiff);
+        //Log.d("BemaCarl15", "OrderTotalPriceCalculator.calcItemOrderDiscount.biggestOrderDiscount: " + biggestOrderDiscount.getFinalDiscount());
         return calcItems;
     }
 

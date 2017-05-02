@@ -25,6 +25,7 @@ import com.kaching123.tcr.store.helper.RecalcItemMovementTable;
 import com.kaching123.tcr.store.helper.RecalcLoyaltyPointsHelper;
 import com.kaching123.tcr.store.helper.RecalcSaleAddonTable;
 import com.kaching123.tcr.store.helper.RecalcSaleItemTable;
+import com.kaching123.tcr.store.helper.RecalcSaleItemTableBema;
 
 import java.util.Locale;
 import java.util.concurrent.Executors;
@@ -47,6 +48,8 @@ public class ShopProviderExt extends ShopProvider {
     final static String URI_PATH_RAW_TABLE_QUERY = "URI_RAW_TABLE_QUERY";
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+    private String TAG = "BemaCarl15";
 
     protected void scheduleUpdate() {
         scheduler.schedule(new Runnable() {
@@ -130,6 +133,9 @@ public class ShopProviderExt extends ShopProvider {
 
     private RecalcItemMovementTable itemMovementHelper;
     private RecalcSaleItemTable saleItemHelper;
+
+    private RecalcSaleItemTableBema saleItemHelperBema;
+
     private RecalcSaleAddonTable saleItemAddonHelper;
     private ProviderQueryHelper providerQueryHelper;
     private RecalcItemComposerTable composerHelper;
@@ -141,6 +147,9 @@ public class ShopProviderExt extends ShopProvider {
         boolean b = super.onCreate();
         itemMovementHelper = new RecalcItemMovementTable(getContext(), dbHelper);
         saleItemHelper = new RecalcSaleItemTable(getContext(), dbHelper);
+
+        saleItemHelperBema = new RecalcSaleItemTableBema(getContext(), dbHelper);
+
         saleItemAddonHelper = new RecalcSaleAddonTable(getContext(), dbHelper);
         providerQueryHelper = new ProviderQueryHelper(AUTHORITY, dbHelper);
         composerHelper = new RecalcItemComposerTable(getContext(), dbHelper);
@@ -251,19 +260,21 @@ public class ShopProviderExt extends ShopProvider {
 
     @Override
     public int bulkInsert(Uri uri, ContentValues[] valuesAr) {
-        Log.d("BemaCarl1","ShopProviderExt.bulkInsert");
+        //RecalcSaleItemTablebema saleItemHelper;
+        Log.d(TAG, "ShopProviderExt.bulkInsert");
         int count = super.bulkInsert(uri, valuesAr);
+        Log.d(TAG, "ShopProviderExt.bulkInsert.count: " + count);
         if (count > 0) {
             String path = getUriPath(uri);
-            Log.d("BemaCarl1","ShopProviderExt.bulkInsert.path: " + path);
+            Log.d(TAG, "ShopProviderExt.bulkInsert.path: " + path);
             if (SaleItemTable.URI_CONTENT.equals(path)) {
-                Logger.d("RecalculateOrderPrice: bulkInsert SaleItemTable");
-                saleItemHelper.bulkRecalcSaleItemTable(valuesAr);
+                Log.d(TAG, "ShopProviderExt.bulkInsert.SaleItemTable");
+                saleItemHelperBema.bulkRecalcSaleItemTable(valuesAr);
             } else if (SaleAddonTable.URI_CONTENT.equals(path)) {
-                Logger.d("RecalculateOrderPrice: bulkInsert SaleAddonTable");
+                Log.d(TAG, "ShopProviderExt.bulkInsert.SaleAddonTable");
                 saleItemAddonHelper.bulkRecalcSaleAddonTable(valuesAr);
             } else if (ItemMovementTable.URI_CONTENT.equals(path)) {
-                Logger.d("recalculateAvailableQty: bulkInsert ItemMovementTable");
+                Log.d(TAG, "ShopProviderExt.bulkInsert.ItemMovementTable");
                 itemMovementHelper.bulkRecalcAvailableItemMovementTable(valuesAr);
             } /*else if (ItemTable.URI_CONTENT.equals(path)) {
                 //TODO: depends on download sync logic!
@@ -271,6 +282,7 @@ public class ShopProviderExt extends ShopProvider {
                 itemHelper.bulkRecalcAvailableItemTable(valuesAr);
             }*/
         }
+        Log.d(TAG, "ShopProviderExt.bulkInsert.count: " + count);
         return count;
     }
 
