@@ -105,6 +105,7 @@ public class LoginCommand extends GroundyTask {
             if (mode == Mode.LOGIN && !isTrainingMode && !isOffline) {
                 Logger.d("Performing remote login... login: %s, serial: %s", userName, registerSerial);
                 RemoteLoginResult remoteLoginResult = webLogin(registerSerial, userName, password);
+
                 if (remoteLoginResult != null) {
                     if (remoteLoginResult.registerNumber == null) {
                         Logger.d("Remote login FAILED! register check failed");
@@ -221,8 +222,11 @@ public class LoginCommand extends GroundyTask {
     protected boolean checkDb(EmployeeModel employeeModel) {
         TcrApplication app = ((TcrApplication) getContext().getApplicationContext());
         long shopId = app.getShopPref().shopId().getOr(0L);
+        Log.d("BemaCarl16","LoginCommand.checkDb.employeeModel.shopId: " + employeeModel.shopId);
+        Log.d("BemaCarl16","LoginCommand.checkDb.shopId: " + shopId);
         if (shopId != employeeModel.shopId) {
             clearDb();
+            clearDbTrainingMode();
             app.getShopPref().clear();
             app.getShopPref().shopId().put(employeeModel.shopId);
             return true;
@@ -293,6 +297,16 @@ public class LoginCommand extends GroundyTask {
         syncOpenHelper.close();
         if (!result) {
             throw new RuntimeException("Login clear db error");
+        }
+    }
+
+    private void clearDbTrainingMode() {
+        boolean result = ShopProviderExt.callMethod(getContext(), ShopProviderExt.Method.METHOD_CLEAR_TRAINING_DATABASE, null, null);
+        SyncOpenHelper syncOpenHelper = TcrApplication.get().getSyncOpenHelper();
+        result = result && syncOpenHelper.clearDatabase();
+        syncOpenHelper.close();
+        if (!result) {
+            throw new RuntimeException("Login clear db training error");
         }
     }
 
