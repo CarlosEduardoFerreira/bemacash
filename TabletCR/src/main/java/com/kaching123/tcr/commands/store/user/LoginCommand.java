@@ -32,6 +32,7 @@ import com.kaching123.tcr.service.SyncCommand.SyncException;
 import com.kaching123.tcr.service.SyncCommand.SyncInconsistentException;
 import com.kaching123.tcr.service.SyncCommand.SyncInterruptedException;
 import com.kaching123.tcr.service.v2.UploadTaskV2;
+import com.kaching123.tcr.store.DatabaseUtil;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopProviderExt;
 import com.kaching123.tcr.store.ShopStore;
@@ -226,12 +227,18 @@ public class LoginCommand extends GroundyTask {
         Log.d("BemaCarl16","LoginCommand.checkDb.shopId: " + shopId);
         if (shopId != employeeModel.shopId) {
             clearDb();
-            clearDbTrainingMode();
+            clearBemaDB();
             app.getShopPref().clear();
             app.getShopPref().shopId().put(employeeModel.shopId);
             return true;
         }
         return false;
+    }
+
+    private void clearBemaDB(){
+        Log.d("BemaCarl16","LoginCommand.clearBemaDB");
+        DatabaseUtil databaseUtil = new DatabaseUtil(getContext().getApplicationContext());
+        databaseUtil.clearDataOnTables();
     }
 
     private boolean doEmployeeUpload() throws SyncCommand.SyncLockedException {
@@ -297,16 +304,6 @@ public class LoginCommand extends GroundyTask {
         syncOpenHelper.close();
         if (!result) {
             throw new RuntimeException("Login clear db error");
-        }
-    }
-
-    private void clearDbTrainingMode() {
-        boolean result = ShopProviderExt.callMethod(getContext(), ShopProviderExt.Method.METHOD_CLEAR_TRAINING_DATABASE, null, null);
-        SyncOpenHelper syncOpenHelper = TcrApplication.get().getSyncOpenHelper();
-        result = result && syncOpenHelper.clearDatabase();
-        syncOpenHelper.close();
-        if (!result) {
-            throw new RuntimeException("Login clear db training error");
         }
     }
 
