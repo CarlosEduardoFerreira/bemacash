@@ -172,19 +172,39 @@ public final class OrderTotalPriceCalculator {
             if (handler != null) {
                 handler.handleItem(i, itemFinalPrice, itemFinalDiscount, itemFinalTax);
             }
+
+            Log.d("BemaCarl17","PrderTotalPriceCalculator.totalOrderPrice 2: " + totalOrderPrice);
+            Log.d("BemaCarl17","PrderTotalPriceCalculator.subTotalItemTotal 2: " + subTotalItemTotal);
+            Log.d("BemaCarl17","PrderTotalPriceCalculator.totalItemDiscount 2: " + totalItemDiscount);
+            Log.d("BemaCarl17","PrderTotalPriceCalculator.tmpOderDiscountVal 2: " + tmpOderDiscountVal);
+
             totalOrderPrice = totalOrderPrice.add(itemFinalPrice2);
 
         }
+
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.totalOrderPrice 3: " + totalOrderPrice);
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.subTotalItemTotal 3: " + subTotalItemTotal);
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.totalItemDiscount 3: " + totalItemDiscount);
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.tmpOderDiscountVal 3: " + tmpOderDiscountVal);
+
         BigDecimal totalTaxVatValue = totalOrderPrice.subtract(subTotalItemTotal).add(totalItemDiscount).add(tmpOderDiscountVal);
 
-        Logger.d("TotalCost: --------------------- ");
-        Logger.d("TotalCost: itemSubTotal:\t%s", subTotalItemTotal);
-        Logger.d("TotalCost: oderDiscountVal:\t%s", tmpOderDiscountVal);
-        Logger.d("TotalCost: oderDiscountPercent:\t%s", tmpOderDiscountPercent);
-        Logger.d("TotalCost: totalTaxVatValue:\t%s", totalTaxVatValue);
-        Logger.d("TotalCost: totalItemTaxVatValue:\t%s", totalItemTaxVatValue);
-        Logger.d("TotalCost: totalOrderPrice:\t%s", totalOrderPrice);
-        Logger.d("TotalCost: -------- end -------- ");
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.totalOrderPrice 4: " + totalOrderPrice);
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.subTotalItemTotal 4: " + subTotalItemTotal);
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.totalItemDiscount 4: " + totalItemDiscount);
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.tmpOderDiscountVal 4: " + tmpOderDiscountVal);
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.totalTaxVatValue 4: " + totalTaxVatValue);
+
+        if(totalTaxVatValue.signum() < 0){
+            totalOrderPrice = totalOrderPrice.add(totalTaxVatValue.abs());
+            totalTaxVatValue = BigDecimal.ZERO;
+        }
+
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.totalOrderPrice 5: " + totalOrderPrice);
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.subTotalItemTotal 5: " + subTotalItemTotal);
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.totalItemDiscount 5: " + totalItemDiscount);
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.tmpOderDiscountVal 5: " + tmpOderDiscountVal);
+        Log.d("BemaCarl17","PrderTotalPriceCalculator.totalTaxVatValue 5: " + totalTaxVatValue);
 
 
         return new SaleOrderCostInfo(info.isTaxableOrder, orderDiscount, orderDiscountType, tmpOderDiscountVal,
