@@ -491,6 +491,8 @@ public class ItemAdditionalInformationFragment extends ItemBaseFragment implemen
                             getModel().referenceItemGuid = data.getString(data.getColumnIndex(ItemMatrixByParentView.PARENT_ITEM_GUID));
                             getLoaderManager().restartLoader(ITEM_PARENT_LOADER_ID, null, cursorLoaderCallbacks);
                         }
+                    } else if (getItemProvider().isDuplicate()) {
+                        duplicateNextStep();
                     }
                     break;
                 case ITEM_PARENT_LOADER_ID:

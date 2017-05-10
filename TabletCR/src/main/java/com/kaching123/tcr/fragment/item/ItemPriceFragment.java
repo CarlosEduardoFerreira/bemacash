@@ -69,7 +69,7 @@ public class ItemPriceFragment extends ItemBaseFragment {
                 discountType != null && discountType.getAdapter() != null) {
             priceType.setSelection(getPriceTypeSelected());
             discountType.setSelection(getDiscountTypeSelected());
-            ((BaseItemActivity2) getActivity()).priceInfoSetuped();
+            ((BaseItemActivity2) getActivity()).priceInfoReady();
         }
     }
 

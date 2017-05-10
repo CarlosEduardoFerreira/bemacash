@@ -149,6 +149,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
     private boolean changesInSubActivitiesDone;
     private boolean duplicateRequest;
+    private boolean internalDuplicateRequest;
 
     private ItemExModel parentItem;
     private ItemMatrixModel parentItemMatrix;
@@ -173,12 +174,14 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             originalModel.guid = sourceGuid;
         }
         duplicateRequest = getIntent().getExtras().getBoolean(DUPLICATE_EXTRA, false);
-//        if (TextUtils.isEmpty(sourceGuid) && duplicateRequest) {
-//            readyExit = false;
-//        }
 
         if (!TextUtils.isEmpty(sourceGuid) && duplicateRequest) {
-            CopyItemWithReferences.start(getApplicationContext(), sourceGuid, model);
+            CopyItemWithReferences.start(getApplicationContext(), sourceGuid, model, new CopyItemWithReferences.CommandCallback() {
+                @Override
+                protected void handleSuccess() {
+                    CopyModifiersFromToCommand.start(getApplicationContext(), originalModel.guid, model.guid);
+                }
+            });
         }
     }
 
@@ -326,11 +329,11 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
 
     @Click
     protected void btnSaveClicked(){
-//        if (!readyExit) {
-//            WaitDialogFragment.show(this, getString(R.string.employee_edit_wait_msg));
-//            waitingExit = true;
-//            return;
-//        }
+        if (internalDuplicateRequest && !readyExit) {
+            WaitDialogFragment.show(this, getString(R.string.employee_edit_wait_msg));
+            waitingExit = true;
+            return;
+        }
         if (!validateData())
             return;
 
@@ -367,7 +370,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             }
         }
     }
-    public void monitoringInfoSetuped() {
+    public void monitoringInfoReady() {
         if (duplicateRequest) {
             monitoringInfoReady = true;
             if (additionalInfoReady && specialPriceInfoReady &&
@@ -376,7 +379,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             }
         }
     }
-    public void priceInfoSetuped() {
+    public void priceInfoReady() {
         if (duplicateRequest) {
             priceInfoReady = true;
             if (additionalInfoReady && specialPriceInfoReady &&
@@ -403,25 +406,39 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             AddItemCommand.start(getApplicationContext(), model, new AddItemCommand.AddItemCommandCallback() {
                 @Override
                 protected void handleSuccess() {
-                    CopyModifiersFromToCommand.start(getApplicationContext(), originalModel.guid, model.guid);
+                    CopyModifiersFromToCommand.start(getApplicationContext(), originalModel.guid, model.guid, copyModifiersFromToCallback);
                 }
 
                 @Override
                 protected void handleFailure() {
+                    readyToExit();
                 }
             });
         }
-//        readyExit = true;
-//        if(waitingExit) {
-//            WaitDialogFragment.hide(this);
-//            btnSaveClicked();
-//        }
+
+    }
+
+    private CopyModifiersFromToCommand.CommandCallback copyModifiersFromToCallback  = new CopyModifiersFromToCommand.CommandCallback() {
+        @Override
+        protected void handleSuccess() {
+            readyToExit();
+        }
+    };
+
+    private void readyToExit(){
+        readyExit = true;
+        if(waitingExit) {
+            WaitDialogFragment.hide(this);
+            btnSaveClicked();
+        }
     }
 
     @Click
     protected void btnDuplicateClicked(){
-        alphaAnim();
         duplicateRequest = true;
+        internalDuplicateRequest = true;
+        readyExit = false;
+        alphaAnim();
 
         model = new ItemExModel(originalModel);
 

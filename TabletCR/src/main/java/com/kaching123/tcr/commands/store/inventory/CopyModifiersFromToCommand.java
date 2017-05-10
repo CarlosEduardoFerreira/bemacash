@@ -17,6 +17,8 @@ import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.telly.groundy.TaskResult;
+import com.telly.groundy.annotations.OnFailure;
+import com.telly.groundy.annotations.OnSuccess;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,10 +110,35 @@ public class CopyModifiersFromToCommand extends AsyncCommand {
         return sql;
     }
 
+    public static void start(Context context, String itemFrom, String itemTo, CommandCallback callback){
+        create(CopyModifiersFromToCommand.class)
+                .arg(ARG_ITEM_FROM, itemFrom)
+                .arg(ARG_ITEM_TO, itemTo)
+                .callback(callback)
+                .queueUsing(context);
+    }
+
     public static void start(Context context, String itemFrom, String itemTo){
         create(CopyModifiersFromToCommand.class)
                 .arg(ARG_ITEM_FROM, itemFrom)
                 .arg(ARG_ITEM_TO, itemTo)
                 .queueUsing(context);
+    }
+
+    public static abstract class CommandCallback {
+
+        @OnSuccess(CopyModifiersFromToCommand.class)
+        public void onSuccess() {
+            handleSuccess();
+        }
+
+        @OnFailure(CopyModifiersFromToCommand.class)
+        public void onFailure() {
+            handleSuccess();
+        }
+
+        protected abstract void handleSuccess();
+
+
     }
 }

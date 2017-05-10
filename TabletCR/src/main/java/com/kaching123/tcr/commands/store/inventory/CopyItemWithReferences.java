@@ -137,4 +137,19 @@ public class CopyItemWithReferences extends AsyncCommand {
         create(CopyItemWithReferences.class).arg(ARG_ITEM, item).arg(ARG_SOURCE_ITEM_GUID, sourceItemGuid).queueUsing(context);
     }
 
+    public static void start(Context context, String sourceItemGuid, ItemModel item, CommandCallback callback) {
+        create(CopyItemWithReferences.class).arg(ARG_ITEM, item).arg(ARG_SOURCE_ITEM_GUID, sourceItemGuid).callback(callback).queueUsing(context);
+    }
+
+    public static abstract class CommandCallback {
+
+        @OnSuccess(CopyItemWithReferences.class)
+        public void onSuccess() {
+            handleSuccess();
+        }
+
+        protected abstract void handleSuccess();
+
+    }
+
 }

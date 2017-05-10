@@ -59,7 +59,7 @@ public class ItemMonitoringFragment extends ItemBaseFragment {
             return;
         }
         setModel();
-        ((BaseItemActivity2) getActivity()).monitoringInfoSetuped();
+        ((BaseItemActivity2) getActivity()).monitoringInfoReady();
     }
 
     @Override

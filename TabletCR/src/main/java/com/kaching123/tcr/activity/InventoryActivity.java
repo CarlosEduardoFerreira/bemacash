@@ -126,6 +126,9 @@ public class InventoryActivity extends ScannerBaseActivity {
     private ExportQuickbooksCallback exportQuickbooksCallback = new ExportQuickbooksCallback();
 
     private int itemsCount;
+    private boolean refreshItems;
+    private boolean showChooseSaveItemActionFragment;
+    private ItemExModel activityResultModel;
 
     @Override
     protected Set<Permission> getPermissions() {
@@ -292,36 +295,48 @@ public class InventoryActivity extends ScannerBaseActivity {
     }
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (showChooseSaveItemActionFragment) {
+            showChooseSaveItemActionFragment = false;
+            ChooseSaveItemActionFragment.show(this, new ChooseSaveItemActionFragment.ChooseSaveItemActionCallback() {
+                @Override
+                public void onConfirm(ChooseSaveItemActionFragment.SaveItemAction action) {
+                    switch (action) {
+                        case NO:
+                            break;
+                        case ADD_MORE:
+                            addSimpleItem();
+                            break;
+                        case DUPLICATE:
+                            addSimpleItem(activityResultModel.getGuid(), activityResultModel.duplicate());
+                            break;
+                    }
+                }
+            });
+        }
+        if (refreshItems) {
+            refreshItems = false;
+            itemsFragment.sortOrderChanged();
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
             case ADD_ITEM_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
-                    final ItemExModel savedModel = (ItemExModel) data.getSerializableExtra(MODEL_EXTRA);
+                   activityResultModel = (ItemExModel) data.getSerializableExtra(MODEL_EXTRA);
                     StartMode mode = (StartMode) data.getSerializableExtra(MODE_EXTRA);
                     boolean isDuplicateItem = data.getBooleanExtra(DUPLICATE_EXTRA, false);
-                    if (savedModel.refType == ItemRefType.Simple &&
+                    if (activityResultModel.refType == ItemRefType.Simple &&
                             ((mode == StartMode.ADD) || (mode == StartMode.EDIT && isDuplicateItem))) {
-                        ChooseSaveItemActionFragment.show(this, new ChooseSaveItemActionFragment.ChooseSaveItemActionCallback() {
-                            @Override
-                            public void onConfirm(ChooseSaveItemActionFragment.SaveItemAction action) {
-                                switch (action) {
-                                    case NO:
-                                        break;
-                                    case ADD_MORE:
-                                        addSimpleItem();
-                                        break;
-                                    case DUPLICATE:
-                                        addSimpleItem(savedModel.getGuid(), savedModel.duplicate());
-                                        break;
-                                }
-                            }
-                        });
+                        showChooseSaveItemActionFragment = true;
                     }
                 }
                 break;
         }
-        itemsFragment.sortOrderChanged();
+        refreshItems = true;
     }
 
     private boolean inventoryLimitReached() {
