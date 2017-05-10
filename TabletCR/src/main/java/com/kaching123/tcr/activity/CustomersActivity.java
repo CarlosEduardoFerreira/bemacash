@@ -315,9 +315,25 @@ public class CustomersActivity extends SuperBaseActivity {
 
     private class CustomersLoader implements LoaderCallbacks<List<CustomerModel>> {
 
+        String firstLastName = "first_name_last_name";
+        String lastFirstName = "last_name_first_name";
+
         @Override
         public Loader<List<CustomerModel>> onCreateLoader(int i, Bundle bundle) {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(CUSTOMERS_URI);
+            String coma = ",";
+
+            builder.projection(CustomerTable.GUID + coma + CustomerTable.FISRT_NAME + coma + CustomerTable.LAST_NAME + coma +
+                    CustomerTable.STREET + coma + CustomerTable.COMPLEMENTARY + coma + CustomerTable.CITY + coma +
+                    CustomerTable.STATE + coma + CustomerTable.COUNTRY + coma + CustomerTable.ZIP + coma +
+                    CustomerTable.EMAIL + coma + CustomerTable.CUSTOMER_IDENTIFICATION + coma + CustomerTable.PHONE + coma +
+                    CustomerTable.SEX + coma + CustomerTable.BIRTHDAY + coma + CustomerTable.BIRTHDAY_REWARD_APPLY_DATE + coma +
+                    CustomerTable.CREATE_TIME + coma + CustomerTable.CONSENT_PROMOTIONS + coma + CustomerTable.NOTES + coma +
+                    CustomerTable.LOYALTY_PLAN_ID + coma + CustomerTable.LOYALTY_BARCODE + coma + CustomerTable.TMP_LOYALTY_POINTS + coma +
+                    CustomerTable.UPDATE_TIME_LOCAL + coma +
+                    "(" + CustomerTable.FISRT_NAME  + " || ' ' || " + CustomerTable.LAST_NAME + ") " + "as " + firstLastName + coma +
+                    "(" + CustomerTable.LAST_NAME  + " || ' ' || " + CustomerTable.FISRT_NAME + ") " + "as " + lastFirstName);
+
             if (bundle == null) {
                 builder.orderBy(CustomerTable.FISRT_NAME + ", " + CustomerTable.LAST_NAME);
                 nameOrderAsc = !nameOrderAsc;
@@ -360,9 +376,10 @@ public class CustomersActivity extends SuperBaseActivity {
                         break;
                 }
             }
+
             if (!TextUtils.isEmpty(textFilter)) {
                 String filter = "%" + textFilter + "%";
-                builder.where(CustomerTable.FISRT_NAME + " LIKE ? OR " + CustomerTable.LAST_NAME + " LIKE ? OR " + CustomerTable.EMAIL + " LIKE ? OR " + CustomerTable.PHONE + " LIKE ?",
+                builder.where(firstLastName + " LIKE ? OR " + lastFirstName + " LIKE ? OR " + CustomerTable.EMAIL + " LIKE ? OR " + CustomerTable.PHONE + " LIKE ?",
                         filter, filter, filter, filter);
             }
 

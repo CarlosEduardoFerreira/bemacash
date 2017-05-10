@@ -349,9 +349,28 @@ public class EmployeesActivity extends SuperBaseActivity {
 
     private class EmployeeLoader implements LoaderCallbacks<List<EmployeeModel>> {
 
+        String firstLastName = "first_name_last_name";
+        String lastFirstName = "last_name_first_name";
+
         @Override
         public Loader<List<EmployeeModel>> onCreateLoader(int i, Bundle bundle) {
             CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(EMPLOYEE_URI);
+            String coma = ",";
+
+            builder.projection(EmployeeTable.ID + coma + EmployeeTable.GUID + coma + EmployeeTable.FIRST_NAME + coma + EmployeeTable.LAST_NAME + coma +
+                    EmployeeTable.LOGIN + coma +  EmployeeTable.PASSWORD + coma +
+                    EmployeeTable.STREET + coma + EmployeeTable.COMPLEMENTARY + coma + EmployeeTable.CITY + coma +
+                    EmployeeTable.STATE + coma + EmployeeTable.COUNTRY + coma + EmployeeTable.ZIP + coma +
+                    EmployeeTable.EMAIL + coma + EmployeeTable.PHONE + coma +
+                    EmployeeTable.SEX + coma + EmployeeTable.UPDATE_TIME_LOCAL + coma +
+                    EmployeeTable.HIRE_DATE + coma + EmployeeTable.FIRE_DATE + coma +
+                    EmployeeTable.STATUS + coma + EmployeeTable.HOURLY_RATE + coma +
+                    EmployeeTable.SHOP_ID + coma + EmployeeTable.TIPS_ELIGIBLE + coma +
+                    EmployeeTable.ELIGIBLE_FOR_COMMISSION + coma + EmployeeTable.COMMISSION + coma +
+                    EmployeeTable.IS_MERCHANT + coma + EmployeeTable.IS_SYNC + coma +
+                    "(" + EmployeeTable.FIRST_NAME  + " || ' ' || " + EmployeeTable.LAST_NAME + ") " + "as " + firstLastName + coma +
+                    "(" + EmployeeTable.LAST_NAME  + " || ' ' || " + EmployeeTable.FIRST_NAME + ") " + "as " + lastFirstName);
+
             if (bundle == null) {
                 builder.orderBy(EmployeeTable.FIRST_NAME + "," + EmployeeTable.LAST_NAME);
                 nameOrderAsc = !nameOrderAsc;
@@ -389,9 +408,10 @@ public class EmployeesActivity extends SuperBaseActivity {
             builder.where(EmployeeTable.IS_MERCHANT + " = ?", 0);
             builder.where(EmployeeTable.LOGIN + " <> ?", "");
             builder.where(EmployeeTable.LOGIN + " IS NOT NULL");
+
             if (!TextUtils.isEmpty(textFilter)) {
                 String filter = "%" + textFilter + "%";
-                builder.where(EmployeeTable.FIRST_NAME + " like ? OR " + EmployeeTable.LAST_NAME + " like ?", filter, filter);
+                builder.where(firstLastName + " LIKE ? OR " + lastFirstName + " LIKE ?", filter, filter);
             }
 
             return builder.transformRow(new ListConverterFunction<EmployeeModel>() {
