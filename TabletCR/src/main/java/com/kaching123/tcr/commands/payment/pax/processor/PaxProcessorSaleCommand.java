@@ -18,6 +18,7 @@ import com.kaching123.tcr.model.payment.blackstone.pax.PaxTransaction;
 import com.kaching123.tcr.model.payment.general.transaction.Transaction;
 import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
+import com.kaching123.tcr.store.DeviceUtil;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
 import com.kaching123.tcr.util.CalculationUtil;
@@ -161,72 +162,114 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
             request.ECRRefNum = ECRREFNUM_DEFAULT;
             //request.OrigRefNum = what goes here??//
 
-            PosLink posLink = createPosLink();
+            final PosLink posLink = createPosLink();
             posLink.PaymentRequest = request;
 
-            ProcessTransResult ptr = posLink.ProcessTrans();
+            final DeviceUtil deviceUtil = new DeviceUtil(getContext().getApplicationContext());
+            Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.posLink.GetCommSetting().getDestIP(): " + posLink.GetCommSetting().getDestIP());
+            deviceUtil.checkConnection(posLink.GetCommSetting().getDestIP());
 
-            if (ptr.Code == ProcessTransResultCode.OK) {
+            final ProcessTransResult[] ptr = {null};
 
-                response = posLink.PaymentResponse;
+            Thread t = new Thread(new Runnable() {
+                public void run()
+                {
+                    Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil._alive 1: " + deviceUtil._alive);
+                    if(deviceUtil._alive) {
+                        Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil._alive 2: " + deviceUtil._alive);
+                        ptr[0] = posLink.ProcessTrans();
+                    }
+                }
+            });
+            t.start();
 
-                if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
+            Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil._alive 3: " + deviceUtil._alive);
 
-                    String paxDigitalSign = null;
-                    getApp().paxSignatureCanceledByCustomer = false;
-                    getApp().paxMachineHasTransactionSuccessfull = true;
+            while(deviceUtil._alive && deviceUtil._running) {
 
-                    if(transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature()
-                            && getApp().requireSignatureOnTransactionsHigherThan) {
-                        try {
-                            Thread.sleep(400);
-                            paxSignature = new PaxSignature(getPaxModel());
-                            Thread.sleep(400);
-                            if (paxSignature != null) {
-                                paxDigitalSign = paxSignature.signaturePaxFileString;
-                                if(paxDigitalSign == null || paxDigitalSign == ""){
-                                    getApp().paxSignatureCanceledByCustomer = true;
+                Thread.sleep(500);
+                Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil._alive 4: " + deviceUtil._alive);
+                Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil.ptr[0]: " + ptr[0]);
+
+                if(ptr[0] != null) {
+                    deviceUtil._running = false;
+                    Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil.ptr[0]: " + ptr[0].Code);
+
+                    if (ptr[0].Code == ProcessTransResultCode.OK) {
+
+                        response = posLink.PaymentResponse;
+
+                        if (response.ResultCode.compareTo(RESULT_CODE_SUCCESS) == 0) {
+
+                            String paxDigitalSign = null;
+                            getApp().paxSignatureCanceledByCustomer = false;
+                            getApp().paxMachineHasTransactionSuccessfull = true;
+
+                            if (transaction.getGateway().isTrueCreditCard() && getApp().getDigitalSignature()
+                                    && getApp().requireSignatureOnTransactionsHigherThan) {
+                                try {
+                                    Thread.sleep(400);
+                                    paxSignature = new PaxSignature(getPaxModel());
+                                    Thread.sleep(400);
+                                    if (paxSignature != null) {
+                                        paxDigitalSign = paxSignature.signaturePaxFileString;
+                                        if (paxDigitalSign == null || paxDigitalSign == "") {
+                                            getApp().paxSignatureCanceledByCustomer = true;
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
                             }
-                        }catch(Exception e){
-                            e.printStackTrace();
+
+                            transaction.updateWith(response, paxDigitalSign);
+
+                            PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
+                            operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
+                                    .withValues(transactionModel.toValues())
+                                    .build());
+                            sqlCommand.add(jdbcConverter.insertSQL(transactionModel, getAppCommandContext()));
+
+                        } else {
+                            getApp().paxSignatureCanceledByCustomer = true;
+                            getApp().paxMachineHasTransactionSuccessfull = false;
+
+                            transaction.allowReload = true;
+                            errorReason = "Result Code: " + response.ResultCode + " (" + response.ResultTxt + ")";
+                            Logger.d("Pax Error code: " + response.ResultCode + ", Message: " + response.ResultTxt);
                         }
+
+
+                    } else if (ptr[0].Code == ProcessTransResultCode.TimeOut) {
+                        transaction.allowReload = true;
+                        Log.d("BemaCarl9", "PaxProcessorSaleCommand.ptr.Code: " + ptr[0].Code);
+                        Log.d("BemaCarl9", "PaxProcessorSaleCommand.ptr.Msg: " + ptr[0].Msg);
+                        errorReason = "Payment cancelled or connection problem.";
+                        Logger.d("Pax TimeOUt");
+
+                    } else {
+                        errorReason = "Exception Code: " + ptr[0].Code + ", Message: " + ptr[0].Msg;
+                        Logger.d("Pax Fail");
                     }
 
-                    transaction.updateWith(response, paxDigitalSign);
+                    // Send initial message to Pax machine.
+                    new PaxProcessorHelloCommand().sync(getContext(), getPaxModel());
 
-                    PaymentTransactionModel transactionModel = new PaymentTransactionModel(getAppCommandContext().getShiftGuid(), transaction);
-                    operations.add(ContentProviderOperation.newInsert(ShopProvider.getContentUri(PaymentTransactionTable.URI_CONTENT))
-                            .withValues(transactionModel.toValues())
-                            .build());
-                    sqlCommand.add(jdbcConverter.insertSQL(transactionModel, getAppCommandContext()));
-
-                } else {
-                    getApp().paxSignatureCanceledByCustomer = true;
-                    getApp().paxMachineHasTransactionSuccessfull = false;
-
-                    transaction.allowReload = true;
-                    errorReason = "Result Code: " + response.ResultCode + " (" + response.ResultTxt + ")";
-                    Logger.d("Pax Error code: " + response.ResultCode + ", Message: " + response.ResultTxt);
                 }
 
-
-            } else if (ptr.Code == ProcessTransResultCode.TimeOut) {
-                transaction.allowReload = true;
-                errorReason = "Payment cancelled or connection problem.";
-                Logger.d("Pax TimeOUt");
-
-            } else {
-                errorReason = "Exception Code: " + ptr.Code + ", Message: " + ptr.Msg;
-                Logger.d("Pax Fail");
             }
-
-            // Send initial message to Pax machine.
-            new PaxProcessorHelloCommand().sync(getContext(), getPaxModel());
+            if(!deviceUtil._alive){
+                transaction.allowReload = true;
+                Log.d("BemaCarl18", "PaxProcessorSaleCommand.ptr.Code 2: " + ptr[0].Code);
+                Log.d("BemaCarl18", "PaxProcessorSaleCommand.ptr.Msg 2: " + ptr[0].Msg);
+                errorReason = "Payment cancelled or connection problem.";
+            }
 
         } catch (Exception ex) {
             transaction.allowReload = true;
-            errorReason = "Exception occured." + ex.getMessage();
+            //errorReason = "Exception occured: " + ex.getMessage();
+            errorReason = "Connection problem with payment terminal.";
+            Log.d("BemaCarl18", "Exception occured: " + ex.getMessage());
             Logger.e("Sale Pax", ex);
         }
 
