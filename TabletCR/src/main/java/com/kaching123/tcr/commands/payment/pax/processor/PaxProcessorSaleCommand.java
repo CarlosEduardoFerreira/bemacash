@@ -189,11 +189,11 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                 Thread.sleep(500);
                 Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil._alive 4: " + deviceUtil._alive);
-                Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil.ptr[0]: " + ptr[0]);
+                //Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil.ptr[0]: " + ptr[0]);
 
                 if(ptr[0] != null) {
                     deviceUtil._running = false;
-                    Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil.ptr[0]: " + ptr[0].Code);
+                    //Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil.ptr[0]: " + ptr[0].Code);
 
                     if (ptr[0].Code == ProcessTransResultCode.OK) {
 
@@ -242,8 +242,8 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
 
                     } else if (ptr[0].Code == ProcessTransResultCode.TimeOut) {
                         transaction.allowReload = true;
-                        Log.d("BemaCarl9", "PaxProcessorSaleCommand.ptr.Code: " + ptr[0].Code);
-                        Log.d("BemaCarl9", "PaxProcessorSaleCommand.ptr.Msg: " + ptr[0].Msg);
+                        //Log.d("BemaCarl9", "PaxProcessorSaleCommand.ptr.Code: " + ptr[0].Code);
+                        //Log.d("BemaCarl9", "PaxProcessorSaleCommand.ptr.Msg: " + ptr[0].Msg);
                         errorReason = "Payment cancelled or connection problem.";
                         Logger.d("Pax TimeOUt");
 
@@ -260,8 +260,8 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
             }
             if(!deviceUtil._alive){
                 transaction.allowReload = true;
-                Log.d("BemaCarl18", "PaxProcessorSaleCommand.ptr.Code 2: " + ptr[0].Code);
-                Log.d("BemaCarl18", "PaxProcessorSaleCommand.ptr.Msg 2: " + ptr[0].Msg);
+                //Log.d("BemaCarl18", "PaxProcessorSaleCommand.ptr.Code 2: " + ptr[0].Code);
+                //Log.d("BemaCarl18", "PaxProcessorSaleCommand.ptr.Msg 2: " + ptr[0].Msg);
                 errorReason = "Payment cancelled or connection problem.";
             }
 
