@@ -21,7 +21,6 @@ import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.EmployeeStatus;
 import com.kaching123.tcr.util.KeyboardUtils;
 
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 

@@ -855,6 +855,7 @@
     <string name="employee_overtime_starts_label">Overtime starts after how many hours per week?</string>
     <string name="employee_tips_eligible_label">Tips eligible</string>
     <string name="employee_commissions_eligible_label">Commission eligible</string>
+    <string name="employee_clock_in_mandatory_label">Clock-in Mandatory</string>
     <string name="employee_commissions_label">Commission:</string>
     <string name="employee_preset_label">Preset:</string>
     <string name="employee_status_label">Status:</string>

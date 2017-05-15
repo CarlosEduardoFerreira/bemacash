@@ -2,6 +2,7 @@
 <resources>
 
     <color name = "mint_color">#BDD244</color>
+    <color name = "tab_selected_color">#FFBAC64A</color>
     <color name = "main_pages_bg_mint_color">#E5EEAF</color>
     <color name ="cashier_activity_background">#222222</color>
 

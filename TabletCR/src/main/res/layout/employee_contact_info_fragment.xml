@@ -7,7 +7,8 @@
     <TableLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingRight="80dp">
 
         <TableRow
             android:layout_width="fill_parent"
@@ -90,7 +91,7 @@
             </FrameLayout>
 
             <EditText
-                android:id="@+id/street_two"
+                android:id="@+id/complementary"
                 style="@style/EditItem.Table.Edittext"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -104,29 +105,8 @@
     <TableLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:gravity="center_vertical">
-
-            <FrameLayout style="@style/EditItem.Table.LabelLayout.Employee">
-
-                <TextView
-                    style="@style/EditItem.Table.Label"
-                    android:text="@string/employee_complementary_label" />
-            </FrameLayout>
-
-            <EditText
-                android:id="@+id/complementary"
-                style="@style/EditItem.Table.Edittext"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:maxLength="@integer/address_max_length"
-                android:singleLine="true" />
-        </TableRow>
+        android:layout_weight="1"
+        android:paddingRight="100dp">
 
         <TableRow
             android:layout_width="fill_parent"

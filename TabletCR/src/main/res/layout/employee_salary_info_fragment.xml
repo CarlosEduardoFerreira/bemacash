@@ -8,7 +8,8 @@
         android:id="@+id/salary_info_table"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingRight="100dp">
 
         <TableRow
             android:layout_width="fill_parent"
@@ -85,7 +86,8 @@
     <TableLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingRight="100dp">
 
         <TableRow
             android:layout_width="fill_parent"
@@ -157,7 +159,7 @@
                 <CheckBox
                     android:id="@+id/clock_in_mandatory"
                     style="@style/EditItem.Table.Label"
-                    android:text="@string/employee_tips_eligible_label" />
+                    android:text="@string/employee_clock_in_mandatory_label" />
             </FrameLayout>
 
         </TableRow>
