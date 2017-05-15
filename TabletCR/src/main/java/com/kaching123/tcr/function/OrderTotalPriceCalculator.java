@@ -314,59 +314,64 @@ public final class OrderTotalPriceCalculator {
         BigDecimal totalTaxVatValue     = BigDecimal.ZERO;
 
 
-        for (SaleItemInfo i : map.values()) {
-            BigDecimal itemFinalPrice               = i.totalPrice;
+        for (SaleItemInfo i2 : map.values()) {
+            BigDecimal itemFinalPrice               = i2.totalPrice;
             BigDecimal itemFinalPriceDiscount       = BigDecimal.ZERO;
             BigDecimal itemFinalPriceTax            = BigDecimal.ZERO;
+            Log.d("BemaCarl20","OrderTotalPriceCalculator...........handler         3.1: " + handler);
+
+            if(i2.discountable) {
+
+                itemFinalPriceDiscount    = CalculationUtil.getItemDiscountValue(itemFinalPrice, i2.discount, i2.discountType);
+                //itemFinalPrice = itemFinalPrice.subtract(itemFinalPriceDiscount);
+
+                Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPrice           1: " + itemFinalPrice);
+                Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPriceDiscount   1: " + itemFinalPriceDiscount);
+                Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPriceTax        1: " + itemFinalPriceTax);
+
+                if (orderDiscount.compareTo(zeroDecimals) == 1) {
+                    BigDecimal orderDiscountValue       = orderDiscount;
+                    BigDecimal discountByItemPercent    = orderDiscount;
+                    if (orderDiscountType == DiscountType.PERCENT) {
+                        orderDiscountValue = CalculationUtil.getDiscountValue(subTotalItemTotal, orderDiscount, orderDiscountType);
+                    }else{
+                        discountByItemPercent = CalculationUtil.getDiscountValueInPercent(itemFinalPrice, orderDiscountValue, DiscountType.VALUE);
+                    }
+                    BigDecimal discountByItemValue = CalculationUtil.getItemDiscountValue(itemFinalPrice, discountByItemPercent, DiscountType.PERCENT);
+                    itemFinalPriceDiscount         = itemFinalPriceDiscount.add(discountByItemValue);
+
+                    Log.d("BemaCarl20", "OrderTotalPriceCalculator.orderDiscountValue         3: " + orderDiscountValue);
+                    Log.d("BemaCarl20", "OrderTotalPriceCalculator.discountByItemPercent      3: " + discountByItemPercent);
+                    Log.d("BemaCarl20", "OrderTotalPriceCalculator.discountByItemValue        3: " + discountByItemValue);
+                    Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPriceDiscount     3: " + itemFinalPriceDiscount);
+                }
+
+            }
+
+            itemFinalPrice = itemFinalPrice.subtract(itemFinalPriceDiscount);
+
+            if (i2.isTaxable && info.isTaxableOrder) {
+                BigDecimal itemFinalPriceTaxable = BigDecimal.ONE.subtract(i2.ebtPayed).multiply(itemFinalPrice);
+                itemFinalPriceTax = CalculationUtil.getTaxVatValue(itemFinalPriceTaxable, i2.tax);
+                itemFinalPrice = itemFinalPrice.add(itemFinalPriceTax);
+                if (TcrApplication.getCountryFunctionality().isMultiTaxGroup()) {
+                    BigDecimal itemFinalPriceTax2 = CalculationUtil.getTaxVatValue(itemFinalPriceTaxable, i2.tax2);
+                    itemFinalPrice = itemFinalPrice.add(itemFinalPriceTax2);
+                    itemFinalPriceTax = itemFinalPriceTax.add(itemFinalPriceTax2);
+                }
+                totalTaxVatValue = totalTaxVatValue.add(itemFinalPriceTax.multiply(i2.qty));
+            }
+            Log.d("BemaCarl20","OrderTotalPriceCalculator.i2.isTaxable              3.1: " + i2.isTaxable);
+            Log.d("BemaCarl20","OrderTotalPriceCalculator.info.isTaxableOrder       3.1: " + info.isTaxableOrder);
+            Log.d("BemaCarl20","OrderTotalPriceCalculator.itemFinalPrice            3.1: " + itemFinalPrice);
+            Log.d("BemaCarl20","OrderTotalPriceCalculator.itemFinalPriceDiscount    3.1: " + itemFinalPriceDiscount);
+            Log.d("BemaCarl20","OrderTotalPriceCalculator.itemFinalPriceTax         3.1: " + itemFinalPriceTax);
 
             if (handler != null) {
-
-                if(i.discountable) {
-
-                    itemFinalPriceDiscount    = CalculationUtil.getItemDiscountValue(itemFinalPrice, i.discount, i.discountType);
-                    //itemFinalPrice = itemFinalPrice.subtract(itemFinalPriceDiscount);
-
-                    Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPrice           1: " + itemFinalPrice);
-                    Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPriceDiscount   1: " + itemFinalPriceDiscount);
-                    Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPriceTax        1: " + itemFinalPriceTax);
-
-                    if (orderDiscount.compareTo(zeroDecimals) == 1) {
-                        BigDecimal orderDiscountValue       = orderDiscount;
-                        BigDecimal discountByItemPercent    = orderDiscount;
-                        if (orderDiscountType == DiscountType.PERCENT) {
-                            orderDiscountValue = CalculationUtil.getDiscountValue(subTotalItemTotal, orderDiscount, orderDiscountType);
-                        }else{
-                            discountByItemPercent = CalculationUtil.getDiscountValueInPercent(itemFinalPrice, orderDiscountValue, DiscountType.VALUE);
-                        }
-                        BigDecimal discountByItemValue = CalculationUtil.getItemDiscountValue(itemFinalPrice, discountByItemPercent, DiscountType.PERCENT);
-                        itemFinalPriceDiscount         = itemFinalPriceDiscount.add(discountByItemValue);
-
-                        Log.d("BemaCarl20", "OrderTotalPriceCalculator.orderDiscountValue         3: " + orderDiscountValue);
-                        Log.d("BemaCarl20", "OrderTotalPriceCalculator.discountByItemPercent      3: " + discountByItemPercent);
-                        Log.d("BemaCarl20", "OrderTotalPriceCalculator.discountByItemValue        3: " + discountByItemValue);
-                        Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPriceDiscount     3: " + itemFinalPriceDiscount);
-                    }
-
-                }
-
-                itemFinalPrice = itemFinalPrice.subtract(itemFinalPriceDiscount);
-
-                if (i.isTaxable && info.isTaxableOrder) {
-                    BigDecimal itemFinalPriceTaxable = BigDecimal.ONE.subtract(i.ebtPayed).multiply(itemFinalPrice);
-                    itemFinalPriceTax = CalculationUtil.getTaxVatValue(itemFinalPriceTaxable, i.tax);
-                    itemFinalPrice = itemFinalPrice.add(itemFinalPriceTax);
-                    if (TcrApplication.getCountryFunctionality().isMultiTaxGroup()) {
-                        BigDecimal itemFinalPriceTax2 = CalculationUtil.getTaxVatValue(itemFinalPriceTaxable, i.tax2);
-                        itemFinalPrice = itemFinalPrice.add(itemFinalPriceTax2);
-                        totalTaxVatValue = totalTaxVatValue.add(itemFinalPriceTax2);
-                    }
-                    totalTaxVatValue = totalTaxVatValue.add(itemFinalPriceTax);
-                }
-
-                handler.handleItem(i, itemFinalPrice, itemFinalPriceDiscount, itemFinalPriceTax);
+                handler.handleItem(i2, itemFinalPrice, itemFinalPriceDiscount, itemFinalPriceTax);
             }
-        }
 
+        }
 
         BigDecimal tmpOderDiscountVal   = CalculationUtil.getDiscountValue(totalDiscountableItemTotal, orderDiscount, orderDiscountType);
         //BigDecimal totalTaxVatValue   = totalOrderPrice.subtract(subTotalItemTotal).add(totalItemDiscount).add(tmpOderDiscountVal);
@@ -405,9 +410,9 @@ public final class OrderTotalPriceCalculator {
         // When tax is negative
         if(totalTaxVatValue.compareTo(zeroDecimals) == -1){
             Log.d("BemaCarl20","OrderTotalPriceCalculator.totalOrderPrice  5.1: " + totalOrderPrice);
-            totalOrderPrice  = totalOrderPrice.add(totalTaxVatValue.abs());
+            //totalOrderPrice  = totalOrderPrice.add(totalTaxVatValue.abs());
             Log.d("BemaCarl20","OrderTotalPriceCalculator.totalOrderPrice  5.2: " + totalOrderPrice);
-            totalTaxVatValue = BigDecimal.ZERO;
+            //totalTaxVatValue = BigDecimal.ZERO;
             //}else if(tmpOderDiscountVal.compareTo(zeroDecimals) != 0){
         }else if(totalTaxVatValue.compareTo(zeroDecimals) == 1){
             Log.d("BemaCarl20","OrderTotalPriceCalculator.totalOrderPrice  5.3: " + totalOrderPrice);
@@ -418,10 +423,18 @@ public final class OrderTotalPriceCalculator {
          *    Finish - Temporary fix for tax negative issue
          *******************************************************************************/
 
-        // item
+        Log.d("BemaCarl20","OrderTotalPriceCalculator.info.isTaxableOrder           6: " + info.isTaxableOrder);
+        Log.d("BemaCarl20","OrderTotalPriceCalculator.orderDiscount                 6: " + orderDiscount);
+        Log.d("BemaCarl20","OrderTotalPriceCalculator.orderDiscountType             6: " + orderDiscountType);
+        Log.d("BemaCarl20","OrderTotalPriceCalculator.tmpOderDiscountVal            6: " + tmpOderDiscountVal);
+        Log.d("BemaCarl20","OrderTotalPriceCalculator.subTotalItemTotal             6: " + subTotalItemTotal);
+        Log.d("BemaCarl20","OrderTotalPriceCalculator.totalTaxVatValue              6: " + totalTaxVatValue);
+        Log.d("BemaCarl20","OrderTotalPriceCalculator.totalItemDiscount             6: " + totalItemDiscount);
+        Log.d("BemaCarl20","OrderTotalPriceCalculator.totalOrderPrice               6: " + totalOrderPrice);
+        Log.d("BemaCarl20","OrderTotalPriceCalculator.totalDiscountableItemTotal    6: " + totalDiscountableItemTotal);
+        Log.d("BemaCarl20","OrderTotalPriceCalculator.totalEbtOrderPrice            6: " + totalEbtOrderPrice);
 
         Log.d("BemaCarl20","OrderTotalPriceCalculator ------------------ finish calculate ----------------------");
-
 
         return new SaleOrderCostInfo(info.isTaxableOrder, orderDiscount, orderDiscountType, tmpOderDiscountVal,
                 subTotalItemTotal, totalTaxVatValue, totalItemDiscount, totalOrderPrice, totalDiscountableItemTotal, totalEbtOrderPrice);
