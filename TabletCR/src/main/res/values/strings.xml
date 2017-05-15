@@ -838,6 +838,7 @@
     <string name="employee_first_name_label">First name:</string>
     <string name="employee_last_name_label">Last name:</string>
     <string name="employee_street_label">Street:</string>
+    <string name="employee_street_label2">Street 2:</string>
     <string name="employee_complementary_label">Complementary:</string>
     <string name="employee_city_label">City:</string>
     <string name="employee_state_label">State:</string>
@@ -850,6 +851,8 @@
     <string name="employee_password_label">Password:</string>
     <string name="employee_confirm_password_label">Confirm\npassword:</string>
     <string name="employee_hourly_rate_label">Hourly rate:</string>
+    <string name="employee_overtime_rate_label">Overtime rate:</string>
+    <string name="employee_overtime_starts_label">Overtime starts after how many hours per week?</string>
     <string name="employee_tips_eligible_label">Tips eligible</string>
     <string name="employee_commissions_eligible_label">Commission eligible</string>
     <string name="employee_commissions_label">Commission:</string>
@@ -1232,6 +1235,13 @@
         <item>General Information</item>
         <item>Notes</item>
         <item>History</item>
+    </string-array>
+
+    <string-array name="employee_tabs">
+        <item>Contact Information</item>
+        <item>Permission</item>
+        <item>Salary info</item>
+        <item>Job Role</item>
     </string-array>
 
     <string-array name="item_tabs">

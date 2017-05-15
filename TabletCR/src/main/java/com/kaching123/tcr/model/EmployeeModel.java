@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseEmployeeActivity;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
@@ -135,6 +136,34 @@ public class EmployeeModel implements IValueModel, Serializable{
                 c.getInt(c.getColumnIndex(EmployeeTable.IS_SYNC)) == 1,
                 null
         );
+    }
+
+    public EmployeeModel(EmployeeModel model) {
+        this.guid = model.guid;
+        this.firstName = model.firstName;
+        this.lastName = model.lastName;
+        this.login = model.login;
+        this.password = model.password;
+        this.street = model.street;
+        this.complementary = model.complementary;
+        this.city = model.city;
+        this.state = model.state;
+        this.country = model.country;
+        this.zip = model.zip;
+        this.phone = model.phone;
+        this.email = model.email;
+        this.sexMale = model.sexMale;
+        this.hireDate = model.hireDate;
+        this.fireDate = model.fireDate;
+        this.status = model.status;
+        this.shopId = model.shopId;
+        this.hRate = model.hRate;
+        this.tipsEligible = model.tipsEligible;
+        this.commissionEligible = model.commissionEligible;
+        this.commission = model.commission;
+        this.isMerchant = model.isMerchant;
+        this.isSynced = model.isSynced;
+        this.inventoryItemCount = model.inventoryItemCount;
     }
 
     public String fullName(){

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/job_role_header" />
+
+    <ListView
+        android:id="@+id/job_roles_list"
+        android:layout_below="@id/header"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
+
+    <!--<include layout="@layout/job_role_list_vertical_dividers" />-->
+
+</RelativeLayout>

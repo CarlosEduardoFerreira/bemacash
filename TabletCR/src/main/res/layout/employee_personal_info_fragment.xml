@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/personal_information_label"
+        style="@style/EditItem.Table.Header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/edit_item_row_margin_top"
+        android:layout_marginLeft="0dp"
+        android:background="@drawable/inventory_title_line"
+        android:drawableLeft="@drawable/user_information"
+        android:drawablePadding="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="4dp"
+        android:text="@string/customer_label_personal_info" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/personal_information_label"
+        android:orientation="horizontal">
+
+        <TableLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/edit_item_row_margin_top">
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout style="@style/EditItem.Table.LabelLayout.Employee">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/employee_first_name_label" />
+                </FrameLayout>
+
+                <EditText
+                    android:id="@+id/first_name"
+                    style="@style/EditItem.Table.Edittext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLength="@integer/name_max_length"
+                    android:singleLine="true" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout style="@style/EditItem.Table.LabelLayout.Employee">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/employee_last_name_label" />
+                </FrameLayout>
+
+                <EditText
+                    android:id="@+id/last_name"
+                    style="@style/EditItem.Table.Edittext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLength="@integer/name_max_length"
+                    android:singleLine="true" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TableLayout
+            android:paddingLeft="16dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/edit_item_row_margin_top">
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout style="@style/EditItem.Table.LabelLayout.Employee">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/employee_login_label" />
+                </FrameLayout>
+
+                <EditText
+                    android:id="@+id/login"
+                    style="@style/EditItem.Table.Edittext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:digits="0123456789"
+                    android:inputType="number"
+                    android:maxLength="@integer/login_length"
+                    android:singleLine="true" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout style="@style/EditItem.Table.LabelLayout.Employee">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/employee_status_label" />
+                </FrameLayout>
+
+                <Spinner
+                    android:id="@+id/status"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TableLayout
+            android:paddingLeft="16dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/edit_item_row_margin_top">
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout style="@style/EditItem.Table.LabelLayout.Employee">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/employee_password_label" />
+                </FrameLayout>
+
+                <EditText
+                    android:id="@+id/password"
+                    style="@style/EditItem.Table.Edittext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberPassword"
+                    android:maxLength="@integer/password_length"
+                    android:singleLine="true" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical">
+
+                <FrameLayout style="@style/EditItem.Table.LabelLayout.Employee">
+
+                    <TextView
+                        style="@style/EditItem.Table.Label.Required"
+                        android:text="@string/employee_confirm_password_label" />
+                </FrameLayout>
+
+                <EditText
+                    android:id="@+id/password_confirm"
+                    style="@style/EditItem.Table.Edittext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberPassword"
+                    android:maxLength="@integer/password_length"
+                    android:singleLine="true" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+
+
+
+
+    <!--</TableLayout>-->
+</RelativeLayout>

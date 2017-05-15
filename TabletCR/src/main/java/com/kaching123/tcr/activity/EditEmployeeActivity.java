@@ -5,21 +5,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
-import android.text.InputFilter;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import com.google.common.base.Function;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.local.EndEmployeeCommand;
 import com.kaching123.tcr.commands.local.StartEmployeeCommand;
@@ -28,17 +18,14 @@ import com.kaching123.tcr.commands.store.user.DeleteEmployeeCommand;
 import com.kaching123.tcr.commands.store.user.EditEmployeeCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
-import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
-import com.kaching123.tcr.fragment.user.LoginFragment;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.service.UploadTask;
 import com.kaching123.tcr.service.v2.UploadTaskV2;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
-import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
 import com.kaching123.tcr.util.ReceiverWrapper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -46,112 +33,44 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
-import static com.kaching123.tcr.fragment.UiHelper.showPhone;
-import static com.kaching123.tcr.fragment.UiHelper.showPrice;
 
 /**
  * Created by vkompaniets on 27.12.13.
  */
-@EActivity(R.layout.employee_edit_activity)
+@EActivity(R.layout.employee_activity_layout)
 @OptionsMenu(R.menu.employee_edit_actions)
 public class EditEmployeeActivity extends BaseEmployeeActivity {
-    public static final int REQUEST_CODE = 1;
 
-    private static final Uri URI_PERMISSIONS = ShopProvider.getContentUri(EmployeePermissionTable.URI_CONTENT);
     protected static final Uri URI_EMPLOYEE_SYNCED = ShopProvider.getNoNotifyContentUri(ShopStore.EmployeeTable.URI_CONTENT);
-
     public EditEmployeeCallback editEmployeeCallback = new EditEmployeeCallback();
-    private static final Uri EMPLOYEE_URI = ShopProvider.getContentUri(ShopStore.EmployeeTable.URI_CONTENT);
-
-    EmployeeModel initEmployeeModel;
-
-    long statusValue;
-    long presedValue;
-    boolean statusChanged = false;
-    boolean presedChanged = false;
-
-    protected Collection<Permission> customPermissionInitial;
 
     @AfterViews
     @Override
     protected void init() {
+        mode = EmployeeMode.EDIT;
         super.init();
         initUserAndPwd();
-        getSupportLoaderManager().initLoader(0, null, new UserPermissionsLoader());
 
         statusChanged = false;
         presedChanged = false;
 
-        status.setOnTouchListener(new android.view.View.OnTouchListener() {
+        personalInfoFragment.getStatus().setOnTouchListener(new android.view.View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    statusValue = status.getSelectedItemId();
+                    statusValue = personalInfoFragment.getStatus().getSelectedItemId();
                 }
                 return false;
             }
         });
-
-        preset.setOnTouchListener(new android.view.View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    presedValue = preset.getSelectedItemId();
-                }
-                return false;
-            }
-        });
-
-        fillFields();
     }
 
     private void initUserAndPwd() {
         if (model.isSynced) {
-            login.setEnabled(false);
-
-            login.setBackgroundColor(getResources().getColor(R.color.password_gray));
-
-            password.setEnabled(false);
-            password.setBackgroundColor(getResources().getColor(R.color.password_gray));
-
-            passwordConfirm.setEnabled(false);
-            passwordConfirm.setBackgroundColor(getResources().getColor(R.color.password_gray));
+            personalInfoFragment.setFieldsEnabled(false);
         }
-    }
-
-    private void fillFields() {
-        firstName.setText(model.firstName);
-        lastName.setText(model.lastName);
-        login.setText(model.login);
-        email.setText(model.email);
-        showPhone(phone, model.phone);
-        street.setText(model.street);
-        complementary.setText(model.complementary);
-        city.setText(model.city);
-        state.setText(model.state);
-        country.setText(model.country);
-        zip.setText(model.zip);
-        showPrice(hourlyRate, model.hRate);
-        this.preset.setSelection(CUSTOM_PRESET_INDEX);
-        status.setSelection(model.status.ordinal());
-        tipsEligible.setChecked(model.tipsEligible);
-        commissionsEligible.setChecked(model.commissionEligible);
-        showPrice(commissions, model.commission);
-
-        InputFilter[] filterArray = new InputFilter[1];
-        filterArray[0] = new InputFilter.LengthFilter(6);
-        hourlyRate.setFilters(filterArray);
-        commissions.setFilters(filterArray);
-
-        initEmployeeModel = model;
     }
 
     @OptionsItem
@@ -240,10 +159,9 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
 
             if (isCurrentUserDeleted(model.login)) {
                 logOut(EditEmployeeActivity.this);
-            } else
+            } else {
                 finish();
-
-
+            }
         }
 
         @Override
@@ -277,40 +195,11 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
     }
 
     @Override
-    protected void bindModel() {
-        super.bindModel();
-        String passwordText = password.getText().toString().trim();
-        if (!TextUtils.isEmpty(passwordText)) {
-            model.password = LoginFragment.md5(passwordText);
-        }
-    }
-
-    @Override
     protected boolean validateForm() {
-        if (!super.validateForm()) {
-            return false;
+        if (!personalInfoFragment.validateView()) {
+           return false;
         }
-        String passwordText = password.getText().toString().trim();
-        String passwordConfirmText = passwordConfirm.getText().toString().trim();
-        boolean isPswdEmpty = TextUtils.isEmpty(passwordText);
-        if (model.isSynced || isPswdEmpty && TextUtils.isEmpty(passwordConfirmText))
-            return true;
-
-        if (model.isSynced || isPswdEmpty) {
-            Toast.makeText(this, R.string.employee_edit_password_error, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (model.isSynced || passwordText.length() < PASSWORD_MIN_LEN) {
-            Toast.makeText(this, R.string.employee_edit_password_min_error, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (model.isSynced || !passwordConfirmText.equals(passwordText)) {
-            Toast.makeText(this, R.string.employee_edit_password_confirm_error, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
+        return super.validateForm();
     }
 
     @Override
@@ -364,200 +253,4 @@ public class EditEmployeeActivity extends BaseEmployeeActivity {
         }
     }
 
-
-    @Override
-    public void onBackPressed() {
-        if(employeeHasChanges() || permissionsHasChanges()) {
-            final FragmentActivity actv = this;
-            AlertDialogFragment.showAlert(
-                this,
-                R.string.dlg_title_back_button,
-                getApplicationContext().getResources().getString(R.string.dlg_text_back_button),
-                R.string.btn_yes,
-                new OnDialogClickListener() {
-                    @Override
-                    public boolean onClick() {
-                        onBackPressedDialog();
-                        return false;
-                    }
-                }, new OnDialogClickListener() {
-                    @Override
-                    public boolean onClick() {
-                        DialogUtil.hide(actv, "errorDialogFragment");
-                        return false;
-                    }
-                }
-            );
-        }else{
-            onBackPressedDialog();
-        }
-    }
-
-    private void onBackPressedDialog(){
-        super.onBackPressed();
-        disableForceLogOut();
-    }
-
-
-
-    private boolean employeeHasChanges(){
-
-        DecimalFormat formatar = new DecimalFormat("###,###,###,###,###.##");
-        formatar.setMinimumFractionDigits(2);
-
-        BigDecimal hR1 = initEmployeeModel.hRate == null ? BigDecimal.ZERO : initEmployeeModel.hRate;
-        String hR2String = hourlyRate.getText().toString().replaceAll(",", "");
-        BigDecimal hR2 = hourlyRate.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(hR2String);
-        String hRate1 = formatar.format(hR1);
-        String hRate2 = formatar.format(hR2);
-
-        statusChanged = statusValue != status.getSelectedItemId();
-
-        BigDecimal co1 = initEmployeeModel.commission  == null ? BigDecimal.ZERO : initEmployeeModel.commission;
-        String co2String = commissions.getText().toString().replaceAll(",", "");
-        BigDecimal co2 = commissions.getText().toString().equals("") ? BigDecimal.ZERO : new BigDecimal(co2String);
-        String commission1 = formatar.format(co1);
-        String commission2 = formatar.format(co2);
-
-        presedChanged = presedValue != preset.getSelectedItemId();
-
-        if(!initEmployeeModel.firstName.equals(firstName.getText().toString())) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.firstName"); return true;
-        }
-        if(!initEmployeeModel.lastName.equals(lastName.getText().toString())) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.lastName"); return true;
-        }
-        if(!initEmployeeModel.login.equals(login.getText().toString())) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.login"); return true;
-        }
-        if(initEmployeeModel.email != null)
-        if(!initEmployeeModel.email.equals(email.getText().toString())) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.email"); return true;
-        }
-        if(initEmployeeModel.phone != null) {
-            String phoneOnlyNumbers = phone.getText().toString().replaceAll("[^0-9]", "");
-            if (!initEmployeeModel.phone.equals(phoneOnlyNumbers)) {
-                Log.d("BemaCarl3", "EditEmployeeActivity.employeeHasChanges.phone: |" + initEmployeeModel.phone + "|" + phoneOnlyNumbers + "|");
-                return true;
-            }
-        }
-        if(initEmployeeModel.street != null)
-        if(!initEmployeeModel.street.equals(street.getText().toString())) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.street"); return true;
-        }
-        if(initEmployeeModel.complementary != null)
-        if(!initEmployeeModel.complementary.equals(complementary.getText().toString())) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.complementary"); return true;
-        }
-        if(initEmployeeModel.city != null)
-        if(!initEmployeeModel.city.equals(city.getText().toString())) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.city"); return true;
-        }
-        if(initEmployeeModel.state != null)
-        if(!initEmployeeModel.state.equals(state.getText().toString())) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.state"); return true;
-        }
-        if(initEmployeeModel.country != null)
-        if(!initEmployeeModel.country.equals(country.getText().toString())) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.country"); return true;
-        }
-        if(initEmployeeModel.zip != null)
-        if(!initEmployeeModel.zip.equals(zip.getText().toString())) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.zip"); return true;
-        }
-        if(!hRate1.equals(hRate2)) {
-            Log.d("BemaCarl3", "EditEmployeeActivity.employeeHasChanges.hourlyRate: |" + hRate1 + "|" + hRate2 + "|");
-            return true;
-        }
-        if(initEmployeeModel.tipsEligible != tipsEligible.isChecked()) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.tipsEligible"); return true;
-        }
-        if(initEmployeeModel.commissionEligible != commissionsEligible.isChecked()) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.commissionsEligible"); return true;
-        }
-        if(!commission1.equals(commission2)) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.commissions"); return true;
-        }
-        if(statusChanged) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.statusChanged"); return true;
-        }
-        if(presedChanged) {
-            Log.d("BemaCarl3","EditEmployeeActivity.employeeHasChanges.presedChanged"); return true;
-        }
-
-        return false;
-    }
-
-
-    private boolean permissionsHasChanges(){
-        if(customPermissionInitial!=null && customPermissionsBase!=null) {
-            for (Permission a : customPermissionInitial) {
-                boolean hasOnBase = customPermissionsBase.contains(a);
-                if (!hasOnBase){
-                    Log.d("BemaCarl3","EditEmployeeActivity.permissionsHasChanges.hasOnBase: " + hasOnBase);
-                    Log.d("BemaCarl3","EditEmployeeActivity.permissionsHasChanges.a.getId(): " + a.getId());
-                    return true;
-                }
-            }
-            for (Permission b : customPermissionsBase) {
-                boolean hasOnInitial = customPermissionInitial.contains(b);
-                if (!hasOnInitial){
-                    Log.d("BemaCarl3","EditEmployeeActivity.permissionsHasChanges.hasOnInitial: " + hasOnInitial);
-                    Log.d("BemaCarl3","EditEmployeeActivity.permissionsHasChanges.b.getId(): " + b.getId());
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-
-    private void disableForceLogOut() {
-        setResult(REQUEST_CODE, new Intent().putExtra(DashboardActivity.EXTRA_FORCE_LOGOUT, false));
-    }
-
-    private class UserPermissionsLoader implements LoaderCallbacks<List<Permission>> {
-
-        @Override
-        public Loader<List<Permission>> onCreateLoader(int i, Bundle bundle) {
-            return CursorLoaderBuilder.forUri(URI_PERMISSIONS)
-                    .projection(EmployeePermissionTable.PERMISSION_ID)
-                    .where(EmployeePermissionTable.USER_GUID + " = ?", model.guid)
-                    .where(EmployeePermissionTable.ENABLED + " = ?", 1)
-                    .transform(new Function<Cursor, List<Permission>>() {
-                        @Override
-                        public List<Permission> apply(Cursor c) {
-                            List<Permission> permissions = new ArrayList<Permission>(c.getCount());
-                            while (c.moveToNext()) {
-                                Permission p = Permission.valueOfOrNull(c.getLong(0));
-                                if (p != null) {
-                                    permissions.add(p);
-                                }
-                            }
-                            Collections.sort(permissions, new Comparator<Permission>() {
-                                @Override
-                                public int compare(Permission p1, Permission p2) {
-                                    return p1.getGroup().compareTo(p2.getGroup());
-                                }
-                            });
-                            customPermissionInitial = permissions;
-                            return permissions;
-                        }
-                    })
-                    .build(EditEmployeeActivity.this);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Permission>> mapLoader, List<Permission> permissions) {
-            try2SetupPermissions(permissions);
-            getSupportLoaderManager().destroyLoader(0);
-            presedValue = preset.getSelectedItemId();
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Permission>> mapLoader) {
-
-        }
-
-    }
 }

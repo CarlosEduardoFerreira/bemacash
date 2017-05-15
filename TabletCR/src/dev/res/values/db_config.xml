@@ -1,5 +1,5 @@
 <resources>
-    <string name="api_server_url">http://54.202.36.31</string>
+    <string name="api_server_url">http://54.212.230.2</string>
     <string name="api_basic_cred"></string>
     <string name="merchant_register_url">http://bematech.demo162.dataart.com</string>
 </resources>
