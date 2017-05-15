@@ -165,9 +165,11 @@ public abstract class BaseEmployeeActivity extends SuperBaseActivity implements 
                 return true;
             }
             for (int i = 0; i < adapter.getCount(); i++) {
-                ((EmployeeView) adapter.getItem(i)).hasChanges(initEmployeeModel);
+                if(((EmployeeView) adapter.getItem(i)).hasChanges(initEmployeeModel)) {
+                    return true;
+                }
             }
-            statusChanged = statusValue != personalInfoFragment.getStatus().getSelectedItemId();
+            statusChanged = initEmployeeModel.status.ordinal() != personalInfoFragment.getStatus().getSelectedItemId();
 
             presedValue = permissionFragment.getPresedValue();
             presedChanged = presedValue != permissionFragment.getPreset().getSelectedItemId();
