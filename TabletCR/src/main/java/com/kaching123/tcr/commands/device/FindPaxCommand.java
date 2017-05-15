@@ -142,7 +142,7 @@ public class FindPaxCommand extends PublicGroundyTask {
                 }
             }
         } catch (SocketException ex) {
-            Log.e("Socket exception in GetIP Address of Utilities", ex.toString());
+            Log.e("Socket exception", " in GetIP Address of Utilities: " + ex.toString());
         }
         return null;
     }
