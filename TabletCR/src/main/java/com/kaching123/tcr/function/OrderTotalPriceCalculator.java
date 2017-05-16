@@ -139,20 +139,21 @@ public final class OrderTotalPriceCalculator {
 
                 itemFinalPriceDiscount    = CalculationUtil.getItemDiscountValue(itemFinalPrice, i2.discount, i2.discountType);
 
-                Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPriceDiscount     2: " + itemFinalPriceDiscount);
+                Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPrice           2: " + itemFinalPrice);
+                Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPriceDiscount   2: " + itemFinalPriceDiscount);
 
                 if (orderDiscount.compareTo(zeroDecimals) == 1) {
-                    BigDecimal orderDiscountValue       = orderDiscount;
                     BigDecimal discountByItemPercent    = orderDiscount;
-                    if (orderDiscountType == DiscountType.PERCENT) {
-                        orderDiscountValue          = CalculationUtil.getDiscountValue(itemSubTotal.subtract(itemDiscountTotal), orderDiscount, orderDiscountType);
-                    }else{
-                        discountByItemPercent       = CalculationUtil.getDiscountValueInPercent(itemFinalPrice.subtract(itemFinalPriceDiscount), orderDiscountValue, DiscountType.VALUE);
+                    if (orderDiscountType == DiscountType.VALUE) {
+                        discountByItemPercent       = CalculationUtil.getDiscountValueInPercent(itemSubTotal.subtract(itemDiscountTotal), orderDiscount, orderDiscountType);
                     }
                     BigDecimal discountByItemValue  = CalculationUtil.getItemDiscountValue(itemFinalPrice.subtract(itemFinalPriceDiscount), discountByItemPercent, DiscountType.PERCENT);
+                    Log.d("BemaCarl20", "OrderTotalPriceCalculator.discountByItemValue      2.1: " + discountByItemValue);
+                    discountByItemValue = discountByItemValue.setScale(2, RoundingMode.DOWN);
+                    Log.d("BemaCarl20", "OrderTotalPriceCalculator.discountByItemValue      2.2: " + discountByItemValue);
                     itemFinalPriceDiscount          = itemFinalPriceDiscount.add(discountByItemValue);
 
-                    Log.d("BemaCarl20", "OrderTotalPriceCalculator.orderDiscountValue         3: " + orderDiscountValue);
+                    Log.d("BemaCarl20", "OrderTotalPriceCalculator.orderDiscount              3: " + orderDiscount);
                     Log.d("BemaCarl20", "OrderTotalPriceCalculator.discountByItemPercent      3: " + discountByItemPercent);
                     Log.d("BemaCarl20", "OrderTotalPriceCalculator.discountByItemValue        3: " + discountByItemValue);
                     Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPriceDiscount     3: " + itemFinalPriceDiscount);
@@ -211,6 +212,7 @@ public final class OrderTotalPriceCalculator {
                 itemSubTotal, orderTax, itemDiscountTotal, orderTotal, itemSubTotal, totalEbtOrderPrice);
 
     }
+
 
     private static class CalcItemInfo {
         SaleItemInfo itemInfo;
