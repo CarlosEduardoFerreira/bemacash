@@ -1196,6 +1196,12 @@ public abstract class ShopStore {
         @Column(type = Column.Type.TEXT)
         String HOURLY_RATE = "hourly_rate";
 
+        @Column(type = Column.Type.TEXT)
+        String OVERTIME_RATE = "overtime_rate";
+
+        @Column(type = Column.Type.TEXT)
+        String OVER_STARTS_FROM = "over_starts_from";
+
         @NotNull
         @Column(type = Column.Type.INTEGER)
         String SHOP_ID = "shop_id";
@@ -1203,6 +1209,10 @@ public abstract class ShopStore {
         @NotNull
         @Column(type = Column.Type.INTEGER, defVal = "0")
         String TIPS_ELIGIBLE = "tips_eligible";
+
+        @NotNull
+        @Column(type = Column.Type.INTEGER, defVal = "0")
+        String CLOCK_IN_MANDATORY = "clock_in_mandatory";
 
         @NotNull
         @Column(type = Column.Type.INTEGER, defVal = "1")

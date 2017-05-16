@@ -1,10 +1,6 @@
 package com.kaching123.tcr.jdbc.converters;
 
-import android.text.TextUtils;
-import android.util.Log;
-
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.jdbc.JdbcBuilder;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.EmployeeStatus;
@@ -16,11 +12,8 @@ import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
@@ -58,6 +51,9 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
     private static final String COMMISSION = "COMMISSION";
     private static final String RESELLER_ID = "RESELLER_ID";
     private static final String IS_SYNC = "IS_SYNC";
+    private static final String OVERTIME_RATE = "OVERTIME_RATE";
+    private static final String CLOCK_IN_MANDATORY = "CLOCK_IN_MANDATORY";
+    private static final String OVERTIME_STARTS_AFTER = "OVERTIME_STARTS_AFTER";
 
     @Override
     public EmployeeModel toValues(JdbcJSONObject rs) throws JSONException {
@@ -86,6 +82,9 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
         if (!rs.has(COMMISSION)) ignoreFields.add(ShopStore.EmployeeTable.COMMISSION);
         if (!rs.has(RESELLER_ID)) ignoreFields.add(ShopStore.EmployeeTable.IS_MERCHANT);
         if (!rs.has(IS_SYNC)) ignoreFields.add(ShopStore.EmployeeTable.IS_SYNC);
+        if (!rs.has(OVERTIME_RATE)) ignoreFields.add(ShopStore.EmployeeTable.OVERTIME_RATE);
+        if (!rs.has(CLOCK_IN_MANDATORY)) ignoreFields.add(ShopStore.EmployeeTable.CLOCK_IN_MANDATORY);
+        if (!rs.has(OVERTIME_STARTS_AFTER)) ignoreFields.add(ShopStore.EmployeeTable.OVER_STARTS_FROM);
 
         return new EmployeeModel(
                 rs.getString(GUID),
@@ -112,6 +111,9 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 rs.getBigDecimal(COMMISSION),
                 !rs.isNull(RESELLER_ID),
                 rs.getBoolean(IS_SYNC),
+                rs.getBigDecimal(OVERTIME_RATE),
+                rs.getString(OVERTIME_STARTS_AFTER),
+                rs.getBoolean(CLOCK_IN_MANDATORY),
                 ignoreFields
         );
     }
@@ -159,6 +161,9 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                     .put(TIPS_ELIGIBLE, model.tipsEligible)
                     .put(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
                     .put(COMMISSION, model.commission)
+                    .put(OVERTIME_RATE, model.overtimeRate)
+                    .put(OVERTIME_STARTS_AFTER, model.overtimeStartsFrom)
+                    .put(CLOCK_IN_MANDATORY, model.clockInMandatory)
                     .put(RESELLER_ID, model.isMerchant)
                     .put(IS_SYNC, model.isSynced);
 
@@ -197,6 +202,9 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(COMMISSION, model.commission)
                 .add(RESELLER_ID, (byte[]) null)
                 .add(IS_SYNC, model.isSynced)
+                .add(CLOCK_IN_MANDATORY, model.clockInMandatory)
+                .add(OVERTIME_RATE, model.overtimeRate)
+                .add(OVERTIME_STARTS_AFTER, model.overtimeStartsFrom)
                 .build(JdbcFactory.getApiMethod(model));
     }
 
@@ -226,6 +234,9 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
                 .add(COMMISSION, model.commission)
                 .add(IS_SYNC, model.isSynced)
+                .add(CLOCK_IN_MANDATORY, model.clockInMandatory)
+                .add(OVERTIME_RATE, model.overtimeRate)
+                .add(OVERTIME_STARTS_AFTER, model.overtimeStartsFrom)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }
@@ -253,6 +264,9 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(ELIGIBLE_FOR_COMMISSION, model.commissionEligible)
                 .add(COMMISSION, model.commission)
                 .add(IS_SYNC, model.isSynced)
+                .add(CLOCK_IN_MANDATORY, model.clockInMandatory)
+                .add(OVERTIME_RATE, model.overtimeRate)
+                .add(OVERTIME_STARTS_AFTER, model.overtimeStartsFrom)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }

@@ -267,6 +267,10 @@ public class UpdateBlock {
     public static void update10to10_1(SQLiteDatabase db){
         db.execSQL("ALTER TABLE customer ADD COLUMN status INTEGER");
 
+        db.execSQL("ALTER TABLE employee ADD COLUMN clock_in_mandatory INTEGER DEFAULT (0)");
+        db.execSQL("ALTER TABLE employee ADD COLUMN overtime_rate TEXT");
+        db.execSQL("ALTER TABLE employee ADD COLUMN over_starts_from TEXT");
+
         updateViews(db);
     }
 

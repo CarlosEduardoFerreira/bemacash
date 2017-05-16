@@ -79,9 +79,14 @@ public class EmployeeSalaryInfoFragment extends EmployeeBaseFragment implements 
         commissionsEligible.setChecked(model.commissionEligible);
         showPrice(commissions, model.commission);
 
+        showPrice(overtimeRate, model.overtimeRate);
+        overtimeStarts.setText(model.overtimeStartsFrom);
+        clockInMandatory.setChecked(model.clockInMandatory);
+
         InputFilter[] filterArray = new InputFilter[1];
         filterArray[0] = new InputFilter.LengthFilter(6);
         hourlyRate.setFilters(filterArray);
+        overtimeRate.setFilters(filterArray);
         commissions.setFilters(filterArray);
     }
 
@@ -91,6 +96,9 @@ public class EmployeeSalaryInfoFragment extends EmployeeBaseFragment implements 
         model.tipsEligible = tipsEligible.isChecked();
         model.commissionEligible = commissionsEligible.isChecked();
         model.commission = parseBigDecimal(commissions, BigDecimal.ZERO);
+        model.overtimeRate = parseBigDecimal(overtimeRate, BigDecimal.ZERO);
+        model.overtimeStartsFrom = overtimeStarts.getText().toString();
+        model.clockInMandatory = clockInMandatory.isChecked();
     }
 
     @Override
