@@ -40,6 +40,7 @@ public class EmployeeModel implements IValueModel, Serializable{
     public String phone;
     public String email;
     public boolean sexMale;
+    public boolean clockInMandatory;
 
     public Date hireDate;
     public Date fireDate;
@@ -47,6 +48,8 @@ public class EmployeeModel implements IValueModel, Serializable{
     public EmployeeStatus status;
     public long shopId;
     public BigDecimal hRate;
+    public BigDecimal overtimeRate;
+    public String overtimeStartsFrom;
 
     public boolean tipsEligible;
     public boolean commissionEligible;
@@ -78,7 +81,8 @@ public class EmployeeModel implements IValueModel, Serializable{
                          String phone, String email, boolean sexMale, Date hireDate, Date fireDate,
                          EmployeeStatus status, long shopId, BigDecimal hRate, boolean tipsEligible,
                          boolean commissionEligible, BigDecimal commission, boolean isMerchant, boolean isSynced,
-                        List<String> ignoreFields) {
+                         BigDecimal oRate, String overtimeStartsFrom, boolean clockInMandatory,
+                         List<String> ignoreFields) {
 
         this.guid = guid;
         this.firstName = firstName;
@@ -104,6 +108,9 @@ public class EmployeeModel implements IValueModel, Serializable{
         this.commission = commission;
         this.isMerchant = isMerchant;
         this.isSynced = isSynced;
+        this.overtimeRate = oRate;
+        this.overtimeStartsFrom = overtimeStartsFrom;
+        this.clockInMandatory = clockInMandatory;
 
         this.mIgnoreFields = ignoreFields;
     }
@@ -134,6 +141,9 @@ public class EmployeeModel implements IValueModel, Serializable{
                 _decimal(c, c.getColumnIndex(EmployeeTable.COMMISSION), BigDecimal.ZERO),
                 c.getInt(c.getColumnIndex(EmployeeTable.IS_MERCHANT)) == 1,
                 c.getInt(c.getColumnIndex(EmployeeTable.IS_SYNC)) == 1,
+                _decimal(c, c.getColumnIndex(EmployeeTable.OVERTIME_RATE), BigDecimal.ZERO),
+                c.getString(c.getColumnIndex(EmployeeTable.OVER_STARTS_FROM)),
+                c.getInt(c.getColumnIndex(EmployeeTable.CLOCK_IN_MANDATORY)) == 1,
                 null
         );
     }
@@ -164,6 +174,9 @@ public class EmployeeModel implements IValueModel, Serializable{
         this.isMerchant = model.isMerchant;
         this.isSynced = model.isSynced;
         this.inventoryItemCount = model.inventoryItemCount;
+        this.overtimeRate = model.overtimeRate;
+        this.overtimeStartsFrom = model.overtimeStartsFrom;
+        this.clockInMandatory = model.clockInMandatory;
     }
 
     public String fullName(){
@@ -203,6 +216,9 @@ public class EmployeeModel implements IValueModel, Serializable{
         if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.ELIGIBLE_FOR_COMMISSION)) v.put(EmployeeTable.ELIGIBLE_FOR_COMMISSION, commissionEligible);
         if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.COMMISSION)) v.put(EmployeeTable.COMMISSION, _decimal(commission));
         if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.IS_SYNC)) v.put(EmployeeTable.IS_SYNC, isSynced);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.OVERTIME_RATE)) v.put(EmployeeTable.OVERTIME_RATE,_decimal(overtimeRate));
+        if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.OVER_STARTS_FROM)) v.put(EmployeeTable.OVER_STARTS_FROM, overtimeStartsFrom);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.CLOCK_IN_MANDATORY)) v.put(EmployeeTable.CLOCK_IN_MANDATORY, clockInMandatory);
         return v;
     }
 
