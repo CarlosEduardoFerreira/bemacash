@@ -120,7 +120,7 @@ public final class OrderTotalPriceCalculator {
 
             if (i1.discountable) {
                 itemDiscount        = CalculationUtil.getItemDiscountValue(itemValue, i1.discount, i1.discountType);
-                itemDiscountTotal   = itemDiscount.multiply(i1.qty);
+                itemDiscountTotal = itemDiscountTotal.add(itemDiscount.multiply(i1.qty));
             }
 
             if (i1.isEbtEligible){
@@ -149,7 +149,7 @@ public final class OrderTotalPriceCalculator {
                     }
                     BigDecimal discountByItemValue  = CalculationUtil.getItemDiscountValue(itemFinalPrice.subtract(itemFinalPriceDiscount), discountByItemPercent, DiscountType.PERCENT);
                     Log.d("BemaCarl20", "OrderTotalPriceCalculator.discountByItemValue      2.1: " + discountByItemValue);
-                    discountByItemValue = discountByItemValue.setScale(2, RoundingMode.DOWN);
+                    //discountByItemValue = discountByItemValue.setScale(2, RoundingMode.DOWN);
                     Log.d("BemaCarl20", "OrderTotalPriceCalculator.discountByItemValue      2.2: " + discountByItemValue);
                     itemFinalPriceDiscount          = itemFinalPriceDiscount.add(discountByItemValue);
 
@@ -184,7 +184,11 @@ public final class OrderTotalPriceCalculator {
                 Log.d("BemaCarl20", "OrderTotalPriceCalculator.orderTax                  5.4: " + orderTax);
             }
 
+            Log.d("BemaCarl20", "OrderTotalPriceCalculator.handler                  6: " + handler);
             if (handler != null) {
+                Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPrice                  6: " + itemFinalPrice);
+                Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPriceDiscount          6: " + itemFinalPriceDiscount);
+                Log.d("BemaCarl20", "OrderTotalPriceCalculator.itemFinalPriceTax               6: " + itemFinalPriceTax);
                 handler.handleItem(i2, itemFinalPrice, itemFinalPriceDiscount, itemFinalPriceTax);
             }
 
@@ -194,6 +198,8 @@ public final class OrderTotalPriceCalculator {
         if (orderDiscount.compareTo(zeroDecimals) == 1) {
             tmpOderDiscountVal = CalculationUtil.getDiscountValue(itemSubTotal.subtract(itemDiscountTotal), orderDiscount, orderDiscountType);
         }
+
+        BigDecimal subTotalDiscontable = itemSubTotal.subtract(itemDiscountTotal);
 
         orderTotal                 = orderTotal.add(itemSubTotal);
         orderTotal                 = orderTotal.subtract(itemDiscountTotal);
@@ -209,7 +215,7 @@ public final class OrderTotalPriceCalculator {
         Log.d("BemaCarl20","OrderTotalPriceCalculator ------------------ finish calculate ----------------------");
 
         return new SaleOrderCostInfo(info.isTaxableOrder, orderDiscount, orderDiscountType, tmpOderDiscountVal,
-                itemSubTotal, orderTax, itemDiscountTotal, orderTotal, itemSubTotal, totalEbtOrderPrice);
+                itemSubTotal, orderTax, itemDiscountTotal, orderTotal, subTotalDiscontable, totalEbtOrderPrice);
 
     }
 
