@@ -1215,6 +1215,10 @@ public abstract class ShopStore {
         String CLOCK_IN_MANDATORY = "clock_in_mandatory";
 
         @NotNull
+        @Column(type = Column.Type.INTEGER, defVal = "0")
+        String OPEN_SHIFT_MANDATORY = "open_shift_mandatory";
+
+        @NotNull
         @Column(type = Column.Type.INTEGER, defVal = "1")
         String ELIGIBLE_FOR_COMMISSION = "eligible_for_commission";
 

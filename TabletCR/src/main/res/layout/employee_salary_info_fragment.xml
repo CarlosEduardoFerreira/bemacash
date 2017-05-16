@@ -76,9 +76,26 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="numberDecimal"
-                android:maxLength="6"
+                android:inputType="number"
+                android:maxLength="3"
                 android:singleLine="true" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical">
+
+            <FrameLayout
+                style="@style/EditItem.Table.LabelLayout.Employee"
+                android:paddingLeft="0dp">
+
+                <CheckBox
+                    android:id="@+id/open_shift_mandatory"
+                    style="@style/EditItem.Table.Label"
+                    android:text="@string/employee_open_shift_mandatory_label" />
+            </FrameLayout>
+
         </TableRow>
 
     </TableLayout>

@@ -53,6 +53,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
     private static final String IS_SYNC = "IS_SYNC";
     private static final String OVERTIME_RATE = "OVERTIME_RATE";
     private static final String CLOCK_IN_MANDATORY = "CLOCK_IN_MANDATORY";
+    private static final String OPEN_SHIFT_MANDATORY = "OPEN_SHIFT_MANDATORY";
     private static final String OVERTIME_STARTS_AFTER = "OVERTIME_STARTS_AFTER";
 
     @Override
@@ -84,6 +85,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
         if (!rs.has(IS_SYNC)) ignoreFields.add(ShopStore.EmployeeTable.IS_SYNC);
         if (!rs.has(OVERTIME_RATE)) ignoreFields.add(ShopStore.EmployeeTable.OVERTIME_RATE);
         if (!rs.has(CLOCK_IN_MANDATORY)) ignoreFields.add(ShopStore.EmployeeTable.CLOCK_IN_MANDATORY);
+        if (!rs.has(OPEN_SHIFT_MANDATORY)) ignoreFields.add(ShopStore.EmployeeTable.OPEN_SHIFT_MANDATORY);
         if (!rs.has(OVERTIME_STARTS_AFTER)) ignoreFields.add(ShopStore.EmployeeTable.OVER_STARTS_FROM);
 
         return new EmployeeModel(
@@ -114,6 +116,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 rs.getBigDecimal(OVERTIME_RATE),
                 rs.getString(OVERTIME_STARTS_AFTER),
                 rs.getBoolean(CLOCK_IN_MANDATORY),
+                rs.getBoolean(OPEN_SHIFT_MANDATORY),
                 ignoreFields
         );
     }
@@ -164,6 +167,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                     .put(OVERTIME_RATE, model.overtimeRate)
                     .put(OVERTIME_STARTS_AFTER, model.overtimeStartsFrom)
                     .put(CLOCK_IN_MANDATORY, model.clockInMandatory)
+                    .put(OPEN_SHIFT_MANDATORY, model.openShiftMandatory)
                     .put(RESELLER_ID, model.isMerchant)
                     .put(IS_SYNC, model.isSynced);
 
@@ -203,6 +207,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(RESELLER_ID, (byte[]) null)
                 .add(IS_SYNC, model.isSynced)
                 .add(CLOCK_IN_MANDATORY, model.clockInMandatory)
+                .add(OPEN_SHIFT_MANDATORY, model.openShiftMandatory)
                 .add(OVERTIME_RATE, model.overtimeRate)
                 .add(OVERTIME_STARTS_AFTER, model.overtimeStartsFrom)
                 .build(JdbcFactory.getApiMethod(model));
@@ -235,6 +240,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(COMMISSION, model.commission)
                 .add(IS_SYNC, model.isSynced)
                 .add(CLOCK_IN_MANDATORY, model.clockInMandatory)
+                .add(OPEN_SHIFT_MANDATORY, model.openShiftMandatory)
                 .add(OVERTIME_RATE, model.overtimeRate)
                 .add(OVERTIME_STARTS_AFTER, model.overtimeStartsFrom)
                 .where(GUID, model.guid)
@@ -265,6 +271,7 @@ public class EmployeeJdbcConverter extends JdbcConverter<EmployeeModel> {
                 .add(COMMISSION, model.commission)
                 .add(IS_SYNC, model.isSynced)
                 .add(CLOCK_IN_MANDATORY, model.clockInMandatory)
+                .add(OPEN_SHIFT_MANDATORY, model.openShiftMandatory)
                 .add(OVERTIME_RATE, model.overtimeRate)
                 .add(OVERTIME_STARTS_AFTER, model.overtimeStartsFrom)
                 .where(GUID, model.guid)

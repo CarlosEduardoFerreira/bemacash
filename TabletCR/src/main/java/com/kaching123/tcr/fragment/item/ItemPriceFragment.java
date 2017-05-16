@@ -67,6 +67,7 @@ public class ItemPriceFragment extends ItemBaseFragment {
     public void duplicate() {
         if (priceType != null && priceType.getAdapter() != null &&
                 discountType != null && discountType.getAdapter() != null) {
+            setModel();
             priceType.setSelection(getPriceTypeSelected());
             discountType.setSelection(getDiscountTypeSelected());
             ((BaseItemActivity2) getActivity()).priceInfoReady();

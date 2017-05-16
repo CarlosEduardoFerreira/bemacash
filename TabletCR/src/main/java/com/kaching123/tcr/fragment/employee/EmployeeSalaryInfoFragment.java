@@ -40,6 +40,8 @@ public class EmployeeSalaryInfoFragment extends EmployeeBaseFragment implements 
     @ViewById
     protected CheckBox clockInMandatory;
     @ViewById
+    protected CheckBox openShiftMandatory;
+    @ViewById
     protected CheckBox tipsEligible;
     @ViewById
     protected View commissionsEligibleContainer;
@@ -82,6 +84,7 @@ public class EmployeeSalaryInfoFragment extends EmployeeBaseFragment implements 
         showPrice(overtimeRate, model.overtimeRate);
         overtimeStarts.setText(model.overtimeStartsFrom);
         clockInMandatory.setChecked(model.clockInMandatory);
+        openShiftMandatory.setChecked(model.openShiftMandatory);
 
         InputFilter[] filterArray = new InputFilter[1];
         filterArray[0] = new InputFilter.LengthFilter(6);
@@ -99,6 +102,7 @@ public class EmployeeSalaryInfoFragment extends EmployeeBaseFragment implements 
         model.overtimeRate = parseBigDecimal(overtimeRate, BigDecimal.ZERO);
         model.overtimeStartsFrom = overtimeStarts.getText().toString();
         model.clockInMandatory = clockInMandatory.isChecked();
+        model.openShiftMandatory = openShiftMandatory.isChecked();
     }
 
     @Override

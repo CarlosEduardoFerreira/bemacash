@@ -193,7 +193,7 @@ public class EmployeesActivity extends SuperBaseActivity {
         } else {
             EmployeeModel model = new EmployeeModel(UUID.randomUUID().toString(), null, null, null, null, null, null, null, null, null, null, null, null, true, null, null,
                     EmployeeStatus.ACTIVE,
-                    TcrApplication.get().getShopId(), BigDecimal.ZERO, false, false, null, false, false, BigDecimal.ZERO, null, false, null);//TcrApplication.get().getShopId());
+                    TcrApplication.get().getShopId(), BigDecimal.ZERO, false, false, null, false, false, BigDecimal.ZERO, null, false, false, null);//TcrApplication.get().getShopId());
             AddEmployeeActivity.start(this, model);
         }
     }
@@ -367,7 +367,7 @@ public class EmployeesActivity extends SuperBaseActivity {
                     EmployeeTable.STATUS + coma + EmployeeTable.HOURLY_RATE + coma +
                     EmployeeTable.SHOP_ID + coma + EmployeeTable.TIPS_ELIGIBLE + coma +
                     EmployeeTable.ELIGIBLE_FOR_COMMISSION + coma + EmployeeTable.COMMISSION + coma +
-                    EmployeeTable.IS_MERCHANT + coma + EmployeeTable.IS_SYNC + coma +
+                    EmployeeTable.IS_MERCHANT + coma + EmployeeTable.IS_SYNC + coma + EmployeeTable.OPEN_SHIFT_MANDATORY + coma +
                     EmployeeTable.OVER_STARTS_FROM + coma + EmployeeTable.OVERTIME_RATE + coma + EmployeeTable.CLOCK_IN_MANDATORY + coma +
                     "(" + EmployeeTable.FIRST_NAME  + " || ' ' || " + EmployeeTable.LAST_NAME + ") " + "as " + firstLastName + coma +
                     "(" + EmployeeTable.LAST_NAME  + " || ' ' || " + EmployeeTable.FIRST_NAME + ") " + "as " + lastFirstName);

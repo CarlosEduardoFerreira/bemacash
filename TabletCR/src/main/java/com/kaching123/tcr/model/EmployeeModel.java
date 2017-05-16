@@ -41,6 +41,7 @@ public class EmployeeModel implements IValueModel, Serializable{
     public String email;
     public boolean sexMale;
     public boolean clockInMandatory;
+    public boolean openShiftMandatory;
 
     public Date hireDate;
     public Date fireDate;
@@ -81,7 +82,7 @@ public class EmployeeModel implements IValueModel, Serializable{
                          String phone, String email, boolean sexMale, Date hireDate, Date fireDate,
                          EmployeeStatus status, long shopId, BigDecimal hRate, boolean tipsEligible,
                          boolean commissionEligible, BigDecimal commission, boolean isMerchant, boolean isSynced,
-                         BigDecimal oRate, String overtimeStartsFrom, boolean clockInMandatory,
+                         BigDecimal oRate, String overtimeStartsFrom, boolean clockInMandatory, boolean openShiftMandatory,
                          List<String> ignoreFields) {
 
         this.guid = guid;
@@ -111,6 +112,7 @@ public class EmployeeModel implements IValueModel, Serializable{
         this.overtimeRate = oRate;
         this.overtimeStartsFrom = overtimeStartsFrom;
         this.clockInMandatory = clockInMandatory;
+        this.openShiftMandatory = openShiftMandatory;
 
         this.mIgnoreFields = ignoreFields;
     }
@@ -144,6 +146,7 @@ public class EmployeeModel implements IValueModel, Serializable{
                 _decimal(c, c.getColumnIndex(EmployeeTable.OVERTIME_RATE), BigDecimal.ZERO),
                 c.getString(c.getColumnIndex(EmployeeTable.OVER_STARTS_FROM)),
                 c.getInt(c.getColumnIndex(EmployeeTable.CLOCK_IN_MANDATORY)) == 1,
+                c.getInt(c.getColumnIndex(EmployeeTable.OPEN_SHIFT_MANDATORY)) == 1,
                 null
         );
     }
@@ -177,6 +180,7 @@ public class EmployeeModel implements IValueModel, Serializable{
         this.overtimeRate = model.overtimeRate;
         this.overtimeStartsFrom = model.overtimeStartsFrom;
         this.clockInMandatory = model.clockInMandatory;
+        this.openShiftMandatory = model.openShiftMandatory;
     }
 
     public String fullName(){
@@ -219,6 +223,7 @@ public class EmployeeModel implements IValueModel, Serializable{
         if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.OVERTIME_RATE)) v.put(EmployeeTable.OVERTIME_RATE,_decimal(overtimeRate));
         if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.OVER_STARTS_FROM)) v.put(EmployeeTable.OVER_STARTS_FROM, overtimeStartsFrom);
         if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.CLOCK_IN_MANDATORY)) v.put(EmployeeTable.CLOCK_IN_MANDATORY, clockInMandatory);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(EmployeeTable.OPEN_SHIFT_MANDATORY)) v.put(EmployeeTable.OPEN_SHIFT_MANDATORY, openShiftMandatory);
         return v;
     }
 
