@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
@@ -253,6 +254,12 @@ public class InventoryActivity extends ScannerBaseActivity {
         boolean enableABCSort = getApp().isEnableABCOrder();
         itemsFragment.sortOrderChanged();
         sort.setIcon(getResources().getDrawable(enableABCSort ? R.drawable.ic_action_sort_az : R.drawable.ic_action_sort_category));
+
+        if (enableABCSort) {
+            Toast.makeText(this, R.string.sequence_alphabetical, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, R.string.sequence_order, Toast.LENGTH_LONG).show();
+        }
     }
 
     @OptionsItem

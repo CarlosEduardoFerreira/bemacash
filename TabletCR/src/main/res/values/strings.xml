@@ -2272,6 +2272,8 @@
 
     <string name="choose_item_save_action">Your item has been saved. Would you like to add another item?</string>
     <string name="item_save_action">Save options</string>
+    <string name="sequence_alphabetical">Sequence of items in register will be changed to alphabetical order</string>
+    <string name="sequence_order">Sequence of items in register will be changed to sequence order</string>
 
 
     <!-- local sync ends -->
