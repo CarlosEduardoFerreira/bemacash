@@ -239,7 +239,6 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                             Logger.d("Pax Error code: " + response.ResultCode + ", Message: " + response.ResultTxt);
                         }
 
-
                     } else if (ptr[0].Code == ProcessTransResultCode.TimeOut) {
                         transaction.allowReload = true;
                         //Log.d("BemaCarl9", "PaxProcessorSaleCommand.ptr.Code: " + ptr[0].Code);
