@@ -13,7 +13,6 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.ItemModel;
-import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ModifierType;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.SaleOrderItemViewModel;
@@ -28,7 +27,6 @@ import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +100,7 @@ public class ItemsNegativeStockTrackingCommand extends AsyncCommand {
         oldQty = oldQty == null ? BigDecimal.ZERO : oldQty;
         String itemGuid = getArgs().getString(ARG_ITEM_GUID);
 
-        HashMap<String, BigDecimal> composers = ComposerModel.getChildsByHostId(getContext(), itemGuid);                                        //kill composed items
+        HashMap<String, BigDecimal> composers = ComposerModel.getChildsGuidQtyByHostId(getContext(), itemGuid);                                        //kill composed items
         if (composers != null && !composers.isEmpty()) {
             for (Map.Entry<String, BigDecimal> composer : composers.entrySet()) {
                 BigDecimal subValue = currentOrderItemQty.get(composer.getKey()).subtract(oldQty.multiply(composer.getValue()));
@@ -388,7 +386,7 @@ public class ItemsNegativeStockTrackingCommand extends AsyncCommand {
     private boolean compositionProcessing(String itemGuid) {
         ArrayList<TrackedItemInfo> localTrackableMods = new ArrayList<>();
 
-        HashMap<String, BigDecimal> composers = ComposerModel.getChildsByHostId(getContext(), itemGuid);
+        HashMap<String, BigDecimal> composers = ComposerModel.getChildsGuidQtyByHostId(getContext(), itemGuid);
 
         if (composers != null && !composers.isEmpty()) {
             for (Map.Entry<String, BigDecimal> childItem : composers.entrySet()) {
@@ -424,7 +422,7 @@ public class ItemsNegativeStockTrackingCommand extends AsyncCommand {
     private boolean compositionChangeQty(String itemGuid, BigDecimal oldParentQty, BigDecimal newParentQty) {
         ArrayList<TrackedItemInfo> localTrackableMods = new ArrayList<>();
 
-        HashMap<String, BigDecimal> composers = ComposerModel.getChildsByHostId(getContext(), itemGuid);
+        HashMap<String, BigDecimal> composers = ComposerModel.getChildsGuidQtyByHostId(getContext(), itemGuid);
 
         if (composers != null && !composers.isEmpty()) {
             for (Map.Entry<String, BigDecimal> childItem : composers.entrySet()) {

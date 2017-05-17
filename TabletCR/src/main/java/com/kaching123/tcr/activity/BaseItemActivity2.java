@@ -65,6 +65,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.composer.CollectComposersCommand;
 import com.kaching123.tcr.store.composer.CollectComposersCommand.ComposerCallback;
+import com.kaching123.tcr.store.composer.CopyComposersCommand;
 import com.telly.groundy.annotations.OnSuccess;
 import com.telly.groundy.annotations.Param;
 
@@ -165,6 +166,9 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     private boolean readyExit = true;
     private boolean waitingExit;
 
+    private boolean copyingModif;
+    private boolean copyingComposer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,6 +184,7 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
                 @Override
                 protected void handleSuccess() {
                     CopyModifiersFromToCommand.start(getApplicationContext(), originalModel.guid, model.guid);
+                    CopyComposersCommand.start(getApplicationContext(), originalModel.guid, model.guid);
                 }
             });
         }
@@ -406,7 +411,10 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
             AddItemCommand.start(getApplicationContext(), model, new AddItemCommand.AddItemCommandCallback() {
                 @Override
                 protected void handleSuccess() {
+                    copyingModif = true;
+                    copyingComposer = true;
                     CopyModifiersFromToCommand.start(getApplicationContext(), originalModel.guid, model.guid, copyModifiersFromToCallback);
+                    CopyComposersCommand.start(getApplicationContext(), originalModel.guid, model.guid, copyComposersCommandCallback);
                 }
 
                 @Override
@@ -421,7 +429,20 @@ public class BaseItemActivity2 extends ScannerBaseActivity implements ItemProvid
     private CopyModifiersFromToCommand.CommandCallback copyModifiersFromToCallback  = new CopyModifiersFromToCommand.CommandCallback() {
         @Override
         protected void handleSuccess() {
-            readyToExit();
+            copyingModif = false;
+            if (!copyingComposer) {
+                readyToExit();
+            }
+        }
+    };
+
+    private CopyComposersCommand.CopyComposersCommandCallback copyComposersCommandCallback  = new CopyComposersCommand.CopyComposersCommandCallback() {
+        @Override
+        protected void handleFinish() {
+            copyingComposer = false;
+            if (!copyingModif) {
+                readyToExit();
+            }
         }
     };
 

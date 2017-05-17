@@ -14,6 +14,7 @@ import com.kaching123.tcr.util.ContentValuesUtilBase;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -101,7 +102,7 @@ public class ComposerModel implements IValueModel, Serializable {
         return v;
     }
 
-    public static HashMap<String, BigDecimal> getChildsByHostId(final Context context, final String itemGuid) {
+    public static HashMap<String, BigDecimal> getChildsGuidQtyByHostId(final Context context, final String itemGuid) {
         try (
                 Cursor c = ProviderAction.query(URI_ITEM)
                         .where(ComposerTable.ITEM_HOST_ID + " = ?", itemGuid)
@@ -115,5 +116,20 @@ public class ComposerModel implements IValueModel, Serializable {
             }
             return childs;
         }
+    }
+
+    public static List<ComposerModel> getChildsByHostId(final Context context, final String itemGuid) {
+        Cursor c = ProviderAction.query(URI_ITEM)
+                    .where(ComposerTable.ITEM_HOST_ID + " = ?", itemGuid)
+                    .perform(context);
+
+            List<ComposerModel> childs = new ArrayList<>();
+            if (c != null) {
+                while (c.moveToNext()) {
+                    childs.add(new ComposerModel(c));
+                }
+                c.close();
+            }
+            return childs;
     }
 }
