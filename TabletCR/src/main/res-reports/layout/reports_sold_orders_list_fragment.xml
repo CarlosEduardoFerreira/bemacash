@@ -44,6 +44,13 @@
                 android:layout_weight="1"/>
 
             <TextView
+                android:id="@+id/gratuity"
+                style="@style/SaleReport.ItemList.Total"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
                 android:id="@+id/tax"
                 style="@style/SaleReport.ItemList.Total"
                 android:layout_height="match_parent"
@@ -112,6 +119,13 @@
                 style="@style/ItemList.HeaderText.Center"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:text="@string/reports_sold_order_header_gratuity"
+                android:layout_weight="1"/>
+
+            <TextView
+                style="@style/ItemList.HeaderText.Center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:text="@string/reports_sold_order_header_tax"
                 android:layout_weight="1"/>
 
@@ -174,6 +188,12 @@
             android:layout_width="0dp"
             android:layout_weight="1"/>
 
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
 
         <View
             style="@style/ItemList.HeaderSpace"

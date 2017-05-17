@@ -48,6 +48,9 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
     protected TextView tax;
 
     @ViewById
+    protected TextView gratuity;
+
+    @ViewById
     protected TextView total;
 
     @FragmentArg
@@ -91,7 +94,7 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
         return new AsyncTaskLoader<List<SaleOrderViewModel>>(getActivity()) {
             @Override
             public List<SaleOrderViewModel> loadInBackground() {
-                List<SaleOrderViewModel> result = SoldOrdersReportQuery.getItemsWithoutTipRefunds(getActivity(), isSold, startTime, endTime, resisterId, managerGuid);
+                List<SaleOrderViewModel> result = SoldOrdersReportQuery.getItemsWithoutRefunds(getActivity(), isSold, startTime, endTime, resisterId, managerGuid);
                 totalValues = calcTotalValues(result);
                 return result;
             }
@@ -105,6 +108,7 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
             tv.subtotal = tv.subtotal.add(subtotal);
             tv.tax = tv.tax.add(i.tmpTotalTax);
             tv.discount = tv.discount.add(i.tmpTotalDiscount);
+            tv.gratuity = tv.gratuity.add(i.tipsAmount);
             tv.total = tv.total.add(i.tmpTotalPrice);
         }
         return tv;
@@ -119,6 +123,7 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
     private void showTotal() {
         UiHelper.showPrice(subtotal, totalValues.subtotal);
         UiHelper.showPrice(discount, totalValues.discount);
+        UiHelper.showPrice(gratuity, totalValues.gratuity);
         UiHelper.showPrice(tax, totalValues.tax);
         UiHelper.showPrice(total, totalValues.total);
     }
@@ -162,6 +167,7 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
                     (TextView) v.findViewById(R.id.cashier),
                     (TextView) v.findViewById(R.id.total_price),
                     (TextView) v.findViewById(R.id.discount),
+                    (TextView) v.findViewById(R.id.gratuity),
                     (TextView) v.findViewById(R.id.tax),
                     (TextView) v.findViewById(R.id.total)
             ));
@@ -178,6 +184,7 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
             showPrice(holder.totalPrice, item.tmpTotalPrice.add(item.tmpTotalDiscount).subtract(item.tmpTotalTax));
             showPrice(holder.tax, item.tmpTotalTax);
             showPrice(holder.discount, item.tmpTotalDiscount);
+            showPrice(holder.gratuity, item.tipsAmount);
             showPrice(holder.total, item.tmpTotalPrice);
             return view;
         }
@@ -189,15 +196,17 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
         private TextView cashier;
         private TextView totalPrice;
         private TextView discount;
+        private TextView gratuity;
         private TextView tax;
         private TextView total;
 
-        private UiHolder(TextView date, TextView registerId, TextView cashier, TextView totalPrice, TextView discount, TextView tax, TextView total) {
+        private UiHolder(TextView date, TextView registerId, TextView cashier, TextView totalPrice, TextView discount, TextView gratuity, TextView tax, TextView total) {
             this.date = date;
             this.registerId = registerId;
             this.cashier = cashier;
             this.totalPrice = totalPrice;
             this.discount = discount;
+            this.gratuity = gratuity;
             this.tax = tax;
             this.total = total;
         }
@@ -208,12 +217,14 @@ public class SoldOrdersFragment extends Fragment implements LoaderCallbacks<List
         private BigDecimal discount;
         private BigDecimal tax;
         private BigDecimal total;
+        private BigDecimal gratuity;
 
         private TotalValues() {
             subtotal = BigDecimal.ZERO;
             discount = BigDecimal.ZERO;
             tax = BigDecimal.ZERO;
             total = BigDecimal.ZERO;
+            gratuity = BigDecimal.ZERO;
         }
     }
 }

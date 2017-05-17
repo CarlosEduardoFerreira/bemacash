@@ -68,6 +68,17 @@ public class SoldOrdersReportQuery {
         });
     }
 
+    public static List<SaleOrderViewModel> getItemsWithoutRefunds(final Context context, final boolean isSold, long startTime, long endTime, long registerId, String managerGuid) {
+        List<SaleOrderViewModel> result = getItems(context, isSold, startTime, endTime, registerId, managerGuid);
+        return filter(result, new Predicate<SaleOrderViewModel>() {
+            @Override
+            public boolean apply(SaleOrderViewModel m) {
+                return OrderStatus.RETURN != m.orderStatus
+                        || (m.tmpTotalPrice != null && m.tmpTotalPrice.compareTo(BigDecimal.ZERO) != 0);
+            }
+        });
+    }
+
     private static List<SaleOrderViewModel> filter(List<SaleOrderViewModel> list, Predicate<SaleOrderViewModel> predicate) {
         if (list == null)
             return null;

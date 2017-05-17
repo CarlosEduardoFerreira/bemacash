@@ -55,6 +55,15 @@
         />
 
     <TextView
+        android:id="@+id/gratuity"
+        style="@style/SaleReport.ItemList.ItemText"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical|right"
+        />
+
+    <TextView
         android:id="@+id/tax"
         style="@style/SaleReport.ItemList.ItemText"
         android:layout_width="0dp"

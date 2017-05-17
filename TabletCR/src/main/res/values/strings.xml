@@ -1307,6 +1307,7 @@
     <string name="reports_sold_order_header_price">Total Price</string>
     <string name="reports_sold_order_header_discount">Discount</string>
     <string name="reports_sold_order_header_tax">Tax</string>
+    <string name="reports_sold_order_header_gratuity">Gratuity</string>
     <string name="reports_sold_order_header_total">Total</string>
     <string name="reports_sales_by_customers_header_name">Name</string>
     <string name="reports_sales_by_customers_header_phone">Phone</string>
