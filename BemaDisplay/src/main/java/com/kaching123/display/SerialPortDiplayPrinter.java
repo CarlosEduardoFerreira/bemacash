@@ -30,7 +30,7 @@ public class SerialPortDiplayPrinter implements DisplayPrinter {
 
     private String port;
 
-    public SerialPortDiplayPrinter(String port){
+    public SerialPortDiplayPrinter(String port) throws IOException {
         this.port = port;
         if (mSerialPort == null) {
             /* Open the serial port */
@@ -49,6 +49,7 @@ public class SerialPortDiplayPrinter implements DisplayPrinter {
                 mOutputStream = mSerialPort.getOutputStream();
             } catch (SecurityException e) {
             } catch (IOException e) {
+                throw new IOException(e);
             } catch (InvalidParameterException e) {
             }
         }
