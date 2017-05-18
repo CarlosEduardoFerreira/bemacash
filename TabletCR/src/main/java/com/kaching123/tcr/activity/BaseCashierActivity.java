@@ -3179,6 +3179,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
             transactions.add(model);
 
             RefundAmount refundAmount = new RefundAmount(model.amount, model.amount, result);
+            Log.d("BemaCarl21", "BaseCashierActivity.handleSuccess.refundAmount.pickedValue:   " + refundAmount.pickedValue);
             MoneybackProcessor.create(orderGuid, OrderType.SALE)
                     .callback(new MoneybackProcessor.IRefundCallback() {
                         @Override
