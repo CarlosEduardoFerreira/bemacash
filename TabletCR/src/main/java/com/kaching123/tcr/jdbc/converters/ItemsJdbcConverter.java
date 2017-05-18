@@ -351,22 +351,25 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
     }
 
     public SingleSqlCommand updatePriceSQL(String guid, BigDecimal price, IAppCommandContext appCommandContext) {
-        ItemModel model = ItemModel.getById(TcrApplication.get(), guid, true);
-        model.price = price;
-        return updateSQL(model, appCommandContext);
+        return _update(ITEM_TABLE_NAME, appCommandContext)
+                .add(SALE_PRICE, price)
+                .where(ID, guid)
+                .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
 
     public SingleSqlCommand updatePriceSQL(String guid, BigDecimal price, PriceType type, IAppCommandContext appCommandContext) {
-        ItemModel model = ItemModel.getById(TcrApplication.get(), guid, true);
-        model.price = price;
-        model.priceType = type;
-        return updateSQL(model, appCommandContext);
+        return _update(ITEM_TABLE_NAME, appCommandContext)
+                .add(SALE_PRICE, price)
+                .add(PRICE_TYPE, type)
+                .where(ID, guid)
+                .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
 
     public SingleSqlCommand updateQtyFlagSQL(String guid, String updateFlag, IAppCommandContext appCommandContext) {
-        ItemModel model = ItemModel.getById(TcrApplication.get(), guid, true);
-        model.updateQtyFlag = updateFlag;
-        return updateSQL(model, appCommandContext);
+        return  _update(ITEM_TABLE_NAME, appCommandContext)
+                .add(UPDATE_QTY_FLAG, updateFlag)
+                .where(ID, guid)
+                .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
 
     public SingleSqlCommand updateIsDeletedSQL(String guid, boolean isDeleted, IAppCommandContext appCommandContext) {

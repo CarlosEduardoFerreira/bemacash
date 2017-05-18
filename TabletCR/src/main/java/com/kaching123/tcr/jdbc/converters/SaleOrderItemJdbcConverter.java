@@ -227,24 +227,13 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     }
 
     public SingleSqlCommand updateQty(String saleItemGuid, BigDecimal qty) {
-        SaleOrderItemModel model = SaleOrderItemModel.getByGuid(TcrApplication.get(), saleItemGuid);
-        if (model != null) {
-            model.qty = qty;
-            return updateSQL(model, null);
-        }
         return _update(SALE_ORDER_ITEMS_TABLE_NAME)
                 .add(QUANTITY, qty, ContentValuesUtil.QUANTITY_SCALE)
                 .where(SALE_ITEM_ID, saleItemGuid)
                 .build(JdbcFactory.getApiMethod(SaleOrderItemModel.class));
-
     }
 
     public SingleSqlCommand updatePrice(String guid, BigDecimal price) {
-        SaleOrderItemModel model = SaleOrderItemModel.getByGuid(TcrApplication.get(), guid);
-        if (model != null) {
-            model.price = price;
-            return updateSQL(model, null);
-        }
         return _update(SALE_ORDER_ITEMS_TABLE_NAME)
                 .add(PRICE, price)
                 .where(SALE_ITEM_ID, guid)
@@ -252,12 +241,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     }
 
     public SingleSqlCommand updateDiscount(String guid, BigDecimal discount, DiscountType discountType) {
-        SaleOrderItemModel model = SaleOrderItemModel.getByGuid(TcrApplication.get(), guid);
-        if (model != null) {
-            model.discount = discount;
-            model.discountType = discountType;
-            return updateSQL(model, null);
-        }
         return _update(SALE_ORDER_ITEMS_TABLE_NAME)
                 .add(DISCOUNT, discount)
                 .add(DISCOUNT_TYPE, discountType)
@@ -266,15 +249,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     }
 
     public SingleSqlCommand updateFinalPrices(SaleOrderItemModel model) {
-        SaleOrderItemModel saleOrderItemModel = SaleOrderItemModel.getByGuid(TcrApplication.get(), model.saleItemGuid);
-        if (saleOrderItemModel != null) {
-            saleOrderItemModel.finalGrossPrice = model.finalGrossPrice;
-            saleOrderItemModel.finalTax = model.finalTax;
-            saleOrderItemModel.finalDiscount = model.finalDiscount;
-
-            return updateSQL(saleOrderItemModel, null);
-        }
-
         return _update(SALE_ORDER_ITEMS_TABLE_NAME)
                 .add(FINAL_GROSS_PRICE, model.finalGrossPrice)
                 .add(FINAL_DISCOUNT, model.finalDiscount)
@@ -284,11 +258,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     }
 
     public SingleSqlCommand updateNotes(String guid, String notes) {
-        SaleOrderItemModel model = SaleOrderItemModel.getByGuid(TcrApplication.get(), guid);
-        if (model != null) {
-            model.notes = notes;
-            return updateSQL(model, null);
-        }
         return _update(SALE_ORDER_ITEMS_TABLE_NAME)
                 .add(NOTES, notes)
                 .where(SALE_ITEM_ID, guid)
@@ -296,16 +265,10 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
     }
 
     public SingleSqlCommand updateKitchenPrintedQty(String guid, BigDecimal qty) {
-        SaleOrderItemModel model = SaleOrderItemModel.getByGuid(TcrApplication.get(), guid);
-        if (model != null) {
-            model.kitchenPrintedQty = qty;
-            return updateSQL(model, null);
-        }
         return _update(SALE_ORDER_ITEMS_TABLE_NAME)
                 .add(KITCHEN_PRINTED_QUANTITY, qty)
                 .where(SALE_ITEM_ID, guid)
                 .build(JdbcFactory.getApiMethod(SaleOrderItemModel.class));
-
     }
 
     @Override
