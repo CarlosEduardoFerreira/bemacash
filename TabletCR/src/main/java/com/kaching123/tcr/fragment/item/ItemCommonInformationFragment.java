@@ -199,6 +199,11 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
             return false;
         }
 
+        if (TextUtils.isEmpty(getModel().categoryId)) {
+            Toast.makeText(getActivity(), R.string.item_activity_alert_category_msg, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         if (getModel().priceType != PriceType.OPEN && getModel().isSalable) {
             BigDecimal priceValue = parseBigDecimal(salesPrice.getText().toString(), null);
             if (priceValue == null) {
