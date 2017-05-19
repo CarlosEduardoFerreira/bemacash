@@ -199,7 +199,7 @@ public class ItemCommonInformationFragment extends ItemBaseFragment implements L
             return false;
         }
 
-        if (TextUtils.isEmpty(getModel().categoryId)) {
+        if (category.getSelectedItemPosition() == -1) {
             Toast.makeText(getActivity(), R.string.item_activity_alert_category_msg, Toast.LENGTH_SHORT).show();
             return false;
         }
