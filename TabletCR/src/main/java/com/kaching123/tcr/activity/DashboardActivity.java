@@ -75,7 +75,6 @@ import com.kaching123.tcr.fragment.user.LoginFragment.Mode;
 import com.kaching123.tcr.fragment.user.LoginFragment.OnLoginCompleteListener;
 import com.kaching123.tcr.fragment.user.LoginOuterFragment;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
-import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.user.TimesheetNewFragment;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
 import com.kaching123.tcr.model.ActivationCarrierModel;
@@ -296,32 +295,30 @@ public class DashboardActivity extends SuperBaseActivity {
         TimesheetNewFragment.show(this, new TimesheetNewFragment.OnTimesheetListener() {
             @Override
             public void onCheckInSelected() {
-
-                TimesheetFragment.show(DashboardActivity.this, TimesheetFragment.Type.CLOCK_IN, null, new TimesheetFragment.OnTimesheetListener() {
-                    @Override
-                    public void onCredentialsEntered(String login/*, String password*/) {
-                        TimesheetFragment.hide(DashboardActivity.this);
-                        WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_in));
-                        ClockInCommand.start(DashboardActivity.this, login/*, password*/, clockInCallback);
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelSelected() {
-
+                TimesheetNewFragment.hide(DashboardActivity.this);
+                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_in));
+                ClockInCommand.start(DashboardActivity.this, getApp().getOperatorLogin()/*, password*/, clockInCallback);
             }
 
             @Override
             public void onCheckOutSelected() {
-                TimesheetFragment.show(DashboardActivity.this, TimesheetFragment.Type.CLOCK_OUT, null, new TimesheetFragment.OnTimesheetListener() {
-                    @Override
-                    public void onCredentialsEntered(String login/*, String password*/) {
-                        TimesheetFragment.hide(DashboardActivity.this);
-                        WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_out));
-                        ClockOutCommand.start(DashboardActivity.this, login/*, password*/, clockOutCallback);
-                    }
-                });
+                TimesheetNewFragment.hide(DashboardActivity.this);
+                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_clock_out));
+                ClockOutCommand.start(DashboardActivity.this, getApp().getOperatorLogin()/*, password*/, clockOutCallback);
+            }
+
+            @Override
+            public void onBreakStartSelected() {
+                TimesheetNewFragment.hide(DashboardActivity.this);
+                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_break_start));
+//                ManageBreakTimeshiftCommand.start(DashboardActivity.this, getApp().getOperatorLogin(), START, clockInCallback);
+            }
+
+            @Override
+            public void onBreakStopSelected() {
+                TimesheetNewFragment.hide(DashboardActivity.this);
+                WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_break_stop));
+//                ManageBreakTimeshiftCommand.start(DashboardActivity.this, getApp().getOperatorLogin(), STOP, clockOutCallback);
             }
         });
 

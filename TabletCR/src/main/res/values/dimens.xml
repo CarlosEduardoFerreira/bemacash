@@ -25,6 +25,8 @@
     <dimen name="base_dlg_width">342dp</dimen>
     <dimen name="base_dlg_heigth">279dp</dimen>
 
+    <dimen name="timeshift_dlg_width">630dp</dimen>
+
     <dimen name="age_ver_dlg_width">400dp</dimen>
     <dimen name="age_ver_dlg_heigth">290dp</dimen>
 

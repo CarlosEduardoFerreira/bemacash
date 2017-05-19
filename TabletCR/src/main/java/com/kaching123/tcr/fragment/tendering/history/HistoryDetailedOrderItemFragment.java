@@ -32,7 +32,6 @@ import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment.RefundAmount;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
-import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.function.ReadPaymentTransactionsFunction;
 import com.kaching123.tcr.function.ReadTipsFunction;
 import com.kaching123.tcr.model.BillPaymentDescriptionModel.PrepaidType;
@@ -376,12 +375,8 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
     }
 
     private void try2ClockIn() {
-        TimesheetFragment.show(getActivity(), TimesheetFragment.Type.CLOCK_IN, getString(R.string.timesheet_dialog_clarify_message), new TimesheetFragment.OnTimesheetListener() {
-            @Override
-            public void onCredentialsEntered(String login/*, String password*/) {
-                TimesheetFragment.hide(getActivity());
                 WaitDialogFragment.show(getActivity(), getString(R.string.wait_message_clock_in));
-                ClockInCommand.start(getActivity(), login/*, password*/, new BaseClockInCallback() {
+                ClockInCommand.start(getActivity(), getApp().getOperatorLogin()/*, password*/, new BaseClockInCallback() {
                     @Override
                     protected void onClockIn(String guid, String fullName, Date time) {
                         WaitDialogFragment.hide(getActivity());
@@ -410,8 +405,6 @@ public class HistoryDetailedOrderItemFragment extends SuperBaseFragment {
                         AlertDialogFragment.showAlert(getActivity(), R.string.error_dialog_title, getString(messageId));
                     }
                 });
-            }
-        });
     }
 
     public HistoryDetailedOrderItemFragment setListener(HistoryDetailedOrderItemListener listener) {
