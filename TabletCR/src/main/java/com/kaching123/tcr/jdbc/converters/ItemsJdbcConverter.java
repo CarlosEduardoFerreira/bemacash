@@ -345,9 +345,10 @@ public class ItemsJdbcConverter extends JdbcConverter<ItemModel> implements IOrd
     }
 
     public SingleSqlCommand updateOrderSQL(String guid, int orderNum, IAppCommandContext appCommandContext) {
-        ItemModel model = ItemModel.getById(TcrApplication.get(), guid, true);
-        model.orderNum = orderNum;
-        return updateSQL(model, appCommandContext);
+        return _update(ITEM_TABLE_NAME, appCommandContext)
+                .add(ORDER_NUM, orderNum)
+                .where(ID, guid)
+                .build(JdbcFactory.getApiMethod(ItemModel.class));
     }
 
     public SingleSqlCommand updatePriceSQL(String guid, BigDecimal price, IAppCommandContext appCommandContext) {
