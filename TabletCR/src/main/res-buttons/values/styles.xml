@@ -69,6 +69,9 @@
         <item name="android:textSize">26sp</item>
         <item name="android:paddingLeft">42dp</item>
     </style>
+    <style name="LocalizableButton.Gold.Timeshits">
+        <item name="android:textSize">26sp</item>
+    </style>
     <style name="LocalizableButton.Gold.20">
         <item name="android:textSize">20sp</item>
     </style>

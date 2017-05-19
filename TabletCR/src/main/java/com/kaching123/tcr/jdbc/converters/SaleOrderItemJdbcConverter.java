@@ -231,7 +231,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(QUANTITY, qty, ContentValuesUtil.QUANTITY_SCALE)
                 .where(SALE_ITEM_ID, saleItemGuid)
                 .build(JdbcFactory.getApiMethod(SaleOrderItemModel.class));
-
     }
 
     public SingleSqlCommand updatePrice(String guid, BigDecimal price) {
@@ -270,7 +269,6 @@ public class SaleOrderItemJdbcConverter extends JdbcConverter<SaleOrderItemModel
                 .add(KITCHEN_PRINTED_QUANTITY, qty)
                 .where(SALE_ITEM_ID, guid)
                 .build(JdbcFactory.getApiMethod(SaleOrderItemModel.class));
-
     }
 
     @Override

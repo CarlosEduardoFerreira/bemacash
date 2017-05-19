@@ -129,7 +129,6 @@ import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemLis
 import com.kaching123.tcr.fragment.tendering.pax.PAXReloadFragmentDialog;
 import com.kaching123.tcr.fragment.tendering.payment.GiftCardAmountFragmentDialog;
 import com.kaching123.tcr.fragment.user.PermissionFragment;
-import com.kaching123.tcr.fragment.user.TimesheetFragment;
 import com.kaching123.tcr.fragment.wireless.BarcodeReceiver;
 import com.kaching123.tcr.fragment.wireless.UnitsSaleFragment;
 import com.kaching123.tcr.function.MultipleDiscountWrapFunction;
@@ -2200,43 +2199,38 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     };
 
     private void try2ClockIn() {
-        TimesheetFragment.show(this, TimesheetFragment.Type.CLOCK_IN, getString(R.string.timesheet_dialog_clarify_message), new TimesheetFragment.OnTimesheetListener() {
+        WaitDialogFragment.show(BaseCashierActivity.this, getString(R.string.wait_message_clock_in));
+        ClockInCommand.start(BaseCashierActivity.this, getApp().getOperatorLogin()/*, password*/, new BaseClockInCallback() {
             @Override
-            public void onCredentialsEntered(String login/*, String password*/) {
-                TimesheetFragment.hide(BaseCashierActivity.this);
-                WaitDialogFragment.show(BaseCashierActivity.this, getString(R.string.wait_message_clock_in));
-                ClockInCommand.start(BaseCashierActivity.this, login/*, password*/, new BaseClockInCallback() {
-                    @Override
-                    protected void onClockIn(String guid, String fullName, Date time) {
-                        WaitDialogFragment.hide(BaseCashierActivity.this);
-                        if (guid.equals(getApp().getOperatorGuid())) {
-                            getApp().setOperatorClockedIn(true);
-                        }
-                        AlertDialogFragment.showComplete(BaseCashierActivity.this, R.string.btn_clock_in,
-                                getString(R.string.dashboard_clock_in_msg, fullName, DateUtils.timeOnlyAttendanceFormat(time)));
-                    }
+            protected void onClockIn(String guid, String fullName, Date time) {
+                WaitDialogFragment.hide(BaseCashierActivity.this);
+                if (guid.equals(getApp().getOperatorGuid())) {
+                    getApp().setOperatorClockedIn(true);
+                }
+                AlertDialogFragment.showComplete(BaseCashierActivity.this, R.string.btn_clock_in,
+                        getString(R.string.dashboard_clock_in_msg, fullName, DateUtils.timeOnlyAttendanceFormat(time)));
+            }
 
-                    @Override
-                    protected void onClockInError(ClockInCommand.ClockInOutError error) {
-                        WaitDialogFragment.hide(BaseCashierActivity.this);
-                        int messageId = R.string.error_message_timesheet;
-                        switch (error) {
-                            case ALREADY_CLOCKED_IN:
-                                messageId = R.string.error_message_already_clocked_in;
-                                break;
-                            case USER_DOES_NOT_EXIST:
-                                messageId = R.string.error_message_employee_does_not_exist;
-                                break;
-                            case EMPLOYEE_NOT_ACTIVE:
-                                messageId = R.string.error_message_employee_not_active;
-                                break;
-                        }
-                        AlertDialogFragment.showAlert(BaseCashierActivity.this, R.string.error_dialog_title, getString(messageId));
-                    }
-                });
+            @Override
+            protected void onClockInError(ClockInCommand.ClockInOutError error) {
+                WaitDialogFragment.hide(BaseCashierActivity.this);
+                int messageId = R.string.error_message_timesheet;
+                switch (error) {
+                    case ALREADY_CLOCKED_IN:
+                        messageId = R.string.error_message_already_clocked_in;
+                        break;
+                    case USER_DOES_NOT_EXIST:
+                        messageId = R.string.error_message_employee_does_not_exist;
+                        break;
+                    case EMPLOYEE_NOT_ACTIVE:
+                        messageId = R.string.error_message_employee_not_active;
+                        break;
+                }
+                AlertDialogFragment.showAlert(BaseCashierActivity.this, R.string.error_dialog_title, getString(messageId));
             }
         });
     }
+
 
     @Override
     public void onResume() {

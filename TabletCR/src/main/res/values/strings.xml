@@ -687,6 +687,8 @@
     <string name="wait_message_print_zreport">Please wait...</string>
     <string name="wait_message_clock_in">Clock-In</string>
     <string name="wait_message_clock_out">Clock-Out</string>
+    <string name="wait_message_break_start">Start the break</string>
+    <string name="wait_message_break_stop">Stop the break</string>
     <string name="wait_message_save_employee">Saving Employee</string>
     <string name="error_dialog_title">Error</string>
     <string name="sale_item_limit_error_dialog_title">Error</string>
@@ -1016,6 +1018,8 @@
     <string name="timesheet_dialog_clarify_message">You should Clock In to work with orders</string>
     <string name="btn_clock_in">Clock In</string>
     <string name="btn_clock_out">Clock Out</string>
+    <string name="btn_break_start">Leave For Break</string>
+    <string name="btn_break_finish">Back From Break</string>
     <string name="reports_activity_label">Reports</string>
     <string name="report_type_xreport">Close Shift Report</string>
     <string name="report_type_zreport">Close Shift ZReport</string>

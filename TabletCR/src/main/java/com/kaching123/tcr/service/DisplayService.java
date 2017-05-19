@@ -138,16 +138,14 @@ public class DisplayService extends Service {
                 displayPrinter = new BluetoothSocketPrinter(display);
                 }
             initDisplayPrinter(displayPrinter);
-            } catch (
-                    IOException e
-                    )
-
-            {
+            } catch (IOException e) {
                 try {
-                    if (displayPrinter != null)
+                    if (displayPrinter != null) {
                         displayPrinter.close();
-                } catch (IOException ignore) {
-                }
+                    } else {
+                        return false;
+                    }
+                } catch (IOException ignore) {}
                 return false;
             }
 
