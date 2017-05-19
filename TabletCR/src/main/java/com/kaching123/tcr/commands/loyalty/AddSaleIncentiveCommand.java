@@ -3,6 +3,7 @@ package com.kaching123.tcr.commands.loyalty;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.store.AsyncCommand;
@@ -110,6 +111,10 @@ public class AddSaleIncentiveCommand extends AsyncCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         BatchSqlCommand batch = batchInsert(saleIncentive);
+        Log.d("BemaCarl22","AddSaleIncentiveCommand.createSqlCommand.saleIncentive: " + saleIncentive);
+        if(saleIncentive != null){
+            Log.d("BemaCarl22","AddSaleIncentiveCommand.createSqlCommand.saleIncentive.rewardValue: " + saleIncentive.rewardValue);
+        }
         batch.add(JdbcFactory.insert(saleIncentive, getAppCommandContext()));
         if (addPointsMovementResult != null)
             batch.add(addPointsMovementResult.getSqlCmd());

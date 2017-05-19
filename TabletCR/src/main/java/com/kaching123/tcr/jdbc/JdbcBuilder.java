@@ -41,7 +41,7 @@ public abstract class JdbcBuilder {
         this.table = table;
         this.action = action;
         this.methodPrefix = methodPrefix;
-
+        Log.d("BemaCarl22","JdbcBuilder.JdbcBuilder.table: " + table);
         if (JdbcFactory.getConverter(table).supportUpdateTimeLocalFlag()){
             add(FIELD_UPDATE_TIME_LOCAL, SyncUtil.formatMillisec(new Date(TcrApplication.get().getCurrentServerTimestamp())));
         }

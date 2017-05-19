@@ -88,4 +88,9 @@ public class LoyaltyIncentiveJdbcConverter extends JdbcConverter<LoyaltyIncentiv
     public SingleSqlCommand updateSQL(LoyaltyIncentiveModel model, IAppCommandContext appCommandContext) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
+    }
 }

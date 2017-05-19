@@ -1,5 +1,7 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import android.util.Log;
+
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.LoyaltyPointsMovementModel;
@@ -59,7 +61,7 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
                     .put(ID, model.guid)
                     .put(CUSTOMER_ID, model.customerId)
                     .put(LOYALTY_POINTS, model.loyaltyPoints)
-                    .put(SHOP_ID, model.shopId);;
+                    .put(SHOP_ID, model.shopId);
         } catch (JSONException e) {
             Logger.e("JSONException", e);
         }
@@ -68,6 +70,7 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
 
     @Override
     public SingleSqlCommand insertSQL(LoyaltyPointsMovementModel model, IAppCommandContext appCommandContext) {
+        Log.d("BemaCarl22","LoyaltyPointsMovementJdbcConverter.insertSQL.model.loyaltyPoints: " + model.loyaltyPoints);
         return _insert(TABLE_NAME, appCommandContext)
                 .add(ID, model.guid)
                 .add(CUSTOMER_ID, model.customerId)
@@ -84,5 +87,10 @@ public class LoyaltyPointsMovementJdbcConverter extends JdbcConverter<LoyaltyPoi
                 .add(SHOP_ID, model.shopId)
                 .where(ID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
+    }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
     }
 }

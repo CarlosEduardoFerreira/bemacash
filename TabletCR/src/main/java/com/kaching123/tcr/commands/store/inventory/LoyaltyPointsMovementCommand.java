@@ -46,15 +46,17 @@ public class LoyaltyPointsMovementCommand extends AsyncCommand {
         if (loyaltyPointsMovementModel == null)
             loyaltyPointsMovementModel = (LoyaltyPointsMovementModel) getArgs().getSerializable(ARG_LOYALTY_MOVEMENT);
 
-        Log.d("BemaCarl1","LoyaltyPointsMovementCommand...doCommand.item.codeType: " + loyaltyPointsMovementModel.loyaltyPoints);
+        Log.d("BemaCarl22","LoyaltyPointsMovementCommand.doCommand.loyaltyPoints1: " + loyaltyPointsMovementModel.loyaltyPoints);
 
         operations = new ArrayList<>();
         operations.add(ContentProviderOperation.newInsert(LOYALTY_MOVEMENT_URI)
                 .withValues(loyaltyPointsMovementModel.toValues())
                 .build());
 
+        Log.d("BemaCarl22","LoyaltyPointsMovementCommand.doCommand.loyaltyPoints2: " + loyaltyPointsMovementModel.loyaltyPoints);
         sql = batchUpdate(loyaltyPointsMovementModel);
         sql.add(JdbcFactory.getConverter(loyaltyPointsMovementModel).insertSQL(loyaltyPointsMovementModel, getAppCommandContext()));
+        Log.d("BemaCarl22","LoyaltyPointsMovementCommand.doCommand.loyaltyPoints3: " + loyaltyPointsMovementModel.loyaltyPoints);
 
         return succeeded();
     }

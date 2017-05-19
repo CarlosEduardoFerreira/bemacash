@@ -261,7 +261,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                     new PaxProcessorHelloCommand().sync(getContext(), getPaxModel());
 
                 }
-
+                
             }
             if(!deviceUtil._alive){
                 transaction.allowReload = true;
