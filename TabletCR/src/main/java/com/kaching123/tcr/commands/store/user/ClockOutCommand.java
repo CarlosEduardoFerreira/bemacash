@@ -6,10 +6,15 @@ import android.database.Cursor;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.jdbc.converters.EmployeeBreaksJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeeTimesheetJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.SaleOrderItemJdbcConverter;
+import com.kaching123.tcr.model.EmployeeBreakTimesheetModel;
 import com.kaching123.tcr.model.EmployeeModel;
 import com.kaching123.tcr.model.EmployeeTimesheetModel;
+import com.kaching123.tcr.model.SaleOrderItemModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -31,13 +36,39 @@ import static com.kaching123.tcr.util.CursorUtil._wrapOrNull;
 public class ClockOutCommand extends BaseClockInOutCommand {
 
     private EmployeeTimesheetModel model;
+    private ArrayList<ContentProviderOperation> operations;
+    private BatchSqlCommand sql;
 
     @Override
     protected TaskResult doInternalCommand(EmployeeModel employee) {
+        operations  = new ArrayList<ContentProviderOperation>(2);
+        sql = batchUpdate(EmployeeTimesheetModel.class);
+
         EmployeeTimesheetModel lastTimesheet = getLastTimesheet(employee.guid);
+
         boolean isClockedIn = lastTimesheet != null && lastTimesheet.clockOut == null;
         if (!isClockedIn)
             return failed().add(EXTRA_ERROR, ClockInOutError.ALREADY_CLOCKED_OUT);
+        EmployeeBreakTimesheetModel breakModel = null;
+
+        Cursor c = ProviderAction.query(ShopProvider.getContentWithLimitUri(ShopStore.EmployeeBreaksTimesheetTable.URI_CONTENT, 1))
+                .where(ShopStore.EmployeeBreaksTimesheetTable.EMPLOYEE_GUID + " = ?", employee.guid)
+                .where(ShopStore.EmployeeBreaksTimesheetTable.CLOCK_IN_GUID + " = ?", lastTimesheet.getGuid())
+                .orderBy(ShopStore.EmployeeBreaksTimesheetTable.BREAK_START + " DESC")
+                .perform(getContext());
+        if (c != null && c.moveToFirst()) {
+            breakModel = new EmployeeBreakTimesheetModel(c);
+            if (breakModel.breakEnd == null) {
+                breakModel.breakEnd = Util.cropSeconds(new Date());
+                operations.add(ContentProviderOperation.newUpdate(ShopProvider.getContentUri(ShopStore.EmployeeBreaksTimesheetTable.URI_CONTENT))
+                        .withValues(breakModel.toUpdateValues())
+                        .withSelection(ShopStore.EmployeeBreaksTimesheetTable.GUID + " = ?", new String[]{breakModel.guid})
+                        .build());
+                EmployeeBreaksJdbcConverter converter = (EmployeeBreaksJdbcConverter) JdbcFactory.getConverter(EmployeeBreakTimesheetModel.class);
+                sql.add(converter.updateEndOfBreakSQL(breakModel, getAppCommandContext()));
+            }
+            c.close();
+        }
 
         model = new EmployeeTimesheetModel(
                 lastTimesheet.guid,
@@ -75,7 +106,6 @@ public class ClockOutCommand extends BaseClockInOutCommand {
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
-        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>(1);
         operations.add(ContentProviderOperation.newUpdate(EMPLOYEE_TIMESHEET_URI)
                 .withValues(model.toUpdateValues())
                 .withSelection(ShopStore.EmployeeTimesheetTable.GUID + " = ?", new String[]{model.guid})
@@ -85,7 +115,8 @@ public class ClockOutCommand extends BaseClockInOutCommand {
 
     @Override
     protected ISqlCommand createSqlCommand() {
-        return ((EmployeeTimesheetJdbcConverter) JdbcFactory.getConverter(model)).updateOutSQL(model, getAppCommandContext());
+        sql.add(((EmployeeTimesheetJdbcConverter) JdbcFactory.getConverter(model)).updateOutSQL(model, getAppCommandContext()));
+        return sql;
     }
 
     public static void start(Context context, String login/*, String password*/, BaseClockOutCallback callback) {

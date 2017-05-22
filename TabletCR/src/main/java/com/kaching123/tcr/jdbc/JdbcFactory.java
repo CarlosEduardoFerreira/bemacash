@@ -11,6 +11,7 @@ import com.kaching123.tcr.jdbc.converters.CreditReceiptJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.CustomerJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.DefinedOnHoldJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.DepartmentJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.EmployeeBreaksJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeeJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeePermissionJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.EmployeeTimesheetJdbcConverter;
@@ -54,6 +55,7 @@ import com.kaching123.tcr.model.ComposerModel;
 import com.kaching123.tcr.model.CountryModel;
 import com.kaching123.tcr.model.CreditReceiptModel;
 import com.kaching123.tcr.model.DefinedOnHoldModel;
+import com.kaching123.tcr.model.EmployeeBreakTimesheetModel;
 import com.kaching123.tcr.model.ItemKdsModel;
 import com.kaching123.tcr.model.LoyaltyPointsMovementModel;
 import com.kaching123.tcr.model.CustomerModel;
@@ -129,6 +131,7 @@ import com.kaching123.tcr.store.ShopStore.TBPxRegisterTable;
 import com.kaching123.tcr.store.ShopStore.TaxGroupTable;
 import com.kaching123.tcr.store.ShopStore.UnitTable;
 import com.kaching123.tcr.store.ShopStore.DefinedOnHoldTable;
+import com.kaching123.tcr.store.ShopStore.EmployeeBreaksTimesheetTable;
 import com.telly.groundy.PublicGroundyTask.IAppCommandContext;
 
 import java.util.HashMap;
@@ -272,6 +275,13 @@ public class JdbcFactory {
 
         API_METHOD.put(EmployeeTimesheetTable.TABLE_NAME, "employee_timesheets");
         API_METHOD2.put(EmployeeTimesheetModel.class, "employee_timesheets");
+
+        CONVERTERS.put(EmployeeBreaksTimesheetTable.TABLE_NAME, c = new EmployeeBreaksJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
+        CONVERTERS2.put(EmployeeBreakTimesheetModel.class, c);
+
+        API_METHOD.put(EmployeeBreaksTimesheetTable.TABLE_NAME, "employee_breaks_timesheet");
+        API_METHOD2.put(EmployeeBreakTimesheetModel.class, "employee_breaks_timesheet");
 
         CONVERTERS.put(EmployeeTipsTable.TABLE_NAME, c = new TipsJdbcConverter());
         CONVERTERS.put(c.getTableName(), c);

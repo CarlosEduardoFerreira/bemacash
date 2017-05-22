@@ -272,6 +272,23 @@ public class UpdateBlock {
         db.execSQL("ALTER TABLE employee ADD COLUMN overtime_rate TEXT");
         db.execSQL("ALTER TABLE employee ADD COLUMN over_starts_from TEXT");
 
+        db.execSQL( "CREATE TABLE " +
+                    "employee_breaks_timesheet" +
+                        "(" +
+                            "guid TEXT PRIMARY KEY NOT NULL," +
+                            "employee_guid TEXT NOT NULL," +
+                            "clock_in_guid TEXT NOT NULL," +
+                            "break_start INTEGER NOT NULL," +
+                            "break_end INTEGER," +
+                            "update_time_local INTEGER" +
+                            "update_time INTEGER," +
+                            "is_deleted INTEGER DEFAULT (0)," +
+                            "is_draft INTEGER DEFAULT (0)," +
+                            "FOREIGN KEY(employee_guid) REFERENCES employee(guid)," +
+                            "FOREIGN KEY(clock_in_guid) REFERENCES employee_timesheet(guid)" +
+                        ")"
+        );
+
         updateViews(db);
     }
 

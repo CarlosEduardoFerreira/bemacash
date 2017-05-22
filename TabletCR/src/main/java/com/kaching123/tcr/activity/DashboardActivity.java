@@ -49,6 +49,7 @@ import com.kaching123.tcr.commands.store.settings.ExportDatabaseCommand.BaseExpo
 import com.kaching123.tcr.commands.store.user.AddCashDrawerMovementCommand;
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
 import com.kaching123.tcr.commands.store.user.ClockOutCommand;
+import com.kaching123.tcr.commands.store.user.ManageBreakTimesheetCommand;
 import com.kaching123.tcr.commands.store.user.StartShiftCommand;
 import com.kaching123.tcr.commands.store.user.StopShiftCommand;
 import com.kaching123.tcr.commands.support.SendLogCommand;
@@ -311,18 +312,25 @@ public class DashboardActivity extends SuperBaseActivity {
             public void onBreakStartSelected() {
                 TimesheetNewFragment.hide(DashboardActivity.this);
                 WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_break_start));
-//                ManageBreakTimeshiftCommand.start(DashboardActivity.this, getApp().getOperatorLogin(), START, clockInCallback);
+                ManageBreakTimesheetCommand.start(DashboardActivity.this, getApp().getOperatorGuid(), ManageBreakTimesheetCommand.Action.START_BREAK, breakTimesheetCallback);
             }
 
             @Override
             public void onBreakStopSelected() {
                 TimesheetNewFragment.hide(DashboardActivity.this);
                 WaitDialogFragment.show(DashboardActivity.this, getString(R.string.wait_message_break_stop));
-//                ManageBreakTimeshiftCommand.start(DashboardActivity.this, getApp().getOperatorLogin(), STOP, clockOutCallback);
+                ManageBreakTimesheetCommand.start(DashboardActivity.this, getApp().getOperatorGuid(), ManageBreakTimesheetCommand.Action.STOP_BREAK, breakTimesheetCallback);
             }
         });
 
     }
+
+    private ManageBreakTimesheetCommand.BreakTimesheetCallback breakTimesheetCallback = new ManageBreakTimesheetCommand.BreakTimesheetCallback() {
+        @Override
+        protected void onFinish() {
+            WaitDialogFragment.hide(DashboardActivity.this);
+        }
+    };
 
     @Override
     protected void onNewIntent(Intent intent) {

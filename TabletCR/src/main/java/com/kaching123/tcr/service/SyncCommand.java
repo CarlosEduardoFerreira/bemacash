@@ -72,6 +72,7 @@ import com.kaching123.tcr.store.ShopStore.EmployeeCommissionsTable;
 import com.kaching123.tcr.store.ShopStore.EmployeePermissionTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetTable;
+import com.kaching123.tcr.store.ShopStore.EmployeeBreaksTimesheetTable;
 import com.kaching123.tcr.store.ShopStore.EmployeeTipsTable;
 import com.kaching123.tcr.store.ShopStore.IBemaSyncTable;
 import com.kaching123.tcr.store.ShopStore.ItemMatrixTable;
@@ -153,6 +154,7 @@ public class SyncCommand implements Runnable {
             EmployeeTable.URI_CONTENT,
             EmployeePermissionTable.URI_CONTENT,
             EmployeeTimesheetTable.URI_CONTENT,
+            EmployeeBreaksTimesheetTable.URI_CONTENT,
             ShiftTable.URI_CONTENT,
             TaxGroupTable.URI_CONTENT,
             DepartmentTable.URI_CONTENT,
@@ -395,6 +397,7 @@ public class SyncCommand implements Runnable {
                     count += syncSingleTable2(service, api2, EmployeeTable.TABLE_NAME, EmployeeTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, EmployeePermissionTable.TABLE_NAME, EmployeePermissionTable.PERMISSION_ID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, EmployeeTimesheetTable.TABLE_NAME, EmployeeTimesheetTable.GUID, employee, serverLastTimestamp);
+                    count += syncSingleTable2(service, api2, EmployeeBreaksTimesheetTable.TABLE_NAME, EmployeeBreaksTimesheetTable.GUID, employee, serverLastTimestamp);
                     count += syncSingleTable2(service, api2, ShiftTable.TABLE_NAME, ShiftTable.GUID, employee, serverLastTimestamp);
 
                     count += syncSingleTable2(service, api2, CashDrawerMovementTable.TABLE_NAME, CashDrawerMovementTable.GUID, employee, serverLastTimestamp);
@@ -675,6 +678,8 @@ public class SyncCommand implements Runnable {
             return false;
         if (!isTableEmpty(context, EmployeeTimesheetTable.URI_CONTENT, EmployeeTimesheetTable.GUID))
             return false;
+        if (!isTableEmpty(context, EmployeeBreaksTimesheetTable.URI_CONTENT, EmployeeBreaksTimesheetTable.GUID))
+            return false;
         if (!isTableEmpty(context, ShiftTable.URI_CONTENT, ShiftTable.GUID))
             return false;
         if (!isTableEmpty(context, CashDrawerMovementTable.URI_CONTENT, CashDrawerMovementTable.GUID))
@@ -848,6 +853,7 @@ public class SyncCommand implements Runnable {
                 count += syncLocalSingleTable(service, EmployeeTable.TABLE_NAME, EmployeeTable.GUID);
                 count += syncLocalSingleTable(service, EmployeePermissionTable.TABLE_NAME, EmployeePermissionTable.PERMISSION_ID);
                 count += syncLocalSingleTable(service, EmployeeTimesheetTable.TABLE_NAME, EmployeeTimesheetTable.GUID);
+                count += syncLocalSingleTable(service, EmployeeBreaksTimesheetTable.TABLE_NAME, EmployeeBreaksTimesheetTable.GUID);
                 count += syncLocalSingleTable(service, ShiftTable.TABLE_NAME, ShiftTable.GUID);
                 count += syncLocalSingleTable(service, CashDrawerMovementTable.TABLE_NAME, CashDrawerMovementTable.GUID);
 
@@ -1789,6 +1795,7 @@ public class SyncCommand implements Runnable {
         EMPLOYEE(EmployeeTable.TABLE_NAME, true),
         EMPLOYEE_PERMISSION(EmployeePermissionTable.TABLE_NAME, true),
         EMPLOYEE_TIMESHEET(EmployeeTimesheetTable.TABLE_NAME, true),
+        EMPLOYEE_BREAKS_TIMESHEET(EmployeeBreaksTimesheetTable.TABLE_NAME, true),
         SHIFT(ShiftTable.TABLE_NAME, true),
         TAX_GROUP(TaxGroupTable.TABLE_NAME, true),
         DEPARTMENT(DepartmentTable.TABLE_NAME, true),

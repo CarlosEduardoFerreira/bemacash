@@ -193,6 +193,7 @@ public class SyncWaitDialogFragment extends WaitDialogFragment {
         TABLE_NAMES.put(EmployeeTable.TABLE_NAME, R.string.sync_employee);
         TABLE_NAMES.put(EmployeePermissionTable.TABLE_NAME, R.string.sync_employee);
         TABLE_NAMES.put(EmployeeTimesheetTable.TABLE_NAME, R.string.sync_employee);
+        TABLE_NAMES.put(ShopStore.EmployeeBreaksTimesheetTable.TABLE_NAME, R.string.sync_employee);
 
         TABLE_NAMES.put(ShiftTable.TABLE_NAME, R.string.sync_shift);
         TABLE_NAMES.put(CashDrawerMovementTable.TABLE_NAME, R.string.sync_cashdrawer_movemennt);

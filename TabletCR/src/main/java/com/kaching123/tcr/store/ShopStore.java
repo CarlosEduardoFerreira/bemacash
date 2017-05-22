@@ -1617,6 +1617,51 @@ public abstract class ShopStore {
         );
     }
 
+    @Table(EmployeeBreaksTimesheetTable.TABLE_NAME)
+    @Indexes({
+            @Index(name = "employee", columns = EmployeeBreaksTimesheetTable.EMPLOYEE_GUID),
+            @Index(name = "clock_in_guid", columns = EmployeeBreaksTimesheetTable.CLOCK_IN_GUID),
+            @Index(name = "break_start", columns = EmployeeBreaksTimesheetTable.BREAK_START)
+    })
+    public static interface EmployeeBreaksTimesheetTable extends IBemaSyncTable {
+
+        @URI
+        String URI_CONTENT = "employee_breaks_timesheet";
+
+        String TABLE_NAME = "employee_breaks_timesheet";
+
+        @PrimaryKey
+        @NotNull
+        @Column(type = Type.TEXT)
+        String GUID = "guid";
+
+        @NotNull
+        @Column(type = Column.Type.TEXT)
+        String EMPLOYEE_GUID = "employee_guid";
+
+        @NotNull
+        @Column(type = Column.Type.TEXT)
+        String CLOCK_IN_GUID = "clock_in_guid";
+
+        @NotNull
+        @Column(type = Column.Type.INTEGER)
+        String BREAK_START = "break_start";
+
+        @Column(type = Column.Type.INTEGER)
+        String BREAK_END = "break_end";
+
+        @Column(type = Type.INTEGER)
+        String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+    }
+
+    static {
+        applyForeignKeys(EmployeeBreaksTimesheetTable.TABLE_NAME,
+                foreignKey(EmployeeBreaksTimesheetTable.EMPLOYEE_GUID, EmployeeTable.TABLE_NAME, EmployeeTable.GUID),
+                foreignKey(EmployeeBreaksTimesheetTable.CLOCK_IN_GUID, EmployeeTimesheetTable.TABLE_NAME, EmployeeTimesheetTable.GUID)
+        );
+    }
+
+
     @Table(TaxGroupTable.TABLE_NAME)
     public static interface TaxGroupTable extends IBemaSyncTable {
 

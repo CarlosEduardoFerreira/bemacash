@@ -6,6 +6,7 @@ import android.database.Cursor;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.store.ShopStore;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._putDate;
 /**
  * Created by pkabakov on 24/12/13.
  */
-public class EmployeeTimesheetModel implements IValueModel{
+public class EmployeeTimesheetModel implements IValueModel, Serializable {
 
     public final String guid;
     public Date clockIn;

@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -15,10 +13,10 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
-import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
+import com.kaching123.tcr.model.EmployeeBreakTimesheetModel;
 import com.kaching123.tcr.model.EmployeeTimesheetModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
 import com.kaching123.tcr.store.ShopProvider;
@@ -35,6 +33,7 @@ import static com.kaching123.tcr.util.CursorUtil._wrapOrNull;
 public class TimesheetNewFragment extends StyledDialogFragment {
 
     private static final String DIALOG_NAME = TimesheetNewFragment.class.getSimpleName();
+    private static final String ARG_LAST_TIMESHEET = "ARG_LAST_TIMESHEET";
 
     @ViewById
     protected Button clockIn;
@@ -146,12 +145,44 @@ public class TimesheetNewFragment extends StyledDialogFragment {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return null;
+            EmployeeTimesheetModel lastTimesheet = (EmployeeTimesheetModel)args.getSerializable(ARG_LAST_TIMESHEET);
+            CursorLoaderBuilder builder = CursorLoaderBuilder.forUri(ShopProvider.getContentWithLimitUri(ShopStore.EmployeeBreaksTimesheetTable.URI_CONTENT, 1));
+            builder.where(ShopStore.EmployeeBreaksTimesheetTable.EMPLOYEE_GUID + " = ?", getApp().getOperatorGuid());
+            if (lastTimesheet != null) {
+                builder.where(ShopStore.EmployeeBreaksTimesheetTable.CLOCK_IN_GUID + " = ?", lastTimesheet.guid);
+            }
+            builder.orderBy(ShopStore.EmployeeBreaksTimesheetTable.BREAK_START + " DESC");
+            return builder.build(getContext());
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+            EmployeeBreakTimesheetModel lastBreak = _wrapOrNull(data, new ListConverterFunction<EmployeeBreakTimesheetModel>() {
+                @Override
+                public EmployeeBreakTimesheetModel apply(Cursor cursor) {
+                    super.apply(cursor);
+                    return new EmployeeBreakTimesheetModel(
+                            cursor.getString(indexHolder.get(ShopStore.EmployeeBreaksTimesheetTable.GUID)),
+                            _nullableDate(cursor, indexHolder.get(ShopStore.EmployeeBreaksTimesheetTable.BREAK_START)),
+                            _nullableDate(cursor, indexHolder.get(ShopStore.EmployeeBreaksTimesheetTable.BREAK_END)),
+                            cursor.getString(indexHolder.get(ShopStore.EmployeeBreaksTimesheetTable.EMPLOYEE_GUID)),
+                            cursor.getString(indexHolder.get(ShopStore.EmployeeBreaksTimesheetTable.CLOCK_IN_GUID)),
+                            null
+                    );
+                }
+            });
+            if (lastBreak != null) {
+                if (lastBreak.breakEnd == null) {
+                    startBreak.setEnabled(false);
+                    stopBreak.setEnabled(true);
+                } else {
+                    startBreak.setEnabled(true);
+                    stopBreak.setEnabled(false);
+                }
+            } else {
+                startBreak.setEnabled(true);
+                stopBreak.setEnabled(false);
+            }
         }
 
         @Override
@@ -193,7 +224,9 @@ public class TimesheetNewFragment extends StyledDialogFragment {
                     clockOut.setEnabled(true);
                     startBreak.setEnabled(true);
                     stopBreak.setEnabled(true);
-                    getLoaderManager().restartLoader(1, null, breaksStateLoader);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(ARG_LAST_TIMESHEET, lastTimesheet);
+                    getLoaderManager().restartLoader(1, bundle, breaksStateLoader);
                 } else {
                     clockIn.setEnabled(true);
                     clockOut.setEnabled(false);
