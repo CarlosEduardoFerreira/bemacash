@@ -16,6 +16,7 @@ import java.util.List;
 
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
+import static com.kaching123.tcr.store.ShopStore.CustomerTable.BIRTHDAY_REWARD_RECEIVED_DATE;
 
 /**
  * Created by pkabakov on 10.02.14.
@@ -211,6 +212,13 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     public SingleSqlCommand updateBirthdayRewardDate(CustomerModel model, IAppCommandContext appCommandContext) {
         return _update(TABLE_NAME, appCommandContext)
                 .add(BIRTHDAY_REWARD_APPLY_DATE, model.birthdayRewardApplyDate)
+                .where(GUID, model.guid)
+                .build(JdbcFactory.getApiMethod(model));
+    }
+
+    public SingleSqlCommand updateLoyaltyBirthdayReceivedDate(CustomerModel model, IAppCommandContext appCommandContext) {
+        return _update(TABLE_NAME, appCommandContext)
+                .add(BIRTHDAY_REWARD_RECEIVED_DATE, model.birthdayRewardReceivedDate)
                 .where(GUID, model.guid)
                 .build(JdbcFactory.getApiMethod(model));
     }

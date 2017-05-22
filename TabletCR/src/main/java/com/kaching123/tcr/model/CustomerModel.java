@@ -40,6 +40,7 @@ public class CustomerModel implements IValueModel, Serializable {
     public boolean sex;
     public Date birthday;
     public Date birthdayRewardApplyDate;
+    public Date birthdayRewardReceivedDate;
     public Date createTime;
     public boolean consentPromotions;
     public String notes;

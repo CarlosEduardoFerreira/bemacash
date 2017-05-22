@@ -1,6 +1,7 @@
 package com.kaching123.tcr.processor;
 
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
@@ -8,6 +9,7 @@ import com.kaching123.tcr.commands.loyalty.AddSaleIncentiveCommand;
 import com.kaching123.tcr.commands.loyalty.AddSaleIncentiveCommand.AddSaleIncentiveCallback;
 import com.kaching123.tcr.commands.loyalty.GetCustomerLoyaltyCommand;
 import com.kaching123.tcr.commands.loyalty.GetCustomerLoyaltyCommand.BaseGetCustomerLoyaltyCallback;
+import com.kaching123.tcr.commands.loyalty.LoyaltyBirthdayReceivedDateCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderDiscountCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
@@ -15,6 +17,7 @@ import com.kaching123.tcr.fragment.loyalty.LoyaltyFragmentDialog;
 import com.kaching123.tcr.fragment.loyalty.LoyaltyFragmentDialog.LoyaltyDialogListener;
 import com.kaching123.tcr.model.DiscountType;
 import com.kaching123.tcr.model.ItemExModel;
+import com.kaching123.tcr.model.LoyaltyType;
 import com.kaching123.tcr.model.LoyaltyViewModel;
 import com.kaching123.tcr.model.LoyaltyViewModel.IncentiveExModel;
 
@@ -81,14 +84,26 @@ public class LoyaltyProcessor {
         if (incentive == null){
             callback.onComplete();
         }else{
+            Log.d("BemaCarl23","LoyaltyProcessor.processIncentive.incentive.type:    1: " + incentive.type);
+            if(incentive.type.equals(LoyaltyType.BIRTHDAY)){
+                Log.d("BemaCarl23","LoyaltyProcessor.processIncentive.incentive.type:    2: " + incentive.type);
+                if(alreadyReceivedBirthdayLoyalty()){
+                    Log.d("BemaCarl23","LoyaltyProcessor.processIncentive. alreadyReceivedBirthdayLoyalty:    ");
+                    return;
+                }
+            }
+            Log.d("BemaCarl23","LoyaltyProcessor.processIncentive.incentive.type:    3: " + incentive.type);
             LoyaltyFragmentDialog.show(context, incentive, new LoyaltyDialogListener() {
                 @Override
                 public void onApplyRequested(IncentiveExModel incentive) {
+                    Log.d("BemaCarl23","LoyaltyProcessor.processIncentive.incentive.type:    4: " + incentive.type);
                     applyIncentive(incentive);
+                    LoyaltyBirthdayReceivedDateCommand.start(context, customerGuid);
                 }
 
                 @Override
                 public void onSkipRequested(IncentiveExModel incentive) {
+                    Log.d("BemaCarl23","LoyaltyProcessor.processIncentive.incentive.type:    5: " + incentive.type);
                     banIncentive(incentive.guid);
                     processIncentive();
                 }
@@ -98,11 +113,26 @@ public class LoyaltyProcessor {
 
     private IncentiveExModel getNextIncentive(){
         for (IncentiveExModel incentive : loyalty.incentiveExModels){
-            if (!checkIncentiveBanned(incentive.guid))
+            Log.d("BemaCarl23","LoyaltyProcessor.getNextIncentive.incentive.guid:           " + incentive.guid);
+            Log.d("BemaCarl23","LoyaltyProcessor.getNextIncentive.incentive.name:           " + incentive.name);
+            Log.d("BemaCarl23","LoyaltyProcessor.getNextIncentive.incentive.birthdayoffset: " + incentive.birthdayOffset);
+            Log.d("BemaCarl23","LoyaltyProcessor.getNextIncentive.incentive.type:           " + incentive.type);
+            Log.d("BemaCarl23","LoyaltyProcessor.getNextIncentive.incentive.rewardType:     " + incentive.rewardType);
+            Log.d("BemaCarl23","LoyaltyProcessor.getNextIncentive.incentive.rewardValue:    " + incentive.rewardValue);
+            if (!checkIncentiveBanned(incentive.guid)) {
                 return incentive;
+            }
         }
         return null;
     }
+
+
+    private boolean alreadyReceivedBirthdayLoyalty(){
+        boolean ret = new LoyaltyBirthdayReceivedCheck().checkIfBirthdayWasAppliedOnCurrentYear(customerGuid);
+        Log.d("BemaCarl23","LoyaltyProcessor.alreadyReceivedBirthdayLoyalty.return:    " + ret);
+        return ret;
+    }
+
 
     private void applyIncentive(IncentiveExModel incentive){
         switch (incentive.rewardType){

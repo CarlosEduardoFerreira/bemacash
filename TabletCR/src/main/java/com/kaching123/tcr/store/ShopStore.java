@@ -1853,6 +1853,9 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+
+        @Column(type = Column.Type.INTEGER)
+        String BIRTHDAY_REWARD_RECEIVED_DATE = "birthday_reward_received_date";
     }
 
     static {
