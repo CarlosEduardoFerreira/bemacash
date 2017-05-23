@@ -1,6 +1,7 @@
 package com.kaching123.tcr.fragment.tendering.history;
 
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.kaching123.tcr.commands.print.digital.ResendDigitalOrderCommand;
 import com.kaching123.tcr.commands.print.digital.ResendDigitalOrderCommand.BaseResendDigitalOrderCallback;
@@ -22,6 +23,7 @@ public class EmailOrderFragmentDialog extends ChooseCustomerBaseDialog {
     private EmailOrderCompleteListener listener;
     @Override
     protected void sendDigitalOrder(final String email) {
+        Log.d("BemaCarl24", "SendDigitalDetailedReportCommand.sendDigitalOrder.email: " + email);
         ResendDigitalOrderCommand.start(getActivity(), orderGuid, email, new BaseResendDigitalOrderCallback() {
             @Override
             protected void onDigitalOrderSent() {
@@ -40,6 +42,7 @@ public class EmailOrderFragmentDialog extends ChooseCustomerBaseDialog {
 
     @Override
     protected void onCustomerPicked(CustomerModel customer) {
+        Log.d("BemaCarl24", "SendDigitalDetailedReportCommand.onCustomerPicked.customer.email: " + customer.email);
         ResendDigitalOrderCommand.start(getActivity(), orderGuid, customer.email, (BaseResendDigitalOrderCallback) null);
 		dismiss();    }
 

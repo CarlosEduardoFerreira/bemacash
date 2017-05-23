@@ -3,6 +3,7 @@ package com.kaching123.tcr.commands.print.digital;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.commands.rest.email.BaseSendEmailCommand;
@@ -75,6 +76,8 @@ public class SendDigitalDetailedReportCommand extends BaseSendEmailCommand {
         String html = orderBuilder.build();
 
         String subject = getContext().getString(R.string.report_type_detailed_report);
+
+        Log.d("BemaCarl24", "SendDigitalDetailedReportCommand.execute.html: " + html);
 
         return sendEmail(restApi, apiKey, new String[]{email}, subject, html);
     }

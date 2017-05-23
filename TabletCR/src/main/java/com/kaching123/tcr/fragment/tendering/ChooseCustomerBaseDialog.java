@@ -10,6 +10,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -19,7 +20,9 @@ import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.EditCustomerActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderCustomerCommand;
@@ -33,6 +36,7 @@ import com.kaching123.tcr.model.PaymentTransactionModel;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.CustomerTable;
 import com.kaching123.tcr.websvc.api.prepaid.IVULotoDataResponse;
 
@@ -46,6 +50,8 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 
+import static com.kaching123.tcr.activity.BaseCashierActivity.customerWasChosen;
+
 /**
  * Created by gdubina on 03/03/14.
  */
@@ -53,6 +59,7 @@ import java.util.ArrayList;
 public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment implements LoaderCallbacks<Cursor> {
 
     private static final Uri CUSTOMERS_URI = ShopProvider.getContentUri(CustomerTable.URI_CONTENT);
+    private static final Uri SALEORDER_URI = ShopProvider.getContentUri(ShopStore.SaleOrderTable.URI_CONTENT);
 
     private static final int ADD_CUSTOMER_REQUEST_CODE = 0x0100;
 
@@ -162,6 +169,25 @@ public abstract class ChooseCustomerBaseDialog extends StyledDialogFragment impl
             return;
         }
         this.email = email;
+
+        customerWasChosen = false;
+        Log.d("BemaCarl24", "ChooseCustomerBaseDialog.listViewItemClicked.orderGuid:" + orderGuid);
+        if(orderGuid != null) {
+            Log.d("BemaCarl24", "ChooseCustomerBaseDialog.listViewItemClicked.if(orderGuid != null) {:");
+            Cursor c1 = ProviderAction.query(SALEORDER_URI)
+                    .projection(ShopStore.SaleOrderTable.CUSTOMER_GUID)
+                    .where(ShopStore.SaleOrderTable.GUID + " = ?", getCurrentOrderGuid())
+                    .where(ShopStore.SaleOrderTable.CUSTOMER_GUID + " IS NOT NULL")
+                    .perform(getContext());
+            Log.d("BemaCarl24", "ChooseCustomerBaseDialog.listViewItemClicked.customerWasChosen:" + customerWasChosen);
+            if (c1.moveToNext()) {
+                Log.d("BemaCarl24", "ChooseCustomerBaseDialog.listViewItemClicked.SaleOrderTable.CUSTOMER_GUID:" + c1.getString(0));
+                customerWasChosen = true;
+            }
+        }else{
+            Log.d("BemaCarl24", "ChooseCustomerBaseDialog.listViewItemClicked.}else{:");
+            customerWasChosen = true;
+        }
         UpdateSaleOrderCustomerCommand.start(getActivity(), getCurrentOrderGuid(), guid, isGiftCard, updateOrderCustomerCallback);
     }
 

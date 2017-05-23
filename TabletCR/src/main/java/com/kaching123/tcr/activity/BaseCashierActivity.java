@@ -356,6 +356,7 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private List<DiscountBundle> discountBundles = Collections.EMPTY_LIST;
     private boolean hasPrefixes;
 
+    static public boolean customerWasChosen = true;
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
