@@ -1,7 +1,6 @@
 package com.kaching123.tcr.commands.print.digital;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
