@@ -1,5 +1,7 @@
 package com.kaching123.tcr.util;
 
+import android.text.TextUtils;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
@@ -215,6 +217,10 @@ public final class DateUtils {
     }
 
     public static String formatMins(BigDecimal minutes) {
+        if (minutes == null) {
+            return "";
+        }
+
         BigDecimal h = minutes.divide(SIXTY, RoundingMode.DOWN);
         BigDecimal m = minutes.subtract(h.multiply(SIXTY));
 

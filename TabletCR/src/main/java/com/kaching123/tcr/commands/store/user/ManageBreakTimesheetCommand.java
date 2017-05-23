@@ -8,9 +8,11 @@ import android.net.Uri;
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
+import com.kaching123.tcr.jdbc.converters.EmployeeBreaksJdbcConverter;
 import com.kaching123.tcr.model.EmployeeBreakTimesheetModel;
 import com.kaching123.tcr.model.EmployeeTimesheetModel;
 import com.kaching123.tcr.model.converter.ListConverterFunction;
+import com.kaching123.tcr.service.BatchSqlCommand;
 import com.kaching123.tcr.service.ISqlCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopStore;
@@ -45,9 +47,14 @@ public class ManageBreakTimesheetCommand extends AsyncCommand {
     private String employeeGuid;
     private Action action;
     private EmployeeBreakTimesheetModel breakModel;
+    private ArrayList<ContentProviderOperation> operations;
+    private BatchSqlCommand sql;
 
     @Override
     protected TaskResult doCommand() {
+        operations = new ArrayList<ContentProviderOperation>(1);
+        sql = batchInsert(EmployeeBreakTimesheetModel.class);
+
         employeeGuid = getStringArg(ARG_EMPLOYEE);
         action = (Action) getArgs().getSerializable(ARG_ACTION);
         EmployeeTimesheetModel lastTimesheetModel = getLastTimesheet(employeeGuid);
@@ -61,6 +68,8 @@ public class ManageBreakTimesheetCommand extends AsyncCommand {
                         lastTimesheetModel.guid,
                         null
                 );
+                operations.add(ContentProviderOperation.newInsert(EMPLOYEE_BREAKS_TIMESHEET_URI).withValues(breakModel.toValues()).build());
+                sql.add(JdbcFactory.getConverter(breakModel).insertSQL(breakModel, getAppCommandContext()));
             } else {
                 Cursor c = ProviderAction.query(ShopProvider.getContentWithLimitUri(ShopStore.EmployeeBreaksTimesheetTable.URI_CONTENT, 1))
                         .where(ShopStore.EmployeeBreaksTimesheetTable.EMPLOYEE_GUID + " = ?", employeeGuid)
@@ -70,6 +79,11 @@ public class ManageBreakTimesheetCommand extends AsyncCommand {
                 if (c != null && c.moveToFirst()) {
                     breakModel = new EmployeeBreakTimesheetModel(c);
                     breakModel.breakEnd = Util.cropSeconds(new Date());
+
+                    operations.add(ContentProviderOperation.newUpdate(EMPLOYEE_BREAKS_TIMESHEET_URI).withValues(breakModel.toUpdateValues()).build());
+                    EmployeeBreaksJdbcConverter converter = (EmployeeBreaksJdbcConverter)JdbcFactory.getConverter(breakModel);
+                    sql.add(converter.updateEndOfBreakSQL(breakModel, getAppCommandContext()));
+
                     c.close();
                 }
             }
@@ -103,13 +117,11 @@ public class ManageBreakTimesheetCommand extends AsyncCommand {
     }
     @Override
     protected ISqlCommand createSqlCommand() {
-        return JdbcFactory.getConverter(breakModel).insertSQL(breakModel, getAppCommandContext());
+        return sql;
     }
 
     @Override
     protected ArrayList<ContentProviderOperation> createDbOperations() {
-        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>(1);
-        operations.add(ContentProviderOperation.newInsert(EMPLOYEE_BREAKS_TIMESHEET_URI).withValues(breakModel.toValues()).build());
         return operations;
     }
 

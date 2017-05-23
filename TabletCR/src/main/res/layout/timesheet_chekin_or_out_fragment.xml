@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_row="0"
+            android:enabled="false"
             android:background="@drawable/timeshit_btn_selector"
             android:text="@string/btn_clock_in" />
 
@@ -31,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_row="1"
+            android:enabled="false"
             android:background="@drawable/timeshit_btn_selector"
             android:text="@string/btn_clock_out" />
 
@@ -41,6 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_column="1"
             android:layout_row="0"
+            android:enabled="false"
             android:background="@drawable/timeshit_btn_selector"
             android:text="@string/btn_break_start" />
 
@@ -51,6 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_column="1"
             android:layout_row="1"
+            android:enabled="false"
             android:background="@drawable/timeshit_btn_selector"
             android:text="@string/btn_break_finish" />
 

@@ -43,7 +43,7 @@ public class EmployeeClockInOutFragment extends SalesBaseFragment implements IDe
         return new AsyncTaskLoader<List<Object>>(getActivity()) {
             @Override
             public List<Object> loadInBackground() {
-                Collection<EmployeeInfo> employeeInfos = ClockInOutReportQuery.getItems(getActivity(), startTime, endTime, employeeGuid);
+                Collection<EmployeeInfo> employeeInfos = ClockInOutReportQuery.getItemsClockInOutReport(getActivity(), startTime, endTime, employeeGuid);
                 ArrayList<Object> rows = new ArrayList<Object>();
                 for (EmployeeInfo i : employeeInfos) {
                     rows.add(new HeaderRow(i.name));
@@ -119,6 +119,7 @@ public class EmployeeClockInOutFragment extends SalesBaseFragment implements IDe
                 view = View.inflate(getContext(), R.layout.reports_employee_ateendance_item1_view, null);
                 UIHolderTime time = new UIHolderTime();
                 time.date = (TextView) view.findViewById(R.id.date);
+                time.totalBreaks = (TextView) view.findViewById(R.id.total_break_time);
                 time.clockIn = (TextView) view.findViewById(R.id.clock_in);
                 time.clockOut = (TextView) view.findViewById(R.id.clock_out);
                 time.shift = (TextView) view.findViewById(R.id.shift);
@@ -148,6 +149,7 @@ public class EmployeeClockInOutFragment extends SalesBaseFragment implements IDe
                 holder.clockIn.setText(DateUtils.timeOnlyAttendanceFormat(timeInfo.clockIn));
                 holder.clockOut.setText(sameDay ? DateUtils.timeOnlyAttendanceFormat(timeInfo.clockOut) : DateUtils.formatFullAttendance(timeInfo.clockOut));
                 holder.shift.setText(timeInfo.clockOut == null ? null : DateUtils.formatMins(timeInfo.getDiff()));
+                holder.totalBreaks.setText(timeInfo.clockOut == null ? null : DateUtils.formatMins(timeInfo.totalBreak));
             }
 
             return convertView;
@@ -165,6 +167,7 @@ public class EmployeeClockInOutFragment extends SalesBaseFragment implements IDe
 
     private static class UIHolderTime {
         TextView date;
+        TextView totalBreaks;
         TextView clockIn;
         TextView clockOut;
         TextView shift;

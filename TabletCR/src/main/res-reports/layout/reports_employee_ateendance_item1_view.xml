@@ -18,6 +18,15 @@
         android:layout_weight="3"/>
 
     <TextView
+        android:id="@+id/total_break_time"
+        style="@style/SaleReport.ItemList.ItemText"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <TextView
         android:id="@+id/clock_in"
         style="@style/SaleReport.ItemList.ItemText"
         android:ellipsize="end"
