@@ -14,6 +14,7 @@ import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.EmployeeComissionView2.ComissionTable;
 import com.kaching123.tcr.store.ShopSchema2.EmployeeTimesheetView2.EmployeeTable;
 import com.kaching123.tcr.store.ShopSchema2.EmployeeTimesheetView2.TimeTable;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.EmployeeComissionView;
 import com.kaching123.tcr.store.ShopStore.EmployeeTimesheetView;
 import com.kaching123.tcr.util.CalculationUtil;
@@ -34,6 +35,7 @@ public class PayrollReportQuery {
 
     private static final Uri URI_TIME = ShopProvider.getContentUri(EmployeeTimesheetView.URI_CONTENT);
     private static final Uri URI_COMMISSION = ShopProvider.getContentUri(EmployeeComissionView.URI_CONTENT);
+    private static final Uri URI_EMPLOYEE_TIMESHEET_WITH_BREAKS = ShopProvider.getContentUri(ShopStore.EmployeeBreaksTimesheetTable.URI_CONTENT);
 
     public static Collection<EmployeePayrollInfo> getItems(Context context, long startTime, long endTime, String employeeGuid) {
 
@@ -77,11 +79,33 @@ public class PayrollReportQuery {
             long clockOut = timeCursor.getLong(timeCursor.getColumnIndex(TimeTable.CLOCK_OUT));
             String clockGuid = timeCursor.getString(timeCursor.getColumnIndex(TimeTable.GUID));
 
+            Cursor c1 = ProviderAction.query(URI_EMPLOYEE_TIMESHEET_WITH_BREAKS)
+                    .where(ShopStore.EmployeeBreaksTimesheetTable.CLOCK_IN_GUID + " = ?", clockGuid)
+                    .where(ShopStore.EmployeeBreaksTimesheetTable.BREAK_END + " IS NOT NULL")
+                    .perform(context);
+
+            BigDecimal totalBreakForClockIn = BigDecimal.ZERO;
+
+            while (c1.moveToNext()) {
+                Date brStart = new Date(c1.getInt(c1.getColumnIndex(ShopStore.EmployeeBreaksTimesheetTable.BREAK_START)));
+                Date brEnd = new Date(c1.getInt(c1.getColumnIndex(ShopStore.EmployeeBreaksTimesheetTable.BREAK_END)));
+                long min = (brEnd.getTime() - brStart.getTime())/1000/60;
+                totalBreakForClockIn = totalBreakForClockIn.add(BigDecimal.valueOf(min));
+            }
+            c1.close();
+
             EmployeePayrollInfo info = result.get(guid);
             if(info == null){
                 BigDecimal commission = commissions.get(guid);
-                info = new EmployeePayrollInfo(concatFullname(timeCursor.getString(timeCursor.getColumnIndex(EmployeeTable.FIRST_NAME)), timeCursor.getString(timeCursor.getColumnIndex(EmployeeTable.LAST_NAME))), _decimal(timeCursor, timeCursor.getColumnIndex(EmployeeTable.HOURLY_RATE), BigDecimal.ZERO), commission);
+                info = new EmployeePayrollInfo(
+                        concatFullname(timeCursor.getString(timeCursor.getColumnIndex(EmployeeTable.FIRST_NAME)),
+                        timeCursor.getString(timeCursor.getColumnIndex(EmployeeTable.LAST_NAME))),
+                        _decimal(timeCursor, timeCursor.getColumnIndex(EmployeeTable.HOURLY_RATE), BigDecimal.ZERO),
+                        commission,
+                        totalBreakForClockIn);
                 result.put(guid, info);
+            } else {
+                info.totalBreaks = info.totalBreaks.add(totalBreakForClockIn);
             }
             TimeInfo timeInfo = new TimeInfo(clockGuid, new Date(clockIn), clockOut == 0 ? null : new Date(clockOut));
             info.times.add(timeInfo);
@@ -113,11 +137,13 @@ public class PayrollReportQuery {
 
         public BigDecimal hRate = BigDecimal.ZERO;
         public BigDecimal totalDue = BigDecimal.ZERO;
+        public BigDecimal totalBreaks = BigDecimal.ZERO;
         public BigDecimal commission = BigDecimal.ZERO;
 
-        public EmployeePayrollInfo(String name, BigDecimal hRate, BigDecimal commission) {
+        public EmployeePayrollInfo(String name, BigDecimal hRate, BigDecimal commission, BigDecimal totalBreaks) {
             super(name);
             this.hRate = hRate;
+            this.totalBreaks = totalBreaks;
             if (commission != null){
                 this.commission = commission;
             }

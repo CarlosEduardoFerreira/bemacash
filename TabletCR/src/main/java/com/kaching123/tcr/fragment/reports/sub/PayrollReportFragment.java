@@ -90,6 +90,7 @@ public class PayrollReportFragment extends SalesBaseFragment<EmployeePayrollInfo
             ViewHolder holder = new ViewHolder(
                     (TextView) convertView.findViewById(R.id.employee_name),
                     (TextView) convertView.findViewById(R.id.total_hours),
+                    (TextView) convertView.findViewById(R.id.total_breaks),
                     (TextView) convertView.findViewById(R.id.hourly_rate),
                     (TextView) convertView.findViewById(R.id.total_due),
                     (TextView) convertView.findViewById(R.id.commission)
@@ -108,6 +109,9 @@ public class PayrollReportFragment extends SalesBaseFragment<EmployeePayrollInfo
 
             holder.name.setText(item.name);
             holder.totalHrs.setText(DateUtils.formatMins(item.totalMins));
+
+            holder.totalBrks.setText(DateUtils.formatMins(item.totalBreaks));
+
             showPrice(holder.hRate, item.hRate);
             showPrice(holder.totalDue, isCommissionEnabled ? item.totalDue.add(item.commission) : item.totalDue);
             if (isCommissionEnabled) {
@@ -123,13 +127,15 @@ public class PayrollReportFragment extends SalesBaseFragment<EmployeePayrollInfo
         private class ViewHolder {
             TextView name;
             TextView totalHrs;
+            TextView totalBrks;
             TextView hRate;
             TextView totalDue;
             TextView commission;
 
-            private ViewHolder(TextView name, TextView totalHrs, TextView hRate, TextView totalDue, TextView commission) {
+            private ViewHolder(TextView name, TextView totalHrs, TextView totalBrks, TextView hRate, TextView totalDue, TextView commission) {
                 this.name = name;
                 this.totalHrs = totalHrs;
+                this.totalBrks = totalBrks;
                 this.hRate = hRate;
                 this.totalDue = totalDue;
                 this.commission = commission;

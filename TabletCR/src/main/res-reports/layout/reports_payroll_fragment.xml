@@ -32,6 +32,14 @@
             style="@style/ItemList.HeaderText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/report_employee_attendance_header_total_break_time"
+            android:layout_weight="1"/>
+
+        <TextView
+            style="@style/ItemList.HeaderText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/report_payroll_header_hour_rate"/>
@@ -74,6 +82,12 @@
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="4"/>
+
+        <View
+            style="@style/ItemList.HeaderSpace"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
 
         <View
             style="@style/ItemList.HeaderSpace"

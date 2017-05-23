@@ -28,6 +28,15 @@
         />
 
     <TextView
+        android:id="@+id/total_breaks"
+        style="@style/SaleReport.ItemList.ItemText"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical|right"
+        />
+
+    <TextView
         android:id="@+id/hourly_rate"
         style="@style/SaleReport.ItemList.ItemText"
         android:layout_height="match_parent"
