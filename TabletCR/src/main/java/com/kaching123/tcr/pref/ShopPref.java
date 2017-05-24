@@ -444,4 +444,7 @@ public interface ShopPref {
 
     boolean showOnlyMyOrder();
 
+    @DefaultBoolean(true)
+    boolean paidBreaks();
+
 }

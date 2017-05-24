@@ -1284,6 +1284,7 @@
     <string name="report_sales_by_drops_and_payments_header_type">Type</string>
     <string name="report_sales_by_drops_and_payments_header_comment">Comment</string>
     <string name="report_employee_attendance_header_total_break_time">Total Break Time</string>
+    <string name="report_employee_attendance_header_total_breaks">Total Breaks</string>
     <string name="report_employee_attendance_header_clockin">Clock in</string>
     <string name="report_employee_attendance_header_clockout">Clock out</string>
     <string name="report_employee_attendance_header_shift">Shift</string>

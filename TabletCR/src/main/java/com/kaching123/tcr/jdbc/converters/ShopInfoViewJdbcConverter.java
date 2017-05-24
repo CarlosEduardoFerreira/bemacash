@@ -142,6 +142,7 @@ public class ShopInfoViewJdbcConverter {
     private static final String ON_HOLD_STATUS_MANDATORY = "ON_HOLD_STATUS_MANDATORY";
 
     private static final String AGE_VERIFICATION_FORMAT = "AGE_VERIFICATION_FORMAT";
+    private static final String PAID_BREAKS = "PAID_BREAKS";
 
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
@@ -232,7 +233,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getString(SIGNATURE_RECEIPT),
                 rs.getBoolean(DEFINED_ON_HOLD),
                 rs.getBoolean(ON_HOLD_STATUS_MANDATORY),
-                rs.getBoolean(AGE_VERIFICATION_FORMAT)
+                rs.getBoolean(AGE_VERIFICATION_FORMAT),
+                rs.getBoolean(PAID_BREAKS)
         );
     }
 
@@ -324,7 +326,8 @@ public class ShopInfoViewJdbcConverter {
                 rs.getString(SIGNATURE_RECEIPT),
                 rs.getBoolean(DEFINED_ON_HOLD),
                 rs.getBoolean(ON_HOLD_STATUS_MANDATORY),
-                rs.getBoolean(AGE_VERIFICATION_FORMAT)
+                rs.getBoolean(AGE_VERIFICATION_FORMAT),
+                rs.getBoolean(PAID_BREAKS)
         );
     }
 
@@ -439,6 +442,7 @@ public class ShopInfoViewJdbcConverter {
         public final boolean definedOnHold;
         public final boolean onHoldStatusMandatory;
         public final boolean ageVerificationFormatLatin;
+        public final boolean paidBreaks;
 
 
 
@@ -524,7 +528,8 @@ public class ShopInfoViewJdbcConverter {
                         String signatureReceipt,
                         boolean definedOnHold,
                         boolean onHoldStatusMandatory,
-                        boolean ageVerificationFormat) {
+                        boolean ageVerificationFormat,
+                        boolean paidBreaks) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -635,6 +640,7 @@ public class ShopInfoViewJdbcConverter {
             this.onHoldStatusMandatory = onHoldStatusMandatory;
 
             this.ageVerificationFormatLatin = ageVerificationFormat;
+            this.paidBreaks = paidBreaks;
         }
 
     }

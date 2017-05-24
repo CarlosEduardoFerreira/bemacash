@@ -37,38 +37,6 @@ public class ClockInOutReportQuery {
     private static final Uri URI_EMPLOYEE_TIMESHEET_WITH_BREAKS = ShopProvider.getContentUri(ShopStore.EmployeeBreaksTimesheetTable.URI_CONTENT);
     public static final String EXTRA_OVERLAPS = "EXTRA_OVERLAPS";
 
-    public static Collection<EmployeeInfo> getItems(Context context, long startTime, long endTime, String employeeGuid) {
-
-        Query query = ProviderAction.query(URI_TIME)
-                .where(TimeTable.CLOCK_IN + " >= ? and " + TimeTable.CLOCK_IN + " <= ?", startTime, endTime);
-
-        if(!TextUtils.isEmpty(employeeGuid)){
-            query.where(EmployeeTable.GUID + " = ?", employeeGuid);
-        }
-        Cursor c = query.perform(context);
-
-        HashMap<String, EmployeeInfo> result = new HashMap<>();
-        while (c.moveToNext()) {
-            String guid = c.getString(c.getColumnIndex(EmployeeTable.GUID));
-
-            long clockIn = c.getLong(c.getColumnIndex(TimeTable.CLOCK_IN));
-            long clockOut = c.getLong(c.getColumnIndex(TimeTable.CLOCK_OUT));
-            String clockGuid = c.getString(c.getColumnIndex(TimeTable.GUID));
-
-            EmployeeInfo info = result.get(guid);
-            if(info == null){
-                info = new EmployeeInfo(concatFullname(c.getString(c.getColumnIndex(EmployeeTable.FIRST_NAME)), c.getString(c.getColumnIndex(EmployeeTable.LAST_NAME))));
-                result.put(guid, info);
-            }
-            TimeInfo timeInfo = new TimeInfo(clockGuid, new Date(clockIn), clockOut == 0 ? null : new Date(clockOut));
-            info.times.add(timeInfo);
-            info.totalMins = info.totalMins.add(timeInfo.getDiff());
-        }
-
-        c.close();
-        return convert(result);
-    }
-
     public static Collection<EmployeeInfo> getItemsClockInOutReport(Context context, long startTime, long endTime, String employeeGuid) {
 
         Query query = ProviderAction.query(URI_TIME)

@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.google.common.collect.ImmutableSortedSet;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.reports.ClockInOutReportQuery.EmployeeInfo;
 import com.kaching123.tcr.reports.ClockInOutReportQuery.TimeInfo;
 import com.kaching123.tcr.store.ShopProvider;
@@ -128,8 +129,9 @@ public class PayrollReportQuery {
     }
 
     private static void calcTotalDue(HashMap<String, EmployeePayrollInfo> map){
+        boolean paidBreaks = TcrApplication.get().getShopInfo().paidBreaks;
         for (EmployeePayrollInfo info : map.values()){
-            info.totalDue = CalculationUtil.getTotalDue(info.hRate, info.totalMins);
+            info.totalDue = CalculationUtil.getTotalDue(info.hRate, info.totalMins, info.totalBreaks, paidBreaks);
         }
     }
 

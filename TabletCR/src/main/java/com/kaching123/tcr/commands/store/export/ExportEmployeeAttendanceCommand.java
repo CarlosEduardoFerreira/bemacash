@@ -28,10 +28,10 @@ public class ExportEmployeeAttendanceCommand extends ExportToFileCommand {
         String employeeGuid = getStringArg(ReportArgs.ARG_EMPLOYEE_GUID);
 
         int n = 0;
-        Collection<EmployeeInfo> items = ClockInOutReportQuery.getItems(getContext(), start, end, employeeGuid);
+        Collection<EmployeeInfo> items = ClockInOutReportQuery.getItemsClockInOutReport(getContext(), start, end, employeeGuid);
         for (EmployeeInfo info : items){
             for (TimeInfo t : info.times){
-                writer.write(readRow(info.name, t.clockIn, t.clockOut, t.getDiff()));
+                writer.write(readRow(info.name, t.totalBreak, t.clockIn, t.clockOut, t.getDiff()));
                 n++;
             }
         }
@@ -39,11 +39,12 @@ public class ExportEmployeeAttendanceCommand extends ExportToFileCommand {
         return n;
     }
 
-    private List<String> readRow(String name, Date in, Date out, BigDecimal diff){
+    private List<String> readRow(String name, BigDecimal totalBreaks, Date in, Date out, BigDecimal diff){
         final boolean sameDay = DateUtils.isSameDay(in, out);
         ArrayList<String> row = new ArrayList<String>(5);
         row.add(name);
         row.add(DateUtils.dateOnlyFormat(in));
+        row.add(totalBreaks == null ? null : DateUtils.formatMins(totalBreaks));
         row.add(DateUtils.timeOnlyAttendanceFormat(in));
         row.add(sameDay ? DateUtils.timeOnlyAttendanceFormat(out) : DateUtils.formatFullAttendance(out));
         row.add(out == null ? null : DateUtils.formatMins(diff));
@@ -60,6 +61,7 @@ public class ExportEmployeeAttendanceCommand extends ExportToFileCommand {
         return new String[]{
                 "Employee",
                 "Date",
+                "Total Break Time",
                 "Clock-in",
                 "Clock-out",
                 "Shift"
@@ -71,6 +73,7 @@ public class ExportEmployeeAttendanceCommand extends ExportToFileCommand {
         return new CellProcessor[]{
                 null, //"Employee",
                 null, //"Date",
+                null, //"Total Break Time",
                 null, //"Clock-in",
                 null, //"Clock-out",
                 null  //"Shift"

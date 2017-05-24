@@ -26,8 +26,12 @@ public final class CalculationUtil {
 
     private CalculationUtil(){}
 
-    public static BigDecimal getTotalDue(BigDecimal hRate, BigDecimal totalMins) {
-        return hRate.multiply(totalMins).divide(ONE_HOUR, RESULT_SCALE, BigDecimal.ROUND_HALF_EVEN);
+    public static BigDecimal getTotalDue(BigDecimal hRate, BigDecimal totalMins, BigDecimal totalBreaks, boolean paidBreaks) {
+        if (paidBreaks) {
+            return hRate.multiply(totalMins).divide(ONE_HOUR, RESULT_SCALE, BigDecimal.ROUND_HALF_EVEN);
+        } else {
+            return hRate.multiply(totalMins.subtract(totalBreaks)).divide(ONE_HOUR, RESULT_SCALE, BigDecimal.ROUND_HALF_EVEN);
+        }
     }
 
     public static BigDecimal getSubTotal(BigDecimal qty, BigDecimal price){

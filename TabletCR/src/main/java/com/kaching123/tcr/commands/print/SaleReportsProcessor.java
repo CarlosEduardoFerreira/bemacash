@@ -1,6 +1,7 @@
 package com.kaching123.tcr.commands.print;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.kaching123.pos.util.IReportsPrinter;
 import com.kaching123.tcr.R;
@@ -457,6 +458,7 @@ public final class SaleReportsProcessor {
                 printer.startBody();
                 printer.addHourly(item.name, item.hRate);
                 printer.addWithTab(context.getString(R.string.report_payroll_header_total_hours), DateUtils.formatMins(item.totalMins), false);
+                printer.addWithTab(context.getString(R.string.report_employee_attendance_header_total_break_time), DateUtils.formatMins(item.totalBreaks), false);
                 if (isCommissionEnabled) {
                     printer.addWithTab(context.getString(R.string.report_payroll_header_commission), priceFormat(item.commission), false);
                 }
@@ -569,7 +571,7 @@ public final class SaleReportsProcessor {
     }
 
     private static PrintReportsProcessor printEmployeeAttendance(final Context context, final long startTime, final long endTime, String employeeGuid, IAppCommandContext appCommandContext) {
-        final Collection<EmployeeInfo> employeeInfos = ClockInOutReportQuery.getItems(context, startTime, endTime, employeeGuid);
+        final Collection<EmployeeInfo> employeeInfos = ClockInOutReportQuery.getItemsClockInOutReport(context, startTime, endTime, employeeGuid);
 
         return new PrintReportsProcessor<EmployeeInfo>(context.getString(ReportType.EMPLOYEE_ATTENDANCE.getLabelRes()), employeeInfos, new Date(startTime), new Date(endTime), appCommandContext) {
 
@@ -585,9 +587,16 @@ public final class SaleReportsProcessor {
                 printer.startBody();
                 for (TimeInfo time : item.times) {
                     printer.add(time.clockIn, time.clockOut, DateUtils.isSameDay(time.clockIn, time.clockOut));
+
+                    String totalBreaks = DateUtils.formatMins(time.totalBreak);
+                    if (!TextUtils.isEmpty(totalBreaks)) {
+                        printer.addShiftHrs(context.getString(R.string.report_employee_attendance_header_total_breaks), totalBreaks);
+                    }
+
                     if (time.clockOut != null) {
                         printer.addShiftHrs(context.getString(R.string.report_employee_attendance_header_shift), DateUtils.formatMins(time.getDiff()));
                     }
+
                 }
                 printer.endBody();
 
