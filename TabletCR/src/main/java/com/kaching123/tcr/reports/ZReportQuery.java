@@ -314,7 +314,7 @@ public final class ZReportQuery extends XReportQuery {
                 ebtCash, ebtFoodstamp,
                 debit, cards, drawerDifference,
                 transactionFee, openAmount, cashSale, safeDrops, payOuts,
-                cashBack, departsSales,
+                cashBack, departsSales, collectTaxGroupsSales(),
                 result, totalValue, salesCount, voidCount, returnsCount);
 
     }
@@ -565,6 +565,7 @@ public final class ZReportQuery extends XReportQuery {
                 drops, payouts,
                 cashBack,
                 departsSales,
+                collectTaxGroupsSales(),
                 itemSales,
                 totalValue, salesCount, voidCount, returnsCount);
     }

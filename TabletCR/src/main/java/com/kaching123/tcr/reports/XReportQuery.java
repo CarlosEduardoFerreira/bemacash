@@ -9,6 +9,7 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.Logger;
+import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.DashboardActivity.SalesStatisticsConverter;
 import com.kaching123.tcr.activity.DashboardActivity.SalesStatisticsModel;
 import com.kaching123.tcr.commands.payment.PaymentGateway;
@@ -22,6 +23,7 @@ import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
 import com.kaching123.tcr.model.ShiftModel;
+import com.kaching123.tcr.model.TaxGroupSale;
 import com.kaching123.tcr.model.TipsModel.PaymentType;
 import com.kaching123.tcr.model.XReportInfo;
 import com.kaching123.tcr.model.payment.MovementType;
@@ -77,6 +79,9 @@ public class XReportQuery {
     private static final Uri URI_SALE_ITEM_DEPARTMENT = ShopProvider.getContentUri(ShopStore.SaleItemDeptView.URI_CONTENT);
     private static final Uri URI_DEPARTMENT = ShopProvider.getContentUri(ShopStore.DepartmentTable.URI_CONTENT);
     protected static BigDecimal totalValue = BigDecimal.ZERO;
+
+    protected static HashMap<String, BigDecimal> taxGroupsTotal = new HashMap<>();
+    protected static HashMap<String, String> taxGroupsGuidTitlePairs = new HashMap<>();
 
 
     protected XReportQuery() {
@@ -160,6 +165,8 @@ public class XReportQuery {
                 .perform(context);
         Logger.d("tcrtcr: " + c.getCount());
 
+        taxGroupsGuidTitlePairs.clear();
+        taxGroupsTotal.clear();
         final StatInfo saleInfo = getShiftOrders(context, shiftGuid, OrderStatus.COMPLETED);
         final StatInfo returnInfo = getShiftOrders(context, shiftGuid, OrderStatus.RETURN);
 
@@ -307,7 +314,7 @@ public class XReportQuery {
         return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity, tax, totalTender,
                 cogs, grossMargin, grossMarginInPercent, creditCard, cash, tenderCreditReceipt, offlineCredit, check,
                 ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops,
-                payOuts, cashBack, departsSales, result, totalValue);
+                payOuts, cashBack, departsSales, result, collectTaxGroupsSales(), totalValue);
     }
 
     public static XReportInfo loadDailySalesXReport(Context context, long registerID, long fromDate, long toDate) {
@@ -350,6 +357,8 @@ public class XReportQuery {
         openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
         transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerID, fromDate, toDate));//returnInfo is negative
 
+        taxGroupsGuidTitlePairs.clear();
+        taxGroupsTotal.clear();
         final StatInfo saleInfo = getDailyOrders(context, OrderStatus.COMPLETED, registerID, fromDate, toDate);
         final StatInfo returnInfo = getDailyOrders(context, OrderStatus.RETURN, registerID, fromDate, toDate);
 
@@ -485,7 +494,15 @@ public class XReportQuery {
         return new XReportInfo(startDate, endDate, grossSale, discount, returned, netSale, gratuity,
                 tax, totalTender, cogs, grossMargin, grossMarginInPercent, creditCard, cash,
                 tenderCreditReceipt, offlineCredit, check, ebtCash, ebtFoodstamp, debit, cards, drawerDifference, transactionFee,
-                openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, result, totalValue);
+                openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, result, collectTaxGroupsSales(), totalValue);
+    }
+
+    protected static ArrayList<TaxGroupSale> collectTaxGroupsSales() {
+        ArrayList<TaxGroupSale> taxSales = new ArrayList<>();
+        for (Entry<String, BigDecimal> entry : taxGroupsTotal.entrySet()) {
+            taxSales.add(new TaxGroupSale(entry.getKey(), taxGroupsGuidTitlePairs.get(entry.getKey()), entry.getValue()));
+        }
+        return taxSales;
     }
 
     protected static BigDecimal getDailyOrdersTransactionFee(Context context, OrderStatus type, long registerId) {
@@ -624,14 +641,13 @@ public class XReportQuery {
         };
 
         for (Entry<String, SaleOrderInfo> e : ordersInfo.entrySet()) {
-            SaleOrderCostInfo result = calculate(e.getValue(), handler2);
+            SaleOrderCostInfo result = calculate(context, e.getValue(), handler2, type);
             statInfo.discount = statInfo.discount.add(result.totalDiscount);
             statInfo.tax = statInfo.tax.add(result.totalTax);
         }
         return statInfo;
     }
-
-    public static SaleOrderCostInfo calculate(SaleOrderInfo value, Handler2 handler2) {
+    public static SaleOrderCostInfo calculate(Context context, SaleOrderInfo value, Handler2 handler2) {
         BigDecimal subTotal = BigDecimal.ZERO;
         BigDecimal totalDiscount = BigDecimal.ZERO;
         BigDecimal totalTax = BigDecimal.ZERO;
@@ -647,6 +663,41 @@ public class XReportQuery {
             BigDecimal ebtFinalPrice = i2.totalPrice;
             if (handler2 != null) {
                 handler2.handleItem(i, itemFinalPrice, i2.finalDiscount, i2.finalTax);
+            }
+        }
+        return new SaleOrderCostInfo(
+                subTotal,
+                totalDiscount,
+                totalTax
+        );
+    }
+
+    public static SaleOrderCostInfo calculate(Context context, SaleOrderInfo value, Handler2 handler2, OrderStatus type) { //getString(R.string.item_tax_group_default), _decimal(getApp().getShopInfo().taxVat)
+        BigDecimal subTotal = BigDecimal.ZERO;
+        BigDecimal totalDiscount = BigDecimal.ZERO;
+        BigDecimal totalTax = BigDecimal.ZERO;
+
+        for (SaleItemInfo i : value.map.values()) {
+            SaleItemInfo2 i2 = (SaleItemInfo2) i;
+
+            subTotal = subTotal.add(getSubTotal(i2.qty, i2.totalPrice));
+            totalDiscount = totalDiscount.add(getSubTotal(i2.qty, i2.finalDiscount));
+            totalTax = totalTax.add(getSubTotal(i2.qty, i2.finalTax));
+
+            BigDecimal itemFinalPrice = i2.totalPrice.add(i2.finalTax).subtract(i2.finalDiscount);
+            BigDecimal ebtFinalPrice = i2.totalPrice;
+            if (handler2 != null) {
+                handler2.handleItem(i, itemFinalPrice, i2.finalDiscount, i2.finalTax);
+            }
+
+            if (i2.isTaxable) {
+                if (!taxGroupsTotal.containsKey(i2.taxGroupGuid)) {
+                    taxGroupsTotal.put(i2.taxGroupGuid, type == OrderStatus.RETURN ? i2.finalTax.negate() : i2.finalTax);
+
+                    taxGroupsGuidTitlePairs.put(i2.taxGroupGuid, i2.taxGroupGuid == null ? context.getString(R.string.item_tax_group_default) : i2.taxGroupTitle);
+                } else {
+                    taxGroupsTotal.put(i2.taxGroupGuid, taxGroupsTotal.get(i2.taxGroupGuid).add(type == OrderStatus.RETURN ? i2.finalTax.negate() : i2.finalTax));
+                }
             }
         }
         return new SaleOrderCostInfo(
@@ -716,7 +767,9 @@ public class XReportQuery {
                     null,
                     null,
                     null,
-                    _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE))
+                    _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)),
+                    c.getString(c.getColumnIndex(ItemTable.TAX_GROUP_GUID)),
+                    c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.TaxGroupTable.TITLE))
             );
 
             result.map.put(saleItemId, value);
@@ -733,6 +786,8 @@ public class XReportQuery {
         public String departmentTitle;
         public String categoryGuid;
         public String categoryTitle;
+        public String taxGroupGuid;
+        public String taxGroupTitle;
 
         public String ean;
         public String productCode;
@@ -746,7 +801,8 @@ public class XReportQuery {
                              boolean discountable, BigDecimal discount, DiscountType discountType,
                              boolean isTaxable, BigDecimal tax, BigDecimal tax2, BigDecimal itemCost,
                              String departmentGuid, String departmentTitle,
-                             String categoryGuid, String categoryTitle, boolean isEbtEligible) {
+                             String categoryGuid, String categoryTitle, boolean isEbtEligible,
+                             String taxGroupGuid, String taxGroupTitle) {
             super(saleItemGiud, itemGiud, description, qty, totalPrice, discountable, discount,
                     discountType, isTaxable, tax, tax2, isEbtEligible, BigDecimal.ZERO);
             this.itemCost = itemCost;
@@ -756,6 +812,8 @@ public class XReportQuery {
             this.categoryTitle = categoryTitle;
             this.ean = ean;
             this.productCode = productCode;
+            this.taxGroupGuid = taxGroupGuid;
+            this.taxGroupTitle = taxGroupTitle;
         }
     }
 

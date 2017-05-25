@@ -58,7 +58,8 @@ public class PrintXReportCommand extends BasePrintCommand<IXReportPrinter> {
         } else {
             reportInfo = XReportQuery.loadXReport(getContext(), shiftGuid);
         }
-        PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE) ,getBooleanArg(ARG_ITEM_XREPORT_ENABLE));
+        PrintXReportProcessor processor = new PrintXReportProcessor(reportInfo, xReportType, getAppCommandContext(), getBooleanArg(ARG_XREPORT_ENABLE),
+                getBooleanArg(ARG_ITEM_XREPORT_ENABLE), getApp().getShopPref().enableXReportTaxGroups().get());
         setDescriptionInfo(processor, registerID, fromDate, toDate);
         processor.print(getContext(), getApp(), printer);
     }

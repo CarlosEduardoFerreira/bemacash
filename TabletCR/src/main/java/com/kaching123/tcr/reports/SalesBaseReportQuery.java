@@ -11,6 +11,7 @@ import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.reports.XReportQuery.SaleItemInfo2;
 import com.kaching123.tcr.store.ShopProvider;
+import com.kaching123.tcr.store.ShopSchema2;
 import com.kaching123.tcr.store.ShopSchema2.SaleReportItemsView2.BillPaymentDescriptionTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleReportItemsView2.CategoryTable;
 import com.kaching123.tcr.store.ShopSchema2.SaleReportItemsView2.DepartmentTable;
@@ -79,7 +80,7 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
         SalesReportHandler handler2 = createHandler();
 
         for (Entry<String, SaleOrderInfo> e : ordersInfo.entrySet()) {
-            XReportQuery.calculate(e.getValue(), handler2);
+            XReportQuery.calculate(context, e.getValue(), handler2);
         }
 
         return handler2.getResult();
@@ -109,7 +110,7 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
         SalesReportHandler handler2 = createHandler();
 
         for (Entry<String, SaleOrderInfo> e : ordersInfo.entrySet()) {
-            XReportQuery.calculate(e.getValue(), handler2);
+            XReportQuery.calculate(context, e.getValue(), handler2);
         }
 
         return handler2.getResult();
@@ -188,7 +189,9 @@ public abstract class SalesBaseReportQuery<T extends IReportResult> {
                     c.getString(c.getColumnIndex(DepartmentTable.TITLE)),
                     c.getString(c.getColumnIndex(ItemTable.CATEGORY_ID)),
                     c.getString(c.getColumnIndex(CategoryTable.TITLE)),
-                    _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE))
+                    _bool(c, c.getColumnIndex(SaleItemTable.EBT_ELIGIBLE)),
+                    c.getString(c.getColumnIndex(ItemTable.TAX_GROUP_GUID)),
+                    c.getString(c.getColumnIndex(ShopSchema2.SaleOrderItemsView2.TaxGroupTable.TITLE))
             );
 
             result.map.put(saleItemId, value);

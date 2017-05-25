@@ -41,6 +41,7 @@ public class XReportInfo {
     public BigDecimal payOuts = BigDecimal.ZERO;
     public BigDecimal cashBack = BigDecimal.ZERO;
     public TreeMap<String, DepartsSale> departsSales = new TreeMap<String, DepartsSale>();
+    public ArrayList<TaxGroupSale> taxSales = new ArrayList<>();
     public ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales;
     public BigDecimal totalValue;
     /*public BigDecimal ccAmex;
@@ -86,6 +87,7 @@ public class XReportInfo {
                        BigDecimal cashBack,
                        TreeMap<String, DepartsSale> departsSales,
                        ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales,
+                       ArrayList<TaxGroupSale> taxSales,
                        BigDecimal totalValue) {
         this.begin = begin;
         this.end = end;
@@ -118,6 +120,7 @@ public class XReportInfo {
         this.departsSales = departsSales;
         this.itemSales = itemSales;
         this.totalValue = totalValue;
+        this.taxSales = taxSales;
     }
 
 

@@ -3779,9 +3779,14 @@ public abstract class ShopStore {
         String TABLE_SALE_ORDER = "sale_order_table";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({ItemTable.DESCRIPTION, ItemTable.EAN_CODE, ItemTable.PRODUCT_CODE, ItemTable.COST, ItemTable.CATEGORY_ID})
+        @Columns({ItemTable.DESCRIPTION, ItemTable.EAN_CODE, ItemTable.PRODUCT_CODE, ItemTable.COST, ItemTable.CATEGORY_ID, ItemTable.TAX_GROUP_GUID})
         @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ITEM_GUID)
         String TABLE_ITEM = "item_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({TaxGroupTable.TITLE})
+        @Join(type = Join.Type.LEFT, joinTable = TaxGroupTable.TABLE_NAME, joinColumn = TaxGroupTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.TAX_GROUP_GUID)
+        String TAX_GROUP_TABLE = "tax_group_table";
 
         /*@Join(type = Join.Type.LEFT, joinTable = SaleAddonTable.TABLE_NAME, joinColumn = SaleAddonTable.ITEM_GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.SALE_ITEM_GUID)
         String TABLE_SALE_ORDER_ITEM_ADDON = "sale_addon_table";*/
@@ -3821,9 +3826,14 @@ public abstract class ShopStore {
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
         @Columns({ItemTable.GUID, ItemTable.DESCRIPTION, ItemTable.EAN_CODE, ItemTable.PRODUCT_CODE, ItemTable.COST, ItemTable.CATEGORY_ID,
-                ItemTable.PRINTER_ALIAS_GUID})
+                ItemTable.PRINTER_ALIAS_GUID, ItemTable.TAX_GROUP_GUID})
         @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ITEM_GUID)
         String TABLE_ITEM = "item_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({TaxGroupTable.TITLE})
+        @Join(type = Join.Type.LEFT, joinTable = TaxGroupTable.TABLE_NAME, joinColumn = TaxGroupTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.TAX_GROUP_GUID)
+        String TAX_GROUP_TABLE = "tax_group_table";
 
     }
 
@@ -3844,15 +3854,22 @@ public abstract class ShopStore {
         String TABLE_SALE_ORDER = "sale_order_table";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
-        @Columns({SaleItemTable.ITEM_GUID, SaleItemTable.ORDER_GUID, SaleItemTable.KITCHEN_PRINTED_QTY, SaleItemTable.QUANTITY, SaleItemTable.IS_DELETED})
+        @Columns({SaleItemTable.ITEM_GUID, SaleItemTable.ORDER_GUID, SaleItemTable.KITCHEN_PRINTED_QTY, SaleItemTable.QUANTITY, SaleItemTable.IS_DELETED,
+                SaleItemTable.TAXABLE, SaleItemTable.FINAL_TAX, SaleItemTable.TAX})
         @Join(type = Join.Type.LEFT, joinTable = SaleItemTable.TABLE_NAME, joinColumn = SaleItemTable.ORDER_GUID, onTableAlias = TABLE_SALE_ORDER, onColumn = SaleOrderTable.GUID)
         String TABLE_SALE_ORDER_ITEM = "sale_order_item_table";
 
         @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
         @Columns({ItemTable.GUID, ItemTable.DESCRIPTION, ItemTable.EAN_CODE, ItemTable.PRODUCT_CODE, ItemTable.COST, ItemTable.CATEGORY_ID,
-                ItemTable.PRINTER_ALIAS_GUID})
+                ItemTable.PRINTER_ALIAS_GUID, ItemTable.TAX_GROUP_GUID})
         @Join(type = Join.Type.LEFT, joinTable = ItemTable.TABLE_NAME, joinColumn = ItemTable.GUID, onTableAlias = TABLE_SALE_ORDER_ITEM, onColumn = SaleItemTable.ITEM_GUID)
         String TABLE_ITEM = "item_table";
+
+        @ExcludeStaticWhere(IBemaSyncTable.IS_DELETED)
+        @Columns({TaxGroupTable.TITLE})
+        @Join(type = Join.Type.LEFT, joinTable = TaxGroupTable.TABLE_NAME, joinColumn = TaxGroupTable.GUID, onTableAlias = TABLE_ITEM, onColumn = ItemTable.TAX_GROUP_GUID)
+        String TAX_GROUP_TABLE = "tax_group_table";
+
 
     }
 

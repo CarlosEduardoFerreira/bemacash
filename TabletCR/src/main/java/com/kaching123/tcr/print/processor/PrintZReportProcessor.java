@@ -8,10 +8,12 @@ import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter;
+import com.kaching123.tcr.model.TaxGroupSale;
 import com.kaching123.tcr.model.ZReportInfo;
 import com.kaching123.tcr.util.PhoneUtil;
 import com.telly.groundy.PublicGroundyTask;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -27,6 +29,7 @@ public class PrintZReportProcessor {
     private ReportType zReportType;
     private String registerDescription;
     private String registerID;
+    private boolean enableZReportTaxGroups;
 
     public String getFromDate() {
         return fromDate;
@@ -49,10 +52,12 @@ public class PrintZReportProcessor {
 
     private final PublicGroundyTask.IAppCommandContext appCommandContext;
 
-    public PrintZReportProcessor(ZReportInfo report, ReportType zReportType, PublicGroundyTask.IAppCommandContext appCommandContext) {
+    public PrintZReportProcessor(ZReportInfo report, ReportType zReportType, PublicGroundyTask.IAppCommandContext appCommandContext,
+                                 boolean enableZReportTaxGroups) {
         this.report = report;
         this.zReportType = zReportType;
         this.appCommandContext = appCommandContext;
+        this.enableZReportTaxGroups = enableZReportTaxGroups;
     }
 
     public void print(Context context, TcrApplication app, IXReportPrinter printer) {
@@ -135,6 +140,13 @@ public class PrintZReportProcessor {
         printer.boldPair(context.getString(R.string.zreport_net_sales), report.netSales, false);
         printer.pair(context.getString(R.string.zreport_gratuity), report.gratuity);
         printer.pair(context.getString(R.string.xreport_tax), report.tax);
+        if (enableZReportTaxGroups) {
+            for (TaxGroupSale taxSale : report.taxSales) {
+                if (taxSale.totalSales.compareTo(BigDecimal.ZERO) != 0) {
+                    printer.subPair(taxSale.taxTitle, taxSale.totalSales, 1, false);
+                }
+            }
+        }
         printer.emptyLine();
         printer.drawLine();
 

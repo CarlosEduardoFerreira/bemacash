@@ -143,6 +143,8 @@ public class ShopInfoViewJdbcConverter {
 
     private static final String AGE_VERIFICATION_FORMAT = "AGE_VERIFICATION_FORMAT";
     private static final String PAID_BREAKS = "PAID_BREAKS";
+    private static final String ENABLE_ZREPORT_TAX_GROUPS = "ENABLE_YREPORT_TAX_GROUPS";
+    private static final String ENABLE_XREPORT_TAX_GROUPS = "ENABLE_XREPORT_TAX_GROUPS";
 
 
     public static ShopInfo read(ResultSet rs) throws SQLException {
@@ -234,7 +236,9 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(DEFINED_ON_HOLD),
                 rs.getBoolean(ON_HOLD_STATUS_MANDATORY),
                 rs.getBoolean(AGE_VERIFICATION_FORMAT),
-                rs.getBoolean(PAID_BREAKS)
+                rs.getBoolean(PAID_BREAKS),
+                rs.getBoolean(ENABLE_ZREPORT_TAX_GROUPS),
+                rs.getBoolean(ENABLE_XREPORT_TAX_GROUPS)
         );
     }
 
@@ -327,7 +331,9 @@ public class ShopInfoViewJdbcConverter {
                 rs.getBoolean(DEFINED_ON_HOLD),
                 rs.getBoolean(ON_HOLD_STATUS_MANDATORY),
                 rs.getBoolean(AGE_VERIFICATION_FORMAT),
-                rs.getBoolean(PAID_BREAKS)
+                rs.getBoolean(PAID_BREAKS),
+                rs.getBoolean(ENABLE_ZREPORT_TAX_GROUPS),
+                rs.getBoolean(ENABLE_XREPORT_TAX_GROUPS)
         );
     }
 
@@ -443,6 +449,8 @@ public class ShopInfoViewJdbcConverter {
         public final boolean onHoldStatusMandatory;
         public final boolean ageVerificationFormatLatin;
         public final boolean paidBreaks;
+        public final boolean enableZReportTaxGroups;
+        public final boolean enableXReportTaxGroups;
 
 
 
@@ -529,7 +537,9 @@ public class ShopInfoViewJdbcConverter {
                         boolean definedOnHold,
                         boolean onHoldStatusMandatory,
                         boolean ageVerificationFormat,
-                        boolean paidBreaks) {
+                        boolean paidBreaks,
+                        boolean enableZReportTaxGroups,
+                        boolean enableXReportTaxGroups) {
             this.id = id;
             this.name = name;
             this.viewType = viewType;
@@ -641,6 +651,8 @@ public class ShopInfoViewJdbcConverter {
 
             this.ageVerificationFormatLatin = ageVerificationFormat;
             this.paidBreaks = paidBreaks;
+            this.enableZReportTaxGroups = enableZReportTaxGroups;
+            this.enableXReportTaxGroups = enableXReportTaxGroups;
         }
 
     }

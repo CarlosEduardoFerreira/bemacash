@@ -333,7 +333,9 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.definedOnHold().getOr(false),
                     shopPref.onHoldStatusMandatory().getOr(false),
                     shopPref.isAgeFormateLatin().getOr(false),
-                    shopPref.paidBreaks().getOr(true)
+                    shopPref.paidBreaks().getOr(true),
+                    shopPref.enableZReportTaxGroups().getOr(false),
+                    shopPref.enableXReportTaxGroups().getOr(false)
                     );
         }
         barcodePrefixes = new BarcodePrefixes(
@@ -748,6 +750,8 @@ public class TcrApplication extends MultiDexApplication {
                 .onHoldStatusMandatory().put(info.onHoldStatusMandatory)
                 .isAgeFormateLatin().put(info.ageVerificationFormatLatin)
                 .paidBreaks().put(info.paidBreaks)
+                .enableZReportTaxGroups().put(info.enableZReportTaxGroups)
+                .enableXReportTaxGroups().put(info.enableXReportTaxGroups)
                 .apply();
 
         setUsers();

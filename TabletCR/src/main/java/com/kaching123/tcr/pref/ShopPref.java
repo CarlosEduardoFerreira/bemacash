@@ -446,5 +446,9 @@ public interface ShopPref {
 
     @DefaultBoolean(true)
     boolean paidBreaks();
+    @DefaultBoolean(false)
+    boolean enableZReportTaxGroups();
+    @DefaultBoolean(false)
+    boolean enableXReportTaxGroups();
 
 }

@@ -9,6 +9,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.ReportsActivity.ReportType;
 import com.kaching123.tcr.jdbc.converters.ShopInfoViewJdbcConverter.ShopInfo;
 import com.kaching123.tcr.model.DepartsSale;
+import com.kaching123.tcr.model.TaxGroupSale;
 import com.kaching123.tcr.model.XReportInfo;
 import com.kaching123.tcr.reports.SalesByItemsReportQuery;
 import com.kaching123.tcr.util.PhoneUtil;
@@ -34,6 +35,7 @@ public class PrintXReportProcessor {
     private XReportInfo report;
     private ReportType xReportType;
     private boolean enableEreportDepartSale;
+    private boolean enableXReportTaxGroups;
 
     private final IAppCommandContext appCommandContext;
     private boolean enableEreportItemSale;
@@ -59,12 +61,14 @@ public class PrintXReportProcessor {
     private String fromDate;
     private String toDate;
 
-    public PrintXReportProcessor(XReportInfo report, ReportType xReportType, IAppCommandContext appCommandContext, boolean enableEreportDepartSale, boolean enableEreportItemSale) {
+    public PrintXReportProcessor(XReportInfo report, ReportType xReportType, IAppCommandContext appCommandContext,
+                                 boolean enableEreportDepartSale, boolean enableEreportItemSale, boolean enableXReportTaxGroups) {
         this.report = report;
         this.xReportType = xReportType;
         this.appCommandContext = appCommandContext;
         this.enableEreportDepartSale = enableEreportDepartSale;
         this.enableEreportItemSale = enableEreportItemSale;
+        this.enableXReportTaxGroups = enableXReportTaxGroups;
     }
 
     public void print(Context context, TcrApplication app, IXReportPrinter printer) {
@@ -153,6 +157,13 @@ public class PrintXReportProcessor {
         printer.boldPair(context.getString(R.string.xreport_net_sales), report.netSales, false);
         printer.pair(context.getString(R.string.xreport_gratuity), report.gratuity);
         printer.pair(context.getString(R.string.xreport_tax), report.tax);
+        if (enableXReportTaxGroups) {
+            for (TaxGroupSale taxSale : report.taxSales) {
+                if (taxSale.totalSales.compareTo(BigDecimal.ZERO) != 0) {
+                    printer.subPair(taxSale.taxTitle, taxSale.totalSales, 1, false);
+                }
+            }
+        }
         printer.emptyLine();
         printer.drawLine();
 

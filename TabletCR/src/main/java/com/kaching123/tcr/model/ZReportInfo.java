@@ -46,12 +46,13 @@ public class ZReportInfo extends XReportInfo {
                        BigDecimal payOuts,
                        BigDecimal cashBack,
                        TreeMap<String, DepartsSale> departsSales,
+                       ArrayList<TaxGroupSale> taxSales,
                        ArrayList<SalesByItemsReportQuery.ReportItemInfo> itemSales,
                        BigDecimal totalValue,
                        BigDecimal salesCounter,
                        BigDecimal voidsCounter,
                        BigDecimal refundsCounter) {
-        super(begin, end, grossSales, discounts, returns, netSales, gratuity, tax, totalTender, cogs, grossMargin, grossMarginPercent, tenderCreditCard, tenderCash, tenderCreditReceipt, tenderOfflineCredit, tenderCheck, tenderEbtCash, tenderEbtFoodstamp, tenderDebit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, itemSales, totalValue);
+        super(begin, end, grossSales, discounts, returns, netSales, gratuity, tax, totalTender, cogs, grossMargin, grossMarginPercent, tenderCreditCard, tenderCash, tenderCreditReceipt, tenderOfflineCredit, tenderCheck, tenderEbtCash, tenderEbtFoodstamp, tenderDebit, cards, drawerDifference, transactionFee, openAmount, cashSale, safeDrops, payOuts, cashBack, departsSales, itemSales, taxSales, totalValue);
         this.salesCounter = salesCounter;
         this.voidsCounter = voidsCounter;
         this.refundsCounter = refundsCounter;

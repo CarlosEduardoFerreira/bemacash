@@ -63,7 +63,7 @@ public class PrintDigitalZReportCommand extends PublicGroundyTask {
             reportInfo = ZReportQuery.loadZReport(getContext(), shiftGuid);
         }
 
-        PrintZReportProcessor processor = new PrintZReportProcessor(reportInfo, zReportType, getAppCommandContext());
+        PrintZReportProcessor processor = new PrintZReportProcessor(reportInfo, zReportType, getAppCommandContext(), getApp().getShopPref().enableZReportTaxGroups().get());
         setDescriptionInfo(processor, registerID, fromDate, toDate);
         processor.print(getContext(), getApp(), builder);
 
