@@ -117,7 +117,7 @@ public class PayChargeFragmentDialog extends KeyboardDialogFragment {
             Log.d("BemaCarl25", "PayChargeFragmentDialog.afterTextChanged.pending: " + pending);
             if (getDisplayBinder() != null) {
                 Log.d("BemaCarl25", "PayChargeFragmentDialog.afterTextChanged.entered: " + entered);
-                getDisplayBinder().startCommand(new DisplayTenderCommand(entered, null));
+                //getDisplayBinder().startCommand(new DisplayTenderCommand(entered, null));
             }
 
 

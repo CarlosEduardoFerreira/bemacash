@@ -801,7 +801,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                     proceedToCardSwipe(context, transaction);
 
                     if (getDisplayBinder(context) != null) {
-                        getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
+                        //getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
                     }
                 }
                 break;
@@ -851,7 +851,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                 proceedToOfflineCreditPayment(context, amount, transaction);
 
                 if (getDisplayBinder(context) != null) {
-                    getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
+                    //getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
                 }
                 break;
             }
@@ -862,7 +862,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
                 proceedToCheckPayment(context, amount, transaction);
 
                 if (getDisplayBinder(context) != null) {
-                    getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
+                    //getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
                 }
                 break;
             }
@@ -1445,7 +1445,7 @@ public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallb
 
     private void proceedToFinish(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions) {
         if (getDisplayBinder(context) != null) {
-            getDisplayBinder(context).startCommand(new DisplayWelcomeMessageCommand());
+            //getDisplayBinder(context).startCommand(new DisplayWelcomeMessageCommand());
         }
 
         assert transactions != null && !transactions.isEmpty();

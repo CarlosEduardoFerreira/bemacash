@@ -212,8 +212,6 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                 Logger.e("Number format mis parsing", e);
             }
 
-
-
             orderRemaining = orderTotal.subtract(completedAmount);
             Log.d("BemaCarl25", "PayTenderUnitedFragmentDialog.afterTextChanged.orderTotal:           1:" + orderTotal);
             Log.d("BemaCarl25", "PayTenderUnitedFragmentDialog.afterTextChanged.completedAmount:      1:" + completedAmount);

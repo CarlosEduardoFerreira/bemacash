@@ -291,7 +291,7 @@ public class PayCreditReceiptFragmentDialog extends StyledDialogFragment impleme
         secondStep = true;
 
         if (getDisplayBinder() != null) {
-            getDisplayBinder().startCommand(new DisplayTenderCommand(receipt.amount, pendingAmount));
+            //getDisplayBinder().startCommand(new DisplayTenderCommand(receipt.amount, pendingAmount));
         }
 
         Logger.d("PayCreditReceiptFragmentDialog: goToSecondStep(): restore default barcode listener");

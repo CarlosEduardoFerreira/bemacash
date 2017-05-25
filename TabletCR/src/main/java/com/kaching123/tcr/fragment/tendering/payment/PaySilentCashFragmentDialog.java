@@ -87,7 +87,7 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
         BigDecimal tenderAmount = transaction.amount;
         BigDecimal changeAmount = transaction.changeValue;
         if (getDisplayBinder() != null) {
-            getDisplayBinder().startCommand(new DisplayTenderCommand(tenderAmount, changeAmount));
+            //getDisplayBinder().startCommand(new DisplayTenderCommand(tenderAmount, changeAmount));
         }
     }
 

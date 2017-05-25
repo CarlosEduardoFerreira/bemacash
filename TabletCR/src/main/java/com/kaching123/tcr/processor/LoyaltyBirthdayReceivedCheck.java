@@ -21,7 +21,7 @@ public class LoyaltyBirthdayReceivedCheck {
     private static final Uri CUSTOMER_URI = ShopProvider.contentUri(ShopStore.CustomerTable.URI_CONTENT);
 
     public boolean checkIfBirthdayWasAppliedOnCurrentYear(String customerGuid){
-        Log.d("BemaCarl23","LoyaltyBirthdayCheck.checkIfBirthdayWasAppliedOnCurrentYear.customerGuid:    " + customerGuid);
+        Log.d("BemaCarl23","LoyaltyBirthdayReceivedCheck.checkIfBirthdayWasAppliedOnCurrentYear.customerGuid:    " + customerGuid);
         Cursor c1 = ProviderAction.query(CUSTOMER_URI)
                 .projection( ShopStore.CustomerTable.BIRTHDAY_REWARD_RECEIVED_DATE )
                 .where(ShopStore.CustomerTable.GUID + " = ?", customerGuid)
@@ -29,21 +29,21 @@ public class LoyaltyBirthdayReceivedCheck {
         if(c1.moveToNext()) {
             int birthday_reward_received_date = c1.getInt(0);
             try {
-                Log.d("BemaCarl23","LoyaltyBirthdayCheck.checkIfBirthdayWasAppliedOnCurrentYear.birthday_reward_apply_date:    " + birthday_reward_received_date);
+                Log.d("BemaCarl23","LoyaltyBirthdayReceivedCheck.checkIfBirthdayWasAppliedOnCurrentYear.birthday_reward_apply_date:    " + birthday_reward_received_date);
                 java.util.Date completeDate =   new java.util.Date((long)birthday_reward_received_date);
-                Log.d("BemaCarl23","LoyaltyBirthdayCheck.checkIfBirthdayWasAppliedOnCurrentYear.completeDate:    " + completeDate);
+                Log.d("BemaCarl23","LoyaltyBirthdayReceivedCheck.checkIfBirthdayWasAppliedOnCurrentYear.completeDate:    " + completeDate);
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(completeDate);
                 int month   = cal.get(Calendar.MONTH) + 1;
                 int day     = cal.get(Calendar.DATE);
                 int year    = cal.get(Calendar.YEAR);
-                Log.d("BemaCarl23","LoyaltyBirthdayCheck.checkIfBirthdayWasAppliedOnCurrentYear.year:    " + year);
+                Log.d("BemaCarl23","LoyaltyBirthdayReceivedCheck.checkIfBirthdayWasAppliedOnCurrentYear.year:    " + year);
 
                 Calendar calendar = Calendar.getInstance();
                 int actualYear = calendar.get(Calendar.YEAR);
-                Log.d("BemaCarl23","LoyaltyBirthdayCheck.checkIfBirthdayWasAppliedOnCurrentYear.actualYear:    " + actualYear);
+                Log.d("BemaCarl23","LoyaltyBirthdayReceivedCheck.checkIfBirthdayWasAppliedOnCurrentYear.actualYear:    " + actualYear);
                 if(year >= actualYear){
-                    Log.d("BemaCarl23","LoyaltyBirthdayCheck.checkIfBirthdayWasAppliedOnCurrentYear if(year <= actualYear){:    true ");
+                    Log.d("BemaCarl23","LoyaltyBirthdayReceivedCheck.checkIfBirthdayWasAppliedOnCurrentYear if(year <= actualYear){:    true ");
                     return true;
                 }
             } catch (Exception e) {
