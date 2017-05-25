@@ -70,7 +70,7 @@ public final class CalculationUtil {
     public static BigDecimal getDiscountValue(BigDecimal total, BigDecimal discount, DiscountType discountType){
         BigDecimal cem = new BigDecimal("100");
         if(discountType == DiscountType.PERCENT) {
-            return total.divide(cem, 8, BigDecimal.ROUND_HALF_UP).multiply(discount);
+            return total.divide(cem, RESULT_SCALE, BigDecimal.ROUND_HALF_UP).multiply(discount);
         }
         return getDiscountValueNoScale(total, discount, discountType).setScale(RESULT_SCALE, MONEY_ROUNDING);
     }
@@ -103,13 +103,13 @@ public final class CalculationUtil {
     }
 
     public static BigDecimal getTaxVatValue(BigDecimal itemSubTotal, BigDecimal taxVATPercent) {
-        return getTaxVatValueNoScale(itemSubTotal, taxVATPercent).setScale(8, MONEY_ROUNDING);
+        return getTaxVatValueNoScale(itemSubTotal, taxVATPercent).setScale(RESULT_SCALE, MONEY_ROUNDING);
     }
 
     public static BigDecimal getTaxVatValueNoScale(BigDecimal itemSubTotal, BigDecimal taxVATPercent) {
         if(taxVATPercent == null)
             return BigDecimal.ZERO;
-        BigDecimal result = itemSubTotal.multiply(taxVATPercent.divide(ONE_HUNDRED, 8, MONEY_ROUNDING));
+        BigDecimal result = itemSubTotal.multiply(taxVATPercent.divide(ONE_HUNDRED, RESULT_SCALE, MONEY_ROUNDING));
         return result;
     }
 

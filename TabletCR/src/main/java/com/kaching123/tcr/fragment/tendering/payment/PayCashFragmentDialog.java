@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -166,6 +167,8 @@ public class PayCashFragmentDialog extends StyledDialogFragment implements Custo
             turnPositiveButton(false);
         }
         if (getDisplayBinder() != null) {
+            Log.d("BemaCarl25", "PayCashFragmentDialog.chargeAfterTextChanged.tenderAmount: " + tenderAmount);
+            Log.d("BemaCarl25", "PayCashFragmentDialog.chargeAfterTextChanged.changeAmount: " + changeAmount);
             getDisplayBinder().startCommand(new DisplayTenderCommand(tenderAmount, changeAmount));
         }
     }

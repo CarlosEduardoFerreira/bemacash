@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.adapter.BondItemAdapter;
 import com.kaching123.tcr.commands.display.DisplayTenderCommand;
@@ -58,6 +60,8 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     private static final List<Integer> BONDS_LIST = new ArrayList<>();
 
+    private BigDecimal orderRemaining = BigDecimal.ZERO;
+
     static {
         BONDS_LIST.add(1);
         BONDS_LIST.add(5);
@@ -93,6 +97,7 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
 
     private void setChargeView() {
         currencyTextWatcher = new CurrencyTextWatcher(charge);
+        Log.d("BemaCarl25", "PayTenderUnitedFragmentDialog.setChargeView.orderTotal: " + orderTotal);
         charge.setKeyboardSupportConteiner(new CustomEditBox.IKeyboardSupport() {
             @Override
             public void attachMe2Keyboard(CustomEditBox v) {
@@ -207,8 +212,22 @@ public class PayTenderUnitedFragmentDialog extends TenderFragmentDialogBase<PayT
                 Logger.e("Number format mis parsing", e);
             }
 
+
+
+            orderRemaining = orderTotal.subtract(completedAmount);
+            Log.d("BemaCarl25", "PayTenderUnitedFragmentDialog.afterTextChanged.orderTotal:           1:" + orderTotal);
+            Log.d("BemaCarl25", "PayTenderUnitedFragmentDialog.afterTextChanged.completedAmount:      1:" + completedAmount);
+            Log.d("BemaCarl25", "PayTenderUnitedFragmentDialog.afterTextChanged.orderRemaining:       1:" + orderRemaining);
+
+            BigDecimal change = BigDecimal.ZERO;
+            if(entered.compareTo(orderRemaining) == 1) {
+                change = entered.subtract(orderRemaining);
+            }
+
             if (getDisplayBinder() != null) {
-                getDisplayBinder().startCommand(new DisplayTenderCommand(entered, null));
+                Log.d("BemaCarl25", "PayTenderUnitedFragmentDialog.afterTextChanged.entered:                " + entered);
+                Log.d("BemaCarl25", "PayTenderUnitedFragmentDialog.afterTextChanged.change:                 " + change);
+                getDisplayBinder().startCommand(new DisplayTenderCommand(entered, change));
             }
 
         }

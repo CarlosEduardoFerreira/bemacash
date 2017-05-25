@@ -7,23 +7,15 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
-import android.os.Build;
+import android.util.Log;
 
-import com.bematechus.bemaUtils.CommunicationPort;
-import com.bematechus.bemaUtils.UsbPort;
-
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
-import android_serialport_api.SerialPort;
-
-public class USBDiplayPrinter implements DisplayPrinter {
+public class USBDisplayPrinter implements DisplayPrinter {
 
     private static final String ERR_USB_SERVICE = "USB Service Not Initialized";
     private static final String ERR_USB_NOT_CONNECTED = "USB not Connected";
@@ -47,7 +39,7 @@ public class USBDiplayPrinter implements DisplayPrinter {
     private boolean mConnected = false;
     private PendingIntent permissionIntent = null;
 
-    public USBDiplayPrinter(int pid, int vid, UsbManager manager, PendingIntent permissionIntent )throws IOException{
+    public USBDisplayPrinter(int pid, int vid, UsbManager manager, PendingIntent permissionIntent )throws IOException{
         this.pid = pid;
         this.vid = vid;
         this.manager = manager;
@@ -58,19 +50,23 @@ public class USBDiplayPrinter implements DisplayPrinter {
 
     }
     public boolean findPrinter( boolean forceOpen) throws IOException {
+        Log.d("BemaCarl25", "USBDisplayPrinter.findPrinter.forceOpen: " + forceOpen);
         if ( manager == null)
         {
             throw new IOException(ERR_USB_SERVICE );
         }
         HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
+        Log.d("BemaCarl25", "USBDisplayPrinter.findPrinter.deviceList.size: " + deviceList.size());
         Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
+        Log.d("BemaCarl25", "USBDisplayPrinter.findPrinter.deviceIterator.hasNext: " + deviceIterator.hasNext());
 
         while (deviceIterator.hasNext()) {
             UsbDevice device = deviceIterator.next();
+            Log.d("BemaCarl25", "USBDisplayPrinter.findPrinter.device.getVendorId()  : " + device.getVendorId());
+            Log.d("BemaCarl25", "USBDisplayPrinter.findPrinter.device.getProductId() : " + device.getProductId());
             if (device.getVendorId() == this.vid && device.getProductId() == this.pid  ) {
                 mUsbDevice = device;
                 break;
-
             }
         }
         if ( mUsbDevice == null) {
@@ -93,7 +89,7 @@ public class USBDiplayPrinter implements DisplayPrinter {
 
         return true;
     }
-    private UsbEndpoint epIn = null;
+    private UsbEndpoint epIn  = null;
     private UsbEndpoint epOut = null;
 
     private boolean closeConnection ()

@@ -18,7 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bematechus.bemaUtils.PortInfo;
-import com.kaching123.display.USBDiplayPrinter;
+import com.kaching123.display.USBDisplayPrinter;
 import com.kaching123.display.scale.BemaScale;
 import com.kaching123.tcr.BuildConfig;
 import com.kaching123.tcr.Logger;
@@ -64,7 +64,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
     private DeviceAdapter adapter;
 
-    private USBDiplayPrinter display = null;
+    private USBDisplayPrinter display = null;
 
     protected FindDeviceListener findDeviceListener;
     public static final String INTEGRATED_DISPLAYER = "Integrated Customer Display";
@@ -304,7 +304,7 @@ public class FindDeviceFragment extends StyledDialogFragment {
 
                 mPermissionIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent("com.android.example.USB_PERMISSION"), 0);
 
-                display = new USBDiplayPrinter(USBDiplayPrinter.LDX1000_PID,USBDiplayPrinter.LDX1000_VID,manager,null);
+                display = new USBDisplayPrinter(USBDisplayPrinter.LDX1000_PID, USBDisplayPrinter.LDX1000_VID,manager,null);
 
                 boolean findp = display.findPrinter(true);
                 return findp;

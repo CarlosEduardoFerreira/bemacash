@@ -12,11 +12,12 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 
 import com.kaching123.display.BluetoothSocketPrinter;
 import com.kaching123.display.DisplayPrinter;
 import com.kaching123.display.SerialPortDiplayPrinter;
-import com.kaching123.display.USBDiplayPrinter;
+import com.kaching123.display.USBDisplayPrinter;
 import com.kaching123.display.actions.InitDisplayAction;
 import com.kaching123.display.actions.InitSerialPortDisplayAction;
 import com.kaching123.tcr.BuildConfig;
@@ -113,7 +114,7 @@ public class DisplayService extends Service {
         DisplayPrinter displayPrinter = null;
             try
             {
-
+            Log.d("BemaCarl25", "DisplayService.openDisplayPrinter");
             if (isSerialPortDisplay()) {
                 displayPrinter = new SerialPortDiplayPrinter(getApp().getShopPref().displayAddress().get()); // Mint only Serial port
             } else if(isUSBDisplay()){
@@ -121,7 +122,7 @@ public class DisplayService extends Service {
                 PendingIntent mPermissionIntent;
 
                 mPermissionIntent = PendingIntent.getBroadcast(getBaseContext(), 0, new Intent(PrinterCommand.ACTION_USB_PERMISSION), 0);
-                displayPrinter = new USBDiplayPrinter(USBDiplayPrinter.LDX1000_PID,USBDiplayPrinter.LDX1000_VID,manager,mPermissionIntent);
+                displayPrinter = new USBDisplayPrinter(USBDisplayPrinter.LDX1000_PID, USBDisplayPrinter.LDX1000_VID,manager,mPermissionIntent);
             } else {
                 BluetoothDevice display = getDisplay();
                 if (display == null)
