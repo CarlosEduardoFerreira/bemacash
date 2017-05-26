@@ -106,7 +106,8 @@ public final class ZReportQuery extends XReportQuery {
             totalValue = totalValue.add(d.revenue);
         }
 
-
+        taxGroupsGuidTitlePairs.clear();
+        taxGroupsTotal.clear();
         final StatInfo saleInfo = getShiftOrders(context, shiftGuid, OrderStatus.COMPLETED);
         final StatInfo returnInfo = getShiftOrders(context, shiftGuid, OrderStatus.RETURN);
 
