@@ -672,7 +672,7 @@ public class XReportQuery {
         );
     }
 
-    public static SaleOrderCostInfo calculate(Context context, SaleOrderInfo value, Handler2 handler2, OrderStatus type) { //getString(R.string.item_tax_group_default), _decimal(getApp().getShopInfo().taxVat)
+    public static SaleOrderCostInfo calculate(Context context, SaleOrderInfo value, Handler2 handler2, OrderStatus type) {
         BigDecimal subTotal = BigDecimal.ZERO;
         BigDecimal totalDiscount = BigDecimal.ZERO;
         BigDecimal totalTax = BigDecimal.ZERO;

@@ -372,7 +372,8 @@ public final class ZReportQuery extends XReportQuery {
         openAmount = getLastShiftDailyOpenAmount(context, lastShiftGuid);
         transactionFee = transactionFee.add(getDailyOrdersTransactionFee(context, OrderStatus.COMPLETED, registerID, fromDate, toDate));//returnInfo is negative
 
-
+        taxGroupsGuidTitlePairs.clear();
+        taxGroupsTotal.clear();
         final StatInfo saleInfo = getDailyOrders(context, OrderStatus.COMPLETED, registerID, fromDate, toDate);
         final StatInfo returnInfo = getDailyOrders(context, OrderStatus.RETURN, registerID, fromDate, toDate);
 
