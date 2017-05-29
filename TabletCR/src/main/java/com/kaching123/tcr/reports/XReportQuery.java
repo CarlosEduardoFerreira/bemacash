@@ -691,7 +691,7 @@ public class XReportQuery {
             }
 
             if (i2.isTaxable) {
-                BigDecimal finalTax = i2.qty.multiply(i2.finalTax);
+                BigDecimal finalTax = getSubTotal(i2.qty, i2.finalTax);
                 if (!taxGroupsTotal.containsKey(i2.taxGroupGuid)) {
                     taxGroupsTotal.put(i2.taxGroupGuid, finalTax);
 
