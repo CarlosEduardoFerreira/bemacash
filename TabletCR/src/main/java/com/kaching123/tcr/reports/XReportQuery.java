@@ -693,11 +693,11 @@ public class XReportQuery {
             if (i2.isTaxable) {
                 BigDecimal finalTax = i2.qty.multiply(i2.finalTax);
                 if (!taxGroupsTotal.containsKey(i2.taxGroupGuid)) {
-                    taxGroupsTotal.put(i2.taxGroupGuid, type == OrderStatus.RETURN ? finalTax.negate() : finalTax);
+                    taxGroupsTotal.put(i2.taxGroupGuid, finalTax);
 
                     taxGroupsGuidTitlePairs.put(i2.taxGroupGuid, i2.taxGroupGuid == null ? context.getString(R.string.item_tax_group_default) : i2.taxGroupTitle);
                 } else {
-                    taxGroupsTotal.put(i2.taxGroupGuid, taxGroupsTotal.get(i2.taxGroupGuid).add(type == OrderStatus.RETURN ? finalTax.negate() : finalTax));
+                    taxGroupsTotal.put(i2.taxGroupGuid, taxGroupsTotal.get(i2.taxGroupGuid).add(finalTax));
                 }
             }
         }
