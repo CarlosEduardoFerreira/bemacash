@@ -346,7 +346,7 @@ public class ShopInfoViewJdbcConverter {
 
     public static final class ShopInfo {
 
-        public static enum ViewType {RETAIL, QUICK_SERVICE, WIRELESS}
+        public static enum ViewType {RETAIL, QUICK_SERVICE, WIRELESS, DETAILED_QUICK_SERVICE}
 
         public final long id;
         public final String name;

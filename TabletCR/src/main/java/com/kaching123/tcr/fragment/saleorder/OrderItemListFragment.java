@@ -24,6 +24,7 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
+import com.kaching123.tcr.activity.SuperBaseCashierActivity;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
@@ -84,7 +85,7 @@ import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCo
 import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.EXTRA_PRINTER;
 
 @EFragment
-public class OrderItemListFragment extends ListFragment implements LoaderCallbacks<List<SaleOrderItemViewModel>>, BarcodeListenerHolder.BarcodeListener {
+public class OrderItemListFragment extends ListFragment implements LoaderCallbacks<List<SaleOrderItemViewModel>>, BarcodeListenerHolder.BarcodeListener, SuperBaseCashierActivity.IOrderItemListFragmentActions {
 
     protected String orderGuid;
 
@@ -126,6 +127,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         }
     }
 
+    @Override
     public SaleOrderItemViewModel getLastItem() {
         if (adapter == null || adapter.getCount() == 0)
             return null;
@@ -137,6 +139,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         this.isCreateReturnOrder = isCreateReturnOrder;
     }
 
+    @Override
     public boolean hasKitchenItems() {
         for (int i = 0; i < adapter.getCount(); i++) {
             if (adapter.getItem(i).isKitchenPrintable)
@@ -145,6 +148,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         return false;
     }
 
+    @Override
     public HashSet<String> printerAlias() {
         HashSet<String> aliases = new HashSet<>(adapter.getCount());
         for (int i = 0; i < adapter.getCount(); i++) {
@@ -399,6 +403,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         );
     }
 
+    @Override
     public void cleanAll(){
         checkIsNewItemComposerInProcess= false;
         qtyChanged = false;
@@ -448,6 +453,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
     }
 
 
+    @Override
     public void doRemoceClickLine(String guid) {
         ignorReculc = true;
         getListView().closeOpenedItems();
@@ -540,7 +546,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         if (!item.hasModifiers()) {
             return;
         }
-        SaleOrderModel saleOrder = ((OrderDelivery)getActivity()).getOrder();
+        SaleOrderModel saleOrder = ((IOrderDelivery)getActivity()).getOrder();
         if (item.isKitchenPrintable && saleOrder != null && saleOrder.orderStatus == OrderStatus.HOLDON) {
             Toast.makeText(getContext(), R.string.kitchen_printable_modifier_cant_be_changed, Toast.LENGTH_LONG).show();
             return;
@@ -554,11 +560,12 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         }
 
     }
-
+    @Override
     public void setItemsListHandler(IItemsListHandlerHandler itemsListHandler) {
         this.itemsListHandler = itemsListHandler;
     }
 
+    @Override
     public void setIgnorRecalc(boolean ignorRecaulc){
         this.ignorReculc = ignorReculc;
     }
@@ -794,6 +801,7 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
         getLoaderManager().restartLoader(0, null, this);
     }
 
+    @Override
     public void setNeed2ScrollList(boolean need2ScrollList) {
         this.need2ScrollList = need2ScrollList;
     }
@@ -872,10 +880,6 @@ public class OrderItemListFragment extends ListFragment implements LoaderCallbac
 
     private Set<Permission> getOperatorPermissions() {
         return ((TcrApplication) getActivity().getApplication()).getOperatorPermissions();
-    }
-
-    public interface OrderDelivery {
-        SaleOrderModel getOrder();
     }
 
 }

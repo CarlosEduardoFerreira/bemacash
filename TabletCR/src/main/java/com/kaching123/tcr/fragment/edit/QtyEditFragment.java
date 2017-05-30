@@ -1,21 +1,14 @@
 package com.kaching123.tcr.fragment.edit;
 
-import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
-import android.text.InputFilter;
-import android.view.View;
-import android.widget.Button;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 
-import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.component.BrandTextWatcher;
 import com.kaching123.tcr.component.CustomEditBox;
-import com.kaching123.tcr.component.QuantityFormatInputFilter;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
-import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
 
 import java.math.BigDecimal;
 
@@ -35,7 +28,6 @@ public class QtyEditFragment extends DecimalEditFragment{
 
     @FragmentArg
     protected boolean isEnable;
-    private OrderItemListFragment orderItemListFragment;
 
     public QtyEditFragment() {
     }
@@ -104,9 +96,8 @@ public class QtyEditFragment extends DecimalEditFragment{
         QtyEditFragment fragment = QtyEditFragment_.builder().saleItemGuid(saleItemGuid).isInteger(isInteger).decimalValue(qty).isEnable(true).build();
         DialogUtil.show(activity, DIALOG_NAME, fragment).setOnEditQtyListener(onEditQtyListener);
     }
-    public static void showCancelable(FragmentActivity activity, String saleItemGuid, BigDecimal qty, boolean isInteger, OnEditQtyListener onEditQtyListener, OrderItemListFragment orderItemListFragment) {
+    public static void showCancelable(FragmentActivity activity, String saleItemGuid, BigDecimal qty, boolean isInteger, OnEditQtyListener onEditQtyListener) {
         QtyEditFragment fragment = QtyEditFragment_.builder().saleItemGuid(saleItemGuid).isInteger(isInteger).decimalValue(qty).isEnable(false).build();
-        fragment.orderItemListFragment = orderItemListFragment;
         DialogUtil.show(activity, DIALOG_NAME, fragment).setOnEditQtyListener(onEditQtyListener);
     }
 

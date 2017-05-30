@@ -13,6 +13,8 @@ import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.function.OrderTotalPriceLoaderCallback;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.DiscountType;
+import com.kaching123.tcr.fragment.saleorder.DetailedQServiceMainSaleActionsFragment.IOrderRegisterActionListener;
+import com.kaching123.tcr.fragment.saleorder.DetaildeQServiceTotalCostFragment.IOrderPricingListener;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
@@ -239,8 +241,9 @@ public class TotalCostFragment extends Fragment {
     }
 
     public IOrderActionListener getActionListener() {
-        assert getActivity() instanceof IOrderActionListener;
-        return (IOrderActionListener) getActivity();
+        if (getActivity() instanceof IOrderActionListener || (getActivity() instanceof IOrderRegisterActionListener && getActivity() instanceof IOrderPricingListener))
+            return (IOrderActionListener) getActivity();
+        return null;
     }
 
     @Click
@@ -288,19 +291,6 @@ public class TotalCostFragment extends Fragment {
         this.isCreateReturnOrder = isCreateReturnOrder;
     }
 
-    public static interface IOrderActionListener {
-        void onPay();
-
-        void onHold();
-
-        void onVoid();
-
-        void onCustomer();
-
-        void onDiscount(BigDecimal itemsSubTotal);
-
-        void onTax();
-    }
-
+    public interface IOrderActionListener extends IOrderRegisterActionListener, IOrderPricingListener {}
 
 }

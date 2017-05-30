@@ -11,22 +11,12 @@ import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.BaseCashierActivity.IHoldListener;
-import com.kaching123.tcr.activity.SettingsActivity;
-import com.kaching123.tcr.activity.SuperBaseActivity;
-import com.kaching123.tcr.commands.device.KDSCommand;
-import com.kaching123.tcr.commands.device.PrinterCommand;
+import com.kaching123.tcr.activity.SuperBaseCashierActivity.IHoldListener;
 import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
-import com.kaching123.tcr.fragment.KitchenPrintCallbackHelper;
-import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
-import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
-import com.kaching123.tcr.fragment.user.PermissionFragment;
 import com.kaching123.tcr.model.OnHoldStatus;
-import com.kaching123.tcr.model.Permission;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;

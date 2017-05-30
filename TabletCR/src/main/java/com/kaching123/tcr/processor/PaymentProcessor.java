@@ -14,7 +14,7 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.BaseCashierActivity;
+import com.kaching123.tcr.activity.SuperBaseCashierActivity.PrepaidBillingCallback;
 import com.kaching123.tcr.commands.device.DeletePaxCommand;
 import com.kaching123.tcr.commands.display.DisplayOrderCommand;
 import com.kaching123.tcr.commands.display.DisplayPartialTenderCommand;
@@ -109,7 +109,7 @@ import static com.kaching123.tcr.util.CursorUtil._wrap;
 /**
  * @author Ivan v. Rikhmayer
  */
-public class PaymentProcessor implements BaseCashierActivity.PrepaidBillingCallback {
+public class PaymentProcessor implements PrepaidBillingCallback {
 
     //public static final BigDecimal CREDIT_RECEIPT_THRESHOLD = new BigDecimal(2000);
 

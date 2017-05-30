@@ -11,7 +11,7 @@ import android.widget.CheckBox;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Function;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.activity.BaseCashierActivity.SaleOrderViewResult;
+import com.kaching123.tcr.activity.SuperBaseCashierActivity.SaleOrderViewResult;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorHelloCommand;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.CustomerModel;

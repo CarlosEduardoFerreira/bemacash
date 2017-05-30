@@ -206,13 +206,13 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
         if (isVisiable) {
             getSupportFragmentManager().beginTransaction().hide(modifyFragment).commit();
             getSupportFragmentManager().popBackStack();
-            showQuickModifyFragment();
+            showTotalCostFragment();
         }
     }
 
     public void showModifiersFragment() {
         getSupportFragmentManager().beginTransaction().show(modifyFragment).addToBackStack(null).commit();
-        hideQuickModifyFragment();
+        hideTotalCostFragment();
     }
 
     @Override
@@ -335,7 +335,7 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        showQuickModifyFragment();
+        showTotalCostFragment();
     }
 
 

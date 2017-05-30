@@ -667,6 +667,8 @@ public class DashboardActivity extends SuperBaseActivity {
     protected void registerButtonClicked() {
         if (getApp().getStartView() == ShopInfoViewJdbcConverter.ShopInfo.ViewType.QUICK_SERVICE) {
             QuickServiceActivity.start(this);
+        } else if(getApp().getStartView() == ShopInfoViewJdbcConverter.ShopInfo.ViewType.DETAILED_QUICK_SERVICE){
+            DetailedQuickServiceActivity.start(this);
         } else {
             CashierActivity.start(this);
         }
