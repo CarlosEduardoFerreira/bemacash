@@ -81,6 +81,9 @@
             android:name=".activity.QuickServiceActivity_"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".activity.DetailedQuickServiceActivity_"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".activity.SettingsActivity_"
             android:label="@string/settings_activity_label"
             android:screenOrientation="sensorLandscape"

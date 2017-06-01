@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ import java.util.ArrayList;
 
 @EActivity(R.layout.quickservice_activity)
 @OptionsMenu(R.menu.quick_service_activity)
-public class QuickServiceActivity extends BaseCashierActivity implements CustomEditBox.IKeyboardSupport {
+public class QuickServiceActivity extends BaseQuickServiceActiviry {
 
     @FragmentById
     protected QuickCategoriesFragment categoriesFragment;
@@ -58,271 +59,6 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
 
     @FragmentById
     protected QuickModifyFragment modifyFragment;
-    private boolean isVisiable = true;
-
-    @ViewById
-    protected KeyboardView keyboard;
-
-    @Override
-    protected void init() {
-        scannerInput.setKeyboardSupportConteiner(this);
-        keyboard.setDotEnabled(false);
-        keyboard.attachEditView(scannerInput);
-        scannerInput.setEditListener(new CustomEditBox.IEditListener() {
-            @Override
-            public boolean onChanged(String text) {
-                tryToSearchBarCode(scannerInput);
-                return true;
-            }
-        });
-        scannerInput.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Perform action on key press
-//                    Toast.makeText(CashierActivity.this, scannerInput.getText(), Toast.LENGTH_SHORT).show();
-                    tryToSearchBarCode(scannerInput);
-                    return true;
-                }
-                return false;
-            }
-        });
-        super.init();
-
-        getSupportFragmentManager().beginTransaction().hide(searchResultFragment).commit();
-
-        categoriesFragment.setListener(new QuickCategoriesFragment.ICategoryListener() {
-
-            @Override
-            public void onCategoryChanged(long id, String depGuid, String catGuid) {
-                itemsListFragment.setCategory(catGuid);
-            }
-        });
-
-        itemsListFragment.setListener(new ItemsListFragment.IItemListener() {
-
-            @Override
-            public void onItemSelected(long id, final ItemExModel model) {
-                tryToAddItem(model);
-            }
-        });
-        modifyFragment.setCancelListener(new OnCancelListener() {
-
-            @Override
-            public void onFragmentCanceled() {
-                hideModifiersFragment();
-            }
-        });
-        hideModifiersFragment();
-        scannerInput.requestFocus();
-    }
-
-    @Override
-    protected void makeScannerInputFocus() {
-        scannerInput.setFocusableInTouchMode(true);
-        scannerInput.requestFocus();
-    }
-
-    @Override
-    protected void completeOrder() {
-        super.completeOrder();
-        hideModifiersFragment();
-
-        strItemCount = "0";
-        saleItemCount = 0;
-        updateItemCountMsg();
-    }
-
-    @Override
-    protected void showEditItemModifiers(final String saleItemGuid, final String itemGuid) {
-        modifyFragment.setupParams(itemGuid, saleItemGuid, new ItemModifiersFragment.OnAddonsChangedListener() {
-
-            @Override
-            public void onAddonsChanged(ArrayList<String> modifierGuid, ArrayList<String> addonsGuid, ArrayList<String> optionalsGuid) {
-                hideModifiersFragment();
-                UpdateSaleItemAddonsCommand.start(QuickServiceActivity.this,
-                        saleItemGuid,
-                        itemGuid,
-                        modifierGuid,
-                        addonsGuid,
-                        optionalsGuid,
-                        updateSaleItemAddonsCallback);
-            }
-
-            @Override
-            public void onModifiersCountInsufficient(ModifierGroupModel group) {
-                showModifiersInsufficientCountDialog(group);
-            }
-        });
-        showModifiersFragment();
-    }
-
-    private static final IntentFilter intentFilter = new IntentFilter();
-
-    static {
-        intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED);
-        intentFilter.addAction(UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        progressReceiver.register(QuickServiceActivity.this);
-        isVisiable = true;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        progressReceiver.unregister(QuickServiceActivity.this);
-        isVisiable = false;
-    }
-
-    private ReceiverWrapper progressReceiver = new ReceiverWrapper(intentFilter) {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if (UploadTask.ACTION_EMPLOYEE_UPLOAD_COMPLETED.equals(intent.getAction())) {
-                if (!intent.getBooleanExtra(UploadTaskV2.EXTRA_SUCCESS, false))
-                    if (intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE) != null && intent.getStringExtra(UploadTaskV2.EXTRA_ERROR_CODE).equalsIgnoreCase("400"))
-                        Toast.makeText(QuickServiceActivity.this, R.string.warning_transaction_upload_fail, Toast.LENGTH_LONG).show();
-            }
-            if (UploadTask.ACTION_EMPLOYEE_UPLOAD_FAILED.equals(intent.getAction())) {
-
-            }
-        }
-    };
-
-    @Override
-    protected void actionBarItemClicked() {
-        hideModifiersFragment();
-    }
-
-    public void hideModifiersFragment() {
-        if (modifyFragment == null)
-            return;
-        if (isVisiable) {
-            getSupportFragmentManager().beginTransaction().hide(modifyFragment).commit();
-            getSupportFragmentManager().popBackStack();
-            showTotalCostFragment();
-        }
-    }
-
-    public void showModifiersFragment() {
-        getSupportFragmentManager().beginTransaction().show(modifyFragment).addToBackStack(null).commit();
-        hideTotalCostFragment();
-    }
-
-    @Override
-    protected void tryToAddItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit) {
-        final SaleOrderModel saleOrderModel = getSaleOrderModel();
-        if(model.ageVerification > 0 && saleOrderModel != null && saleOrderModel.getAgeVerified() > 0) {
-            if (saleOrderModel.getAgeVerified() >= model.ageVerification) {
-                continueAddingItem(model, price, quantity, unit);
-                return;
-            } else {
-                Toast.makeText(QuickServiceActivity.this, getString(R.string.age_verification_customer_must_be_older, model.ageVerification), Toast.LENGTH_LONG).show();
-                return;
-            }
-        }
-        if(model.ageVerification > 0) {
-            AgeVerificationFragment.show(QuickServiceActivity.this, model.getGuid(), new AgeVerificationFragment.AgeVerifiedListener() {
-                @Override
-                public void onAgeVerified(int customerAge) {
-                    if(saleOrderModel != null) {
-                        saleOrderModel.setAgeVerified(customerAge);
-                        UpdateSaleOrderAgeVeridiedCommand.start(QuickServiceActivity.this, saleOrderModel.getGuid(), customerAge);
-                    } else {
-                        model.setTmpAgeVerified(customerAge);
-                    }
-                    continueAddingItem(model, price, quantity, unit);
-                }
-            });
-        } else {
-            continueAddingItem(model, price, quantity, unit);
-        }
-    }
-
-    private void continueAddingItem(final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit){
-        if(!model.hasModificators() && !checkTrackedQty(model)){
-            return;
-        } else if (model.isAComposisiton) {
-            ItemsNegativeStockTrackingCommand.start(QuickServiceActivity.this, model.getGuid(), ItemsNegativeStockTrackingCommand.ItemType.COMPOSITION, new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
-                @Override
-                protected void handleSuccess(boolean result) {
-                    if(!result){
-                        Toast.makeText(QuickServiceActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    CollectModifiersCommand.start(QuickServiceActivity.this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
-                }
-            });
-        } else {
-            CollectModifiersCommand.start(this, model.guid, null, price, model, quantity, unit, true, collectionCallback);
-        }
-    }
-
-    public CollectModifiersCommand.BaseCollectModifiersCallback collectionCallback = new CollectModifiersCommand.BaseCollectModifiersCallback() {
-        @Override
-        public void onCollected(final ArrayList<CollectModifiersCommand.SelectedModifierExModel> modifiers, final ItemExModel model, final BigDecimal price, final BigDecimal quantity, final Unit unit, boolean hasAutoApply) {
-
-            if (hasAutoApply) {
-                ItemsNegativeStockTrackingCommand.start(QuickServiceActivity.this, ItemsNegativeStockTrackingCommand.ItemType.MODIFIER, model.getGuid(),  getModifiers(modifiers), null, null,
-                        new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
-                            @Override
-                            protected void handleSuccess(boolean result) {
-                                if (!result) {
-                                    Toast.makeText(QuickServiceActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                tryToAddCheckPriceType(model, getModifiers(modifiers), null, null, price, quantity, unit);
-                            }
-                        });
-                return;
-            }
-
-            boolean hasModifiers = model.modifiersCount > 0 || model.addonsCount > 0 || model.optionalCount > 0;
-            if (!hasModifiers || !PlanOptions.isModifiersAllowed()) {
-                tryToAddCheckPriceType(model, null, null, null, price, quantity, unit);
-                return;
-            }
-
-            modifyFragment.setupParams(model.guid, new ItemModifiersFragment.OnAddonsChangedListener() {
-
-                @Override
-                public void onAddonsChanged(final ArrayList<String> modifierGuid, final ArrayList<String> addonsGuid, final ArrayList<String> optionalsGuid) {
-                    hideModifiersFragment();
-                    ItemsNegativeStockTrackingCommand.start(QuickServiceActivity.this, ItemsNegativeStockTrackingCommand.ItemType.MODIFIER, model.getGuid(), modifierGuid, addonsGuid, optionalsGuid,
-                            new ItemsNegativeStockTrackingCommand.NegativeStockTrackingCallback() {
-                                @Override
-                                protected void handleSuccess(boolean result) {
-                                    if (!result) {
-                                        Toast.makeText(QuickServiceActivity.this, R.string.item_qty_lower_zero, Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-                                    tryToAddCheckPriceType(model, modifierGuid, addonsGuid, optionalsGuid, price, quantity, unit);
-                                }
-                            });
-                }
-
-                @Override
-                public void onModifiersCountInsufficient(ModifierGroupModel group) {
-                    showModifiersInsufficientCountDialog(group);
-                }
-            });
-            showModifiersFragment();
-        }
-    };
-
-    private BaseUpdateSaleItemAddonsCallback updateSaleItemAddonsCallback = new BaseUpdateSaleItemAddonsCallback() {
-
-        @Override
-        protected void onSuccess(String saleItemGuid) {
-            startCommand(new DisplaySaleItemCommand(saleItemGuid));
-        }
-    };
 
     public static void start(Context context) {
         QuickServiceActivity_.intent(context).start();
@@ -333,71 +69,17 @@ public class QuickServiceActivity extends BaseCashierActivity implements CustomE
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        showTotalCostFragment();
-    }
-
-
-    @ViewById
-    protected CustomEditBox scannerInput;
-
-    private Timer timer;
-
-    private Handler USBHandler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-
-            switch (msg.what) {
-                case TIMES_UP:
-                    filtInput();
-                    tryToSearchBarCode(scannerInput);
-                    timer.interrupt();
-                    timer = null;
-                    break;
-
-            }
-        }
-    };
-
-    private void filtInput() {
-        String input = scannerInput.getText().toString();
-        String result = input.toString().replace("\n", "").replace("\r", "");
-        scannerInput.setText(result);
+    protected Fragment getModifierFragment() {
+        return modifyFragment;
     }
 
     @Override
-    public void focusUsbInput() {
-        scannerInput.requestFocus();
+    protected Fragment getItemListFragment() {
+        return itemsListFragment;
     }
 
     @Override
-    public void attachMe2Keyboard(CustomEditBox v) {
-
+    protected Fragment getCategoriesFragment() {
+        return categoriesFragment;
     }
-
-    @Override
-    public void detachMe4Keyboard(CustomEditBox v) {
-
-    }
-
-    private class Timer extends Thread {
-        @Override
-        public void run() {
-            try {
-                Thread.sleep(200);
-                notifyHandler();
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void notifyHandler() {
-        USBHandler.sendEmptyMessage(TIMES_UP);
-    }
-
-    private final int TIMES_UP = 0;
 }

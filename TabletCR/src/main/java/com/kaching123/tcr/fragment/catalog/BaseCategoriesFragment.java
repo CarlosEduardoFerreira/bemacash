@@ -16,6 +16,7 @@ import android.widget.ListAdapter;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseQuickServiceActiviry;
 import com.kaching123.tcr.fragment.inventory.CategoriesFragment;
 import com.kaching123.tcr.fragment.itempick.CategoryItemView;
 import com.kaching123.tcr.model.ItemRefType;
@@ -35,7 +36,8 @@ import static com.kaching123.tcr.util.ContentValuesUtilBase._countDistinct;
  * Created by vkompaniets on 25.11.13.
  */
 @EFragment
-public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.ICategoryListener> extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public abstract class BaseCategoriesFragment<T extends BaseCategoriesFragment.ICategoryListener> extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+        BaseQuickServiceActiviry.ICategoryFragmentBaseActions<T> {
 
     private static final Uri URI_CATEGORIES = ShopProvider.getContentUriGroupBy(CategoryView.URI_CONTENT, CategoryTable.GUID);
     private static final int CATEGORY_LOADER_ID = 0;

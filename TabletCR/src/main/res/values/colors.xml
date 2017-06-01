@@ -131,4 +131,16 @@
     <color name="payment_button_color">#888888</color>
     <color name="div_dashboard">@color/div_color</color>
 
+
+    <color name="detailed_qservice_ui_categories_bg_normal">#2e2e2e</color>
+    <color name="detailed_qservice_ui_categories_bg_selected">#3f3f3f</color>
+    <color name="detailed_qservice_ui_categories_active">#bbd80a</color>
+
+    <color name="detailed_qservice_ui_categories_text_normal">#bbd80a</color>
+    <color name="detailed_qservice_ui_items_bg">#3f3f3f</color>
+
+    <color name="detailed_qservice_ui_bottom_fragment">#4b4b4b</color>
+    <color name="detailed_qservice_ui_total_bg">#2e2e2e</color>
+
+
 </resources>

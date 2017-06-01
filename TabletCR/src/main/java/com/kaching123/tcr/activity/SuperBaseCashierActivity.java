@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
@@ -103,7 +104,7 @@ import com.kaching123.tcr.fragment.edit.TaxEditFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
 import com.kaching123.tcr.fragment.saleorder.AddOnHoldDialogFragment;
-import com.kaching123.tcr.fragment.saleorder.DetaildeQServiceTotalCostFragment;
+import com.kaching123.tcr.fragment.saleorder.DetailedQServiceTotalCostFragment;
 import com.kaching123.tcr.fragment.saleorder.DetailedQServiceMainSaleActionsFragment;
 import com.kaching123.tcr.fragment.saleorder.GiftCardFragmentDialog;
 import com.kaching123.tcr.fragment.saleorder.IOrderDelivery;
@@ -196,8 +197,7 @@ import static com.kaching123.tcr.util.CursorUtil._wrap;
  * Created by mboychenko on 5/29/2017.
  */
 @EActivity
-public abstract class SuperBaseCashierActivity extends ScannerBaseActivity implements DisplayService.IDisplayBinder, BarcodeListenerHolder, IOrderDelivery,
-        IRegisterFragmentsImplementation, DetailedQServiceMainSaleActionsFragment.IOrderRegisterActionListener, DetaildeQServiceTotalCostFragment.IOrderPricingListener,
+public abstract class SuperBaseCashierActivity extends ScannerBaseActivity implements DisplayService.IDisplayBinder, BarcodeListenerHolder, IOrderDelivery, DetailedQServiceMainSaleActionsFragment.IOrderRegisterActionListener, DetailedQServiceTotalCostFragment.IOrderPricingListener,
         TotalCostFragment.IOrderActionListener {
 
     private final static HashSet<Permission> permissions = new HashSet<Permission>();
@@ -337,6 +337,8 @@ public abstract class SuperBaseCashierActivity extends ScannerBaseActivity imple
         void doRemoceClickLine(String itemGuid);
         void setCreateReturnOrder(boolean isCreateReturnOrder);
     }
+    protected abstract Fragment getSearchResultFragment();
+    protected abstract ListFragment getOrderItemListFragment();
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {

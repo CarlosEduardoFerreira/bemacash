@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/main_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/cashier_activity_background"
+        android:orientation="vertical">
+
+        <com.kaching123.tcr.component.CustomEditBox
+            android:id="@+id/scanner_input"
+            style="@style/CashierActivity.Barcode"
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
+
+        <com.kaching123.tcr.component.KeyboardView_
+            android:id="@+id/keyboard"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <fragment
+                    android:id="@+id/categories_fragment"
+                    android:name="com.kaching123.tcr.fragment.saleorder.DetailedQuickCategoriesFragment_"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.4" />
+
+                <fragment
+                    android:id="@+id/items_list_fragment"
+                    android:name="com.kaching123.tcr.fragment.saleorder.DetailedQuickItemsFragment_"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <FrameLayout
+                    android:id="@+id/modify_fragment_container"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:visibility="gone">
+                    <fragment
+                        android:id="@+id/modify_fragment"
+                        android:name="com.kaching123.tcr.fragment.saleorder.DetailedQuickModifyFragment_"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <fragment
+                        android:id="@+id/order_item_list_fragment"
+                        android:name="com.kaching123.tcr.fragment.saleorder.OrderItemListFragment_"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+                    <!--todo search fragment play with it-->
+                    <FrameLayout
+                        android:id="@+id/search_result_fragment_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+
+                        <fragment
+                            android:id="@+id/search_result_fragment"
+                            android:name="com.kaching123.tcr.fragment.search.SearchItemsListFragment_"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+                    </FrameLayout>
+
+                    <fragment
+                        android:id="@+id/detailed_total_fragment"
+                        android:name="com.kaching123.tcr.fragment.saleorder.DetailedQServiceTotalCostFragment_"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.2" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/empty_holder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#DD000000"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btn_add_order"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Add new" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.4"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/detailed_qservice_ui_bottom_fragment"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.4">
+
+                    <fragment
+                        android:id="@+id/detailed_reserved_actions_fragment"
+                        android:name="com.kaching123.tcr.fragment.saleorder.DetailedQServiceReservedActionsFragment_"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <fragment
+                        android:id="@+id/detailed_sale_actions_fragment"
+                        android:name="com.kaching123.tcr.fragment.saleorder.DetailedQServiceMainSaleActionsFragment_"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!--<FrameLayout-->
+            <!--android:layout_width="320dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_toRightOf="@+id/items_list_fragment"-->
+            <!--android:paddingLeft="8dp"-->
+            <!--android:paddingRight="8dp">-->
+
+            <!--<fragment-->
+            <!--android:id="@+id/detailed_total_cost_fragment"-->
+            <!--android:name="com.kaching123.tcr.fragment.saleorder.DetailedQServiceTotalCostFragment_"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
+
+            <!--</FrameLayout>-->
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/scanner_wait_block"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone">
+
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/popup_window">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/dark_rounded_bg"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp" />
+
+                <TextView
+                    android:id="@+id/progress_msg"
+                    style="@style/TextAppearance.Dialog.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:singleLine="false"
+                    android:text="@string/search_barcode_wait_msg" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+
+    </RelativeLayout>
+</merge>

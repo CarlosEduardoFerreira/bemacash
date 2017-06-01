@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/detailed_qservice_ui_total_bg"
+    android:paddingLeft="20dp"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingRight="20dp">
+
+    <TextView
+        android:id="@+id/total_cost_subtotal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"/>
+
+        <TableLayout
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1"
+            android:id="@+id/container">
+
+            <TableRow
+                android:id="@+id/order_discount_block"
+                android:minHeight="@dimen/table_row_height">
+                <TextView
+                    style="@style/TotalCostTable.Detailed"
+                    android:text="Discount:"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"/>
+
+                <TextView
+                    android:id="@+id/total_cost_discount"
+                    style="@style/TotalCostTable.Detailed"
+                    tools:text="0.00"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|end"
+                    android:maxLines="1"/>
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tax_block"
+                android:minHeight="@dimen/table_row_height">
+                <TextView
+                    style="@style/TotalCostTable.Detailed"
+                    android:text="Tax:"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:maxLines="1"/>
+
+                <TextView
+                    android:id="@+id/total_cost_tax"
+                    style="@style/TotalCostTable.Detailed"
+                    tools:text="11.16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:maxLines="1"
+                    android:gravity="right" />
+
+            </TableRow>
+        </TableLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="7dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/shadow_for_list_horizontal" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="end"
+        android:paddingTop="24dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+
+
+        <TextView
+            android:id="@+id/total_title"
+            style="@style/TotalCostTable.Detailed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total:"
+            android:layout_alignRight="@+id/total_cost_total"
+            android:layout_alignEnd="@+id/total_cost_total" />
+        <TextView
+            android:id="@+id/total_cost_total"
+            style="@style/TotalCostTable.Detailed.Total.Value"
+            android:layout_below="@id/total_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="1,453.56"/>
+    </RelativeLayout>
+</RelativeLayout>

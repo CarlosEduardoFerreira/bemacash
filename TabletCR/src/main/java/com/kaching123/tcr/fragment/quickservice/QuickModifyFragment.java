@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.BaseQuickServiceActiviry;
 import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand;
 import com.kaching123.tcr.component.ModifierContainerView;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
@@ -45,7 +46,7 @@ import static com.kaching123.tcr.util.ContentValuesUtilBase._decimalQty;
  * Created by gdubina on 22.11.13.
  */
 @EFragment(R.layout.quickservice_item_modifiers_fragment_bra)
-public class QuickModifyFragment extends ItemModifiersFragment {
+public class QuickModifyFragment extends ItemModifiersFragment implements BaseQuickServiceActiviry.IModifierFragmentBaseActions {
 
     private final static int LOADER_ID = 4;
     private final Uri URI_ITEMS = ShopProvider.contentUriGroupBy(ItemExtView.URI_CONTENT, ModifierTable.MODIFIER_GUID);
@@ -105,11 +106,12 @@ public class QuickModifyFragment extends ItemModifiersFragment {
         getLoaderManager().restartLoader(LOADER_ID, null, itemLoader);
     }
 
-
+    @Override
     public void setupParams(String itemGuid, OnAddonsChangedListener onAddonsChangedListener) {
         setupParams(itemGuid, null, onAddonsChangedListener);
     }
 
+    @Override
     public void setupParams(String itemGuid, String saleItemGuid, OnAddonsChangedListener onAddonsChangedListener) {
         this.itemGuid = itemGuid;
         this.saleItemGuid = saleItemGuid;
@@ -174,6 +176,7 @@ public class QuickModifyFragment extends ItemModifiersFragment {
         cancelListener.onFragmentCanceled();
     }
 
+    @Override
     public void setCancelListener(OnCancelListener cancelListener) {
         this.cancelListener = cancelListener;
     }

@@ -25,6 +25,7 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.activity.CashierActivity;
+import com.kaching123.tcr.activity.DetailedQuickServiceActivity;
 import com.kaching123.tcr.activity.QuickServiceActivity;
 import com.kaching123.tcr.commands.rest.sync.DownloadOldOrdersCommand;
 import com.kaching123.tcr.commands.rest.sync.DownloadOldOrdersCommand.BaseDownloadOldOrdersCommandCallback;
@@ -421,6 +422,8 @@ public class HistoryOrderListFragment extends ListFragment implements IFilterReq
     protected void actionAddSelected() {
         if (((TcrApplication) getActivity().getApplicationContext()).getStartView() == ShopInfoViewJdbcConverter.ShopInfo.ViewType.QUICK_SERVICE) {
             QuickServiceActivity.start4Return(getActivity());
+        } else if (((TcrApplication) getActivity().getApplicationContext()).getStartView() == ShopInfoViewJdbcConverter.ShopInfo.ViewType.DETAILED_QUICK_SERVICE) {
+            DetailedQuickServiceActivity.start4Return(getActivity());
         } else {
             CashierActivity.start4Return(getActivity());
         }

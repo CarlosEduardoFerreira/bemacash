@@ -234,6 +234,23 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="TotalCostTable.Detailed">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/prepaid_dialog_white</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TotalCostTable.Detailed.Total">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TotalCostTable.Detailed.Total.Value">
+        <item name="android:textColor">@color/detailed_qservice_ui_categories_active</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+
     <style name="TotalCostTable.Text.Sub">
         <item name="android:textSize">12sp</item>
     </style>
@@ -594,6 +611,11 @@
 
     <style name="DrawerPicker.ItemText.Category">
         <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="DrawerPicker.ItemText.DetailedQSCategory">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/category_text_color_selector</item>
     </style>
 
     <style name="DrawerPicker.ItemSubText.Category">

@@ -9,6 +9,7 @@ import android.support.v4.content.Loader;
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.activity.BaseCashierActivity;
+import com.kaching123.tcr.activity.BaseQuickServiceActiviry;
 import com.kaching123.tcr.activity.SuperBaseCashierActivity;
 import com.kaching123.tcr.activity.SuperBaseCashierActivity.IPriceLevelListener;
 import com.kaching123.tcr.activity.SuperBaseActivity;
@@ -30,7 +31,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._lower;
  * Created by gdubina on 25/11/13.
  */
 @EFragment
-public abstract class BaseItemsPickFragment extends Fragment implements IPriceLevelListener, LoaderCallbacks<List<ItemExModel>> {
+public abstract class BaseItemsPickFragment extends Fragment implements IPriceLevelListener, LoaderCallbacks<List<ItemExModel>>, BaseQuickServiceActiviry.IItemListFragmentBaseActions {
 
     protected static final Uri URI_ITEMS = ShopProvider.contentUriGroupBy(ItemExtView.URI_CONTENT, ItemTable.GUID);
 

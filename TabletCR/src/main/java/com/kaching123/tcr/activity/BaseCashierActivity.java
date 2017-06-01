@@ -53,18 +53,21 @@ public abstract class BaseCashierActivity extends SuperBaseCashierActivity {
     protected String totalCostGetOrderSubTotal() {
         return totalCostFragment.getOrderSubTotal();
     }
+
     protected String totalCostGetOrderDiscountTotal() {
         return totalCostFragment.getOrderDiscountTotal();
     }
     protected String totalCostGetOrderTaxTotal() {
         return totalCostFragment.getOrderTaxTotal();
     }
+
     protected String totalCostGetOrderAmountTotal() {
         return totalCostFragment.getOrderAmountTotal();
     }
     protected void totalCostSetOrderGuid(String guid) {
         totalCostFragment.setOrderGuid(guid);
     }
+
     protected void totalCostSetSuspendedItemsCount(int count) {
         totalCostFragment.setSuspendedItemsCount(count);
     }
@@ -77,6 +80,7 @@ public abstract class BaseCashierActivity extends SuperBaseCashierActivity {
     protected BigDecimal totalCostGetOrderTotal() {
         return totalCostFragment.getOrderTotal();
     }
+
     protected void totalCostSetCustomerButtonEnabled(boolean enabled) {
         totalCostFragment.setCustomerButtonEnabled(enabled);
     }

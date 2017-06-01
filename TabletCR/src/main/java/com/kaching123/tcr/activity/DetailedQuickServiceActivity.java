@@ -4,11 +4,24 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 
+import com.kaching123.tcr.R;
+import com.kaching123.tcr.component.CustomEditBox;
+import com.kaching123.tcr.component.KeyboardView;
+import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment;
 import com.kaching123.tcr.fragment.saleorder.DetailedQServiceMainSaleActionsFragment;
-import com.kaching123.tcr.fragment.saleorder.DetaildeQServiceTotalCostFragment;
+import com.kaching123.tcr.fragment.saleorder.DetailedQServiceReservedActionsFragment;
+import com.kaching123.tcr.fragment.saleorder.DetailedQServiceTotalCostFragment;
+import com.kaching123.tcr.fragment.saleorder.DetailedQuickCategoriesFragment;
+import com.kaching123.tcr.fragment.saleorder.DetailedQuickItemsFragment;
+import com.kaching123.tcr.fragment.saleorder.DetailedQuickModifyFragment;
+import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
+import com.kaching123.tcr.fragment.search.SearchItemsListFragment;
 import com.kaching123.tcr.model.CustomerModel;
 
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 
@@ -16,90 +29,128 @@ import java.math.BigDecimal;
  * Created by mboychenko on 5/26/2017.
  */
 
-@EActivity
-public class DetailedQuickServiceActivity extends SuperBaseCashierActivity implements DetailedQServiceMainSaleActionsFragment.IOrderRegisterActionListener,
-        DetaildeQServiceTotalCostFragment.IOrderPricingListener {
+@EActivity(R.layout.detailed_quickservice_activity)
+@OptionsMenu(R.menu.quick_service_activity)
+public class DetailedQuickServiceActivity extends BaseQuickServiceActiviry implements DetailedQServiceMainSaleActionsFragment.IOrderRegisterActionListener,
+        DetailedQServiceTotalCostFragment.IOrderPricingListener {
 
+    @FragmentById
+    protected DetailedQServiceMainSaleActionsFragment detailedSaleActionsFragment;
 
-    @Override
-    protected void showEditItemModifiers(String saleItemGuid, String itemGuid) {
+    @FragmentById
+    protected DetailedQServiceTotalCostFragment detailedTotalFragment;
 
-    }
+    @FragmentById
+    protected DetailedQServiceReservedActionsFragment detailedReservedActionsFragment;
+
+//    @FragmentById
+//    protected OrderItemListFragment orderItemListFragment;  //todo already in parent, should check when change on new
+//
+//    @FragmentById
+//    protected SearchItemsListFragment searchResultFragment;
+
+    @FragmentById
+    protected DetailedQuickCategoriesFragment categoriesFragment;
+
+    @FragmentById
+    protected DetailedQuickItemsFragment itemsListFragment;
+
+    @FragmentById
+    protected DetailedQuickModifyFragment modifyFragment;
 
     @Override
     public Fragment getSearchResultFragment() {
-        return null;
+        return searchResultFragment;
     }
 
     @Override
     public ListFragment getOrderItemListFragment() {
-        return null;
+        return orderItemListFragment;
     }
 
     @Override
     protected void hideTotalCostFragment() {
-
+        if (detailedTotalFragment != null) {
+            getSupportFragmentManager().beginTransaction().hide(detailedTotalFragment).commit();
+        }
     }
-
     @Override
     protected void showTotalCostFragment() {
-
+        if (detailedTotalFragment != null) {
+            getSupportFragmentManager().beginTransaction().show(detailedTotalFragment).commit();
+        }
     }
 
     @Override
     protected BigDecimal totalCostGetOrderTotal() {
-        return null;
+        return detailedTotalFragment.getOrderTotal();
     }
 
     @Override
     protected String totalCostGetOrderSubTotal() {
-        return null;
+        return detailedTotalFragment.getOrderSubTotal();
     }
 
     @Override
     protected String totalCostGetOrderDiscountTotal() {
-        return null;
+        return detailedTotalFragment.getOrderDiscountTotal();
     }
 
     @Override
     protected String totalCostGetOrderTaxTotal() {
-        return null;
+        return detailedTotalFragment.getOrderTaxTotal();
     }
 
     @Override
     protected String totalCostGetOrderAmountTotal() {
-        return null;
+        return detailedTotalFragment.getOrderAmountTotal();
     }
 
     @Override
     protected void totalCostSetOrderGuid(String guid) {
-
+        detailedTotalFragment.setOrderGuid(guid);
     }
 
     @Override
     protected void totalCostSetSuspendedItemsCount(int count) {
-
+//        detailedSaleActionsFragment
     }
 
     @Override
     protected void totalCostSetCustomer(CustomerModel customerModel) {
-
+//        detailedSaleActionsFragment
     }
 
     @Override
     protected void totalCostSetCreateReturnOrder(boolean isCreateReturnOrder) {
-//        totalCostFragment.setCreateReturnOrder(isCreateReturnOrder);
-//        orderItemListFragment.setCreateReturnOrder(isCreateReturnOrder);
+//        detailedSaleActionsFragment.setCreateReturnOrder(isCreateReturnOrder);
     }
 
     @Override
     protected void totalCostSetCustomerButtonEnabled(boolean isCreateReturnOrder) {
-
+//        detailedSaleActionsFragment
     }
 
+    @Override
+    protected Fragment getModifierFragment() {
+        return modifyFragment;
+    }
+
+    @Override
+    protected Fragment getItemListFragment() {
+        return itemsListFragment;
+    }
+
+    @Override
+    protected Fragment getCategoriesFragment() {
+        return categoriesFragment;
+    }
 
     public static void start(Context context) {
         DetailedQuickServiceActivity_.intent(context).start();
     }
 
+    public static void start4Return(Context context) {
+        DetailedQuickServiceActivity_.intent(context).isCreateReturnOrder(true).start();
+    }
 }
