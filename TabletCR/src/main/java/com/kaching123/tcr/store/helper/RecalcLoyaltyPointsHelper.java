@@ -30,6 +30,7 @@ public class RecalcLoyaltyPointsHelper extends ProviderHelper  {
     }
 
     public void recalculateCustomerLoyaltyPoints(String customerId){
+        Log.d("BemaCarl1","RecalcLoyaltyPointsHelper.recalculateCustomerLoyaltyPoints");
         Cursor c = ProviderAction.query(URI_LOYALTY_MOVEMENT_GROUP_BY)
                 .projection("SUM(" + LoyaltyPointsMovementTable.LOYALTY_POINTS + ")")
                 .where(LoyaltyPointsMovementTable.CUSTOMER_ID + " = ?", customerId)

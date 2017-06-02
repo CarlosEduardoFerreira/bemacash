@@ -23,19 +23,21 @@ public class LoyaltyBirthdayReceivedCheck {
     public boolean checkIfBirthdayWasAppliedOnCurrentYear(String customerGuid){
         Log.d("BemaCarl23","LoyaltyBirthdayReceivedCheck.checkIfBirthdayWasAppliedOnCurrentYear.customerGuid:    " + customerGuid);
         Cursor c1 = ProviderAction.query(CUSTOMER_URI)
-                .projection( ShopStore.CustomerTable.BIRTHDAY_REWARD_RECEIVED_DATE )
+                .projection( ShopStore.CustomerTable.BIRTHDAY_REWARD_APPLY_DATE )
                 .where(ShopStore.CustomerTable.GUID + " = ?", customerGuid)
                 .perform(TcrApplication.get().getApplicationContext());
         if(c1.moveToNext()) {
-            int birthday_reward_received_date = c1.getInt(0);
+            Long birthday_reward_apply_date = c1.getLong(0);
             try {
-                Log.d("BemaCarl23","LoyaltyBirthdayReceivedCheck.checkIfBirthdayWasAppliedOnCurrentYear.birthday_reward_apply_date:    " + birthday_reward_received_date);
-                java.util.Date completeDate =   new java.util.Date((long)birthday_reward_received_date);
+                Log.d("BemaCarl23","LoyaltyBirthdayReceivedCheck.checkIfBirthdayWasAppliedOnCurrentYear.birthday_reward_apply_date:    " +
+                        birthday_reward_apply_date);
+                Date completeDate =   new Date();
+                completeDate.setTime(birthday_reward_apply_date);
                 Log.d("BemaCarl23","LoyaltyBirthdayReceivedCheck.checkIfBirthdayWasAppliedOnCurrentYear.completeDate:    " + completeDate);
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(completeDate);
-                int month   = cal.get(Calendar.MONTH) + 1;
-                int day     = cal.get(Calendar.DATE);
+                //int month   = cal.get(Calendar.MONTH) + 1;
+                //int day     = cal.get(Calendar.DATE);
                 int year    = cal.get(Calendar.YEAR);
                 Log.d("BemaCarl23","LoyaltyBirthdayReceivedCheck.checkIfBirthdayWasAppliedOnCurrentYear.year:    " + year);
 

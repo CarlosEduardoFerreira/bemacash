@@ -39,7 +39,7 @@ public class AtomicUpload {
         DATA, EMPLOYEE
     }
 
-    Context mContext;
+    private Context mContext;
 
     public AtomicUpload() {
         this.mContext = TcrApplication.get().getApplicationContext();
@@ -51,13 +51,14 @@ public class AtomicUpload {
 
     public void upload(BatchSqlCommand sql, UploadType type, UploadObject object) {
 
+        Log.d("BemaCarl7", "AtomicUpload.upload.type|sql: " + type + "|" + sql.toJson());
+
         mContext = TcrApplication.get().getApplicationContext();
 
         if (type.equals(UploadType.LOCAL) || type.equals(UploadType.BOTH)) {
             Log.d("BemaCarl7", "AtomicUpload.upload.type|sql1: " + type + "|" + sql.toJson());
             ContentValues values = getContentValues(sql, System.currentTimeMillis(), true);
             mContext.getContentResolver().insert(ShopProvider.contentUri(ShopStore.SqlCommandHostTable.URI_CONTENT), values);
-
         }
 
         if (type.equals(UploadType.WEB) || type.equals(UploadType.BOTH)) {
@@ -102,9 +103,9 @@ public class AtomicUpload {
         Log.d("BemaCarl7", "AtomicUpload.hasInternetConnection.servidorBemacash: " + url);
         HttpGet httpGet = new HttpGet(url);
         HttpParams httpParameters = new BasicHttpParams();
-        int timeoutConnection = 2000;
+        int timeoutConnection = 5000;
         HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
-        int timeoutSocket = 3000;
+        int timeoutSocket = 5000;
         HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
         DefaultHttpClient httpClient = new DefaultHttpClient(httpParameters);
         try{

@@ -140,6 +140,7 @@ import com.kaching123.tcr.model.DiscountBundle;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ItemRefType;
+import com.kaching123.tcr.model.LoyaltyViewModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.OnHoldStatus;
 import com.kaching123.tcr.model.OrderStatus;
@@ -233,6 +234,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
     private static final Uri ITEM_MOVEMENT_URI = ShopProvider.getContentUri(ShopStore.ItemMovementTable.URI_CONTENT);
     private static final int NUMBER_OF_LETTERS_TO_START_SEARCH = 2;
+
+    private static final Uri CUSTOMER_URI = ShopProvider.contentUri(ShopStore.CustomerTable.URI_CONTENT);
 
     static {
         permissions.add(Permission.SALES_TRANSACTION);
@@ -357,6 +360,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private boolean hasPrefixes;
 
     static public boolean customerWasChosen = true;
+
+    static public boolean runLoyaltyBirthday = false;
+
 
     @Override
     public void barcodeReceivedFromSerialPort(String barcode) {
@@ -2666,14 +2672,29 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                     .transform(new Function<Cursor, SaleOrderViewResult>() {
                         @Override
                         public SaleOrderViewResult apply(Cursor cursor) {
+            Log.d("BemaCarl23","BaseCashierActivity.onCreateLoader.customer: " + customer);
                             if (!cursor.moveToFirst()) {
                                 return new SaleOrderViewResult(null, null);
                             } else {
                                 SaleOrderModel order = SaleOrderModel.fromView(cursor);
-                                CustomerModel customer = null;
-                                if (!cursor.isNull(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID))) {
-                                    customer = CustomerModel.fromOrderView(cursor);
+                                //if(customer == null) {
+                                    if (!cursor.isNull(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID))) {
+                                        Cursor c1 = ProviderAction.query(CUSTOMER_URI)
+                                            .where(ShopStore.CustomerTable.GUID + " = ?", cursor.getString(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID)))
+                                            .perform(TcrApplication.get().getApplicationContext());
+                                        if(c1.moveToNext()) {
+                                            customer = new CustomerModel(c1);
+            Log.d("BemaCarl23", "BaseCashierActivity.onCreateLoader 1: " + cursor.getString(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID)));
+                                        }else {
+                                            customer = CustomerModel.fromOrderView(cursor);
+            Log.d("BemaCarl23", "BaseCashierActivity.onCreateLoader 2: " + cursor.getString(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID)));
+                                        }
+                                    }
+                                //}
+                                if (customer != null) {
+            Log.d("BemaCarl23","BaseCashierActivity.onCreateLoader.customer.birthdayRewardReceivedDate: " + customer.birthdayRewardApplyDate);
                                 }
+
                                 return new SaleOrderViewResult(order, customer);
                             }
                         }
@@ -2682,6 +2703,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public void onLoadFinished(Loader<SaleOrderViewResult> saleOrderModelLoader, SaleOrderViewResult result) {
+            if(result.customer != null) {
+                Log.d("BemaCarl23", "BaseCashierActivity.onLoadFinished.result.customer.birthdayRewardReceivedDate: " + result.customer.birthdayRewardApplyDate);
+            }
             updateOrderInfo(result.order, result.customer);
         }
 

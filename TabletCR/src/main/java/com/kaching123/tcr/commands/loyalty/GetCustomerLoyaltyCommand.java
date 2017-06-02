@@ -3,6 +3,7 @@ package com.kaching123.tcr.commands.loyalty;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.getbase.android.db.provider.Query;
@@ -63,6 +64,7 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
             return succeeded();
 
         CustomerModel customer = CustomerModel.loadSync(getContext(), customerId);
+        Log.d("BemaCarl23","GetCustomerLoyaltyCommand.doInBackground.customer.birthdayRewardReceivedDate: " + customer.birthdayRewardApplyDate);
         SaleOrderModel order = SaleOrderModel.loadSync(getContext(), orderId);
 
         if (customer.loyaltyPlanId == null)
@@ -92,6 +94,8 @@ public class GetCustomerLoyaltyCommand extends PublicGroundyTask {
             return succeeded();
 
         filterByUsedIncentives(loyalty.incentiveExModels, orderId, getContext());
+        Log.d("BemaCarl23","GetCustomerLoyaltyCommand.doInBackground.customer.birthday:                     " + customer.birthday);
+        Log.d("BemaCarl23","GetCustomerLoyaltyCommand.doInBackground.customer.birthdayRewardApplyDate:      " + customer.birthdayRewardApplyDate);
         filterByBirthday(loyalty.incentiveExModels, customer.birthday, customer.birthdayRewardApplyDate);
         filterByOrderValue(loyalty.incentiveExModels, orderCostInfo.totalDiscountableItemTotal);
 

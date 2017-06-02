@@ -201,11 +201,13 @@ public class RemoveSaleOrderCommand extends AsyncCommand {
         }
         c.close();
 
-        if (customerId == null)
+        if (customerId == null) {
             return true;
-        else
-            return new UpdateCustomerBirthdayRewardDateCommand().sync(getContext(), customerId, null, getAppCommandContext());
-
+        }else {
+            Log.d("BemaCarl23","RemoveSaleOrderCommand.resetCustomerBirthdayRewardDate.customerId: " + customerId);
+            return true;
+            //return new UpdateCustomerBirthdayRewardDateCommand().sync(getContext(), customerId, getAppCommandContext());
+        }
     }
 
     @Override

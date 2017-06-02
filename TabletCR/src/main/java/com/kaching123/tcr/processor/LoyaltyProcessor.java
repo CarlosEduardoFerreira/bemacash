@@ -5,12 +5,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.commands.loyalty.AddSaleIncentiveCommand;
 import com.kaching123.tcr.commands.loyalty.AddSaleIncentiveCommand.AddSaleIncentiveCallback;
 import com.kaching123.tcr.commands.loyalty.GetCustomerLoyaltyCommand;
 import com.kaching123.tcr.commands.loyalty.GetCustomerLoyaltyCommand.BaseGetCustomerLoyaltyCallback;
-import com.kaching123.tcr.commands.loyalty.LoyaltyBirthdayReceivedDateCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderDiscountCommand;
+import com.kaching123.tcr.commands.store.user.UpdateCustomerBirthdayRewardDateCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.loyalty.LoyaltyFragmentDialog;
@@ -24,6 +26,8 @@ import com.kaching123.tcr.model.LoyaltyViewModel.IncentiveExModel;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+
+import static java.security.AccessController.getContext;
 
 /**
  * Created by vkompaniets on 06.07.2016.
@@ -98,7 +102,6 @@ public class LoyaltyProcessor {
                 public void onApplyRequested(IncentiveExModel incentive) {
                     Log.d("BemaCarl23","LoyaltyProcessor.processIncentive.incentive.type:    4: " + incentive.type);
                     applyIncentive(incentive);
-                    LoyaltyBirthdayReceivedDateCommand.start(context, customerGuid);
                 }
 
                 @Override
@@ -135,6 +138,10 @@ public class LoyaltyProcessor {
 
 
     private void applyIncentive(IncentiveExModel incentive){
+        if(incentive.type.equals(LoyaltyType.BIRTHDAY)) {
+            Log.d("BemaCarl23","LoyaltyProcessor.applyIncentive.customerGuid:    " + customerGuid);
+            UpdateCustomerBirthdayRewardDateCommand.start(TcrApplication.get().getApplicationContext(), customerGuid);
+        }
         switch (incentive.rewardType){
             case DISCOUNT:
                 applyDiscountIncentive(incentive);
@@ -183,10 +190,13 @@ public class LoyaltyProcessor {
     }
 
     private void addSaleIncentive(final IncentiveExModel incentive){
+        BaseCashierActivity.runLoyaltyBirthday = false;
         AddSaleIncentiveCommand.start(context, incentive.guid, customerGuid, orderGuid, new AddSaleIncentiveCallback() {
             @Override
             protected void onAdded(String saleIncentiveId) {
                 showApplySuccessfulDialog(incentive);
+                Log.d("BemaCarl23","LoyaltyProcessor.addSaleIncentive.runLoyaltyBirthday: " + BaseCashierActivity.runLoyaltyBirthday);
+                BaseCashierActivity.runLoyaltyBirthday = true;
             }
         });
     }
