@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false">
+        <shape
+            android:shape="rectangle" >
+
+            <solid android:color="@color/detailed_qservice_ui_hold_btn_disabled" />
+            <corners
+                android:bottomLeftRadius="@dimen/register_action_buttons_radius"
+                android:bottomRightRadius="@dimen/register_action_buttons_radius"
+                android:topLeftRadius="@dimen/register_action_buttons_radius"
+                android:topRightRadius="@dimen/register_action_buttons_radius" />
+        </shape>
+    </item>
+
+<item android:state_pressed="true">
+    <shape
+        android:shape="rectangle" >
+
+        <solid android:color="@color/detailed_qservice_ui_hold_btn_pressed" />
+        <corners
+            android:bottomLeftRadius="@dimen/register_action_buttons_radius"
+            android:bottomRightRadius="@dimen/register_action_buttons_radius"
+            android:topLeftRadius="@dimen/register_action_buttons_radius"
+            android:topRightRadius="@dimen/register_action_buttons_radius" />
+    </shape>
+</item>
+
+<item>
+    <shape
+        android:shape="rectangle" >
+
+        <solid android:color="@color/detailed_qservice_ui_hold_btn" />
+        <corners
+            android:bottomLeftRadius="@dimen/register_action_buttons_radius"
+            android:bottomRightRadius="@dimen/register_action_buttons_radius"
+            android:topLeftRadius="@dimen/register_action_buttons_radius"
+            android:topRightRadius="@dimen/register_action_buttons_radius" />
+    </shape>
+</item>
+</selector>

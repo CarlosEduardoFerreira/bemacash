@@ -2280,6 +2280,7 @@
     <string name="item_save_action">Save options</string>
     <string name="sequence_alphabetical">Sequence of items in register will be changed to alphabetical order</string>
     <string name="sequence_order">Sequence of items in register will be changed to sequence order</string>
+    <string name="pay">PAY</string>
 
 
     <!-- local sync ends -->

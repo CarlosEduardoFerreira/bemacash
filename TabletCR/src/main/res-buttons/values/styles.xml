@@ -19,6 +19,10 @@
         <item name="android:textColor">@color/text_green</item>
     </style>
 
+    <style name="LocalizableButton.DarkGreen">
+        <item name="android:textColor">@color/detailed_qservice_ui_pay_btn_text</item>
+    </style>
+
     <style name="LocalizableButton.Green.Wide">
         <item name="android:textColor">@color/text_green</item>
         <item name="android:paddingLeft">60dp</item>

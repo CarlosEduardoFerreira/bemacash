@@ -109,26 +109,27 @@ public class DetailedQuickServiceActivity extends BaseQuickServiceActiviry imple
     @Override
     protected void totalCostSetOrderGuid(String guid) {
         detailedTotalFragment.setOrderGuid(guid);
+        detailedSaleActionsFragment.setOrderGuid(guid);
     }
 
     @Override
     protected void totalCostSetSuspendedItemsCount(int count) {
-//        detailedSaleActionsFragment
+        detailedSaleActionsFragment.setSuspendedItemsCount(count);
     }
 
     @Override
     protected void totalCostSetCustomer(CustomerModel customerModel) {
-//        detailedSaleActionsFragment
+        detailedSaleActionsFragment.setCustomer(customerModel);
     }
 
     @Override
     protected void totalCostSetCreateReturnOrder(boolean isCreateReturnOrder) {
-//        detailedSaleActionsFragment.setCreateReturnOrder(isCreateReturnOrder);
+        detailedSaleActionsFragment.setCreateReturnOrder(isCreateReturnOrder);
     }
 
     @Override
     protected void totalCostSetCustomerButtonEnabled(boolean isCreateReturnOrder) {
-//        detailedSaleActionsFragment
+        detailedSaleActionsFragment.setCustomerButtonEnabled(isCreateReturnOrder);
     }
 
     @Override

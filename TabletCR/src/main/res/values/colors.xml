@@ -136,11 +136,34 @@
     <color name="detailed_qservice_ui_categories_bg_selected">#3f3f3f</color>
     <color name="detailed_qservice_ui_categories_active">#bbd80a</color>
 
-    <color name="detailed_qservice_ui_categories_text_normal">#bbd80a</color>
-    <color name="detailed_qservice_ui_items_bg">#3f3f3f</color>
+    <color name="detailed_qservice_ui_pay_btn_text">#423f24</color>
+    <color name="detailed_qservice_ui_pay_btn_disabled">#64899e08</color>
+    <color name="detailed_qservice_ui_pay_btn_pressed">#899e08</color>
+    <color name="detailed_qservice_ui_pay_btn">@color/detailed_qservice_ui_categories_active</color>
+
+    <color name="detailed_qservice_ui_btn_text">#fafeff</color>
+
+    <color name="detailed_qservice_ui_void_btn_disabled">#64a74644</color>
+    <color name="detailed_qservice_ui_void_btn_pressed">#a74644</color>
+    <color name="detailed_qservice_ui_void_btn">#de5f5c</color>
+
+    <color name="detailed_qservice_ui_hold_btn_disabled">#6443482b</color>
+    <color name="detailed_qservice_ui_hold_btn_pressed">#43482b</color>
+    <color name="detailed_qservice_ui_hold_btn">#939f5d</color>
+
+    <color name="detailed_qservice_ui_customer_btn_disabled">#6428444c</color>
+    <color name="detailed_qservice_ui_customer_btn_pressed">#28444c</color>
+    <color name="detailed_qservice_ui_customer_btn">#65a3b4</color>
+
+    <color name="detailed_qservice_ui_reserved_btn_open">#648d8956</color>
+    <color name="detailed_qservice_ui_reserved_btn_pressed">#9b965f</color>
+    <color name="detailed_qservice_ui_reserved_btn">#cfc97f</color>
+
+    <color name="detailed_qservice_ui_categories_text_normal">@color/detailed_qservice_ui_categories_active</color>
+    <color name="detailed_qservice_ui_items_bg">@color/detailed_qservice_ui_categories_bg_selected</color>
 
     <color name="detailed_qservice_ui_bottom_fragment">#4b4b4b</color>
-    <color name="detailed_qservice_ui_total_bg">#2e2e2e</color>
+    <color name="detailed_qservice_ui_total_bg">@color/detailed_qservice_ui_categories_bg_normal</color>
 
 
 </resources>

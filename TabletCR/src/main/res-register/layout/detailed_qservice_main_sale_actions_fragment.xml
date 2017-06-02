@@ -1,7 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/detailed_qservice_ui_bottom_fragment">
+    android:gravity="center_vertical"
+    android:background="@color/detailed_qservice_ui_bottom_fragment"
+    android:paddingTop="8dp"
+    android:paddingRight="16dp">
+
+    <LinearLayout
+        android:id="@+id/btn_void"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:background="@drawable/void_btn_drawable">
+        <ImageView
+            android:layout_width="30dp"
+            android:src="@drawable/void_icon_white"
+            android:layout_gravity="center"
+            android:layout_height="30dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_void"
+            android:paddingTop="4dp"
+            android:textColor="@color/detailed_qservice_ui_btn_text"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textStyle="normal|bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btn_hold"
+        android:layout_width="120dp"
+        android:layout_height="90dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:layout_marginLeft="8dp"
+        android:background="@drawable/hold_btn_drawable">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/hold_icon_white"
+            android:layout_gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_hold"
+            android:paddingTop="4dp"
+            android:textColor="@color/detailed_qservice_ui_btn_text"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textStyle="normal|bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btn_customer"
+        android:layout_width="120dp"
+        android:layout_height="90dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:layout_marginLeft="8dp"
+        android:background="@drawable/customer_btn_drawable">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/customer_icon_white"
+            android:layout_gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/customer_order_customer"
+            android:paddingTop="4dp"
+            android:textColor="@color/detailed_qservice_ui_btn_text"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textStyle="normal|bold" />
+        <TextView
+            android:id="@+id/customer_label"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_lightgrey"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btn_pay"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:layout_marginLeft="8dp"
+        android:background="@drawable/pay_btn_drawable">
+
+        <TextView
+            android:id="@+id/btn_pay_text"
+            style="@style/LocalizableButton.DarkGreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pay"
+            android:textSize="46sp"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 </LinearLayout>
