@@ -8,10 +8,9 @@ import android.support.v4.content.Loader;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
 import com.kaching123.tcr.Logger;
-import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.BaseQuickServiceActiviry;
-import com.kaching123.tcr.activity.SuperBaseCashierActivity;
-import com.kaching123.tcr.activity.SuperBaseCashierActivity.IPriceLevelListener;
+import com.kaching123.tcr.activity.BaseCashierActivity;
+import com.kaching123.tcr.activity.BaseCashierActivity.IPriceLevelListener;
 import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.adapter.ObjectsCursorAdapter;
 import com.kaching123.tcr.model.ItemExModel;
@@ -82,8 +81,8 @@ public abstract class BaseItemsPickFragment extends Fragment implements IPriceLe
     @Override
     public void onLoadFinished(Loader<List<ItemExModel>> loader, List<ItemExModel> list) {
         changeCursor(new ArrayList<>(list));
-        if (getActivity() instanceof SuperBaseCashierActivity){
-            setPriceLevels(((SuperBaseCashierActivity) getActivity()).getPriceLevels());
+        if (getActivity() instanceof BaseCashierActivity){
+            setPriceLevels(((BaseCashierActivity) getActivity()).getPriceLevels());
         }
     }
 

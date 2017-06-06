@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -26,6 +27,10 @@ import com.kaching123.tcr.fragment.quickservice.QuickCategoriesFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickItemsFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment;
 import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment.OnCancelListener;
+import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
+import com.kaching123.tcr.fragment.saleorder.TotalCostFragment;
+import com.kaching123.tcr.fragment.search.SearchItemsListFragment;
+import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.PlanOptions;
@@ -59,6 +64,72 @@ public class QuickServiceActivity extends BaseQuickServiceActiviry {
 
     @FragmentById
     protected QuickModifyFragment modifyFragment;
+
+    @FragmentById
+    protected TotalCostFragment totalCostFragment;
+
+    @FragmentById
+    protected OrderItemListFragment orderItemListFragment;
+
+    @FragmentById
+    protected SearchItemsListFragment searchResultFragment;
+
+    @Override
+    public Fragment getSearchResultFragment() {
+        return searchResultFragment;
+    }
+
+    @Override
+    public ListFragment getOrderItemListFragment() {
+        return orderItemListFragment;
+    }
+
+    protected void hideTotalCostFragment() {
+        if (totalCostFragment != null) {
+            getSupportFragmentManager().beginTransaction().hide(totalCostFragment).commit();
+        }
+    }
+
+    protected void showTotalCostFragment() {
+        if (totalCostFragment != null) {
+            getSupportFragmentManager().beginTransaction().show(totalCostFragment).commit();
+        }
+    }
+
+    protected String totalCostGetOrderSubTotal() {
+        return totalCostFragment.getOrderSubTotal();
+    }
+
+    protected String totalCostGetOrderDiscountTotal() {
+        return totalCostFragment.getOrderDiscountTotal();
+    }
+    protected String totalCostGetOrderTaxTotal() {
+        return totalCostFragment.getOrderTaxTotal();
+    }
+
+    protected String totalCostGetOrderAmountTotal() {
+        return totalCostFragment.getOrderAmountTotal();
+    }
+    protected void totalCostSetOrderGuid(String guid) {
+        totalCostFragment.setOrderGuid(guid);
+    }
+
+    protected void totalCostSetSuspendedItemsCount(int count) {
+        totalCostFragment.setSuspendedItemsCount(count);
+    }
+    protected void totalCostSetCustomer(CustomerModel customerModel) {
+        totalCostFragment.setCustomer(customerModel);
+    }
+    protected void totalCostSetCreateReturnOrder(boolean isCreateReturnOrder) {
+        totalCostFragment.setCreateReturnOrder(isCreateReturnOrder);
+    }
+    protected BigDecimal totalCostGetOrderTotal() {
+        return totalCostFragment.getOrderTotal();
+    }
+
+    protected void totalCostSetCustomerButtonEnabled(boolean enabled) {
+        totalCostFragment.setCustomerButtonEnabled(enabled);
+    }
 
     public static void start(Context context) {
         QuickServiceActivity_.intent(context).start();

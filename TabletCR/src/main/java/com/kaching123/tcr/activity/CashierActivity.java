@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
@@ -28,6 +30,10 @@ import com.kaching123.tcr.fragment.itempick.DrawerCategoriesFragment;
 import com.kaching123.tcr.fragment.itempick.ItemsListFragment;
 import com.kaching123.tcr.fragment.modify.ItemModifiersFragment;
 import com.kaching123.tcr.fragment.modify.ModifyFragment;
+import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
+import com.kaching123.tcr.fragment.saleorder.TotalCostFragment;
+import com.kaching123.tcr.fragment.search.SearchItemsListFragment;
+import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.service.UploadTask;
@@ -39,6 +45,7 @@ import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 @EActivity(R.layout.saleorder_cashier_activity)
@@ -63,7 +70,73 @@ public class CashierActivity extends BaseCashierActivity implements CustomEditBo
     @ViewById
     protected CustomEditBox scannerInput;
 
+    @FragmentById
+    protected TotalCostFragment totalCostFragment;
+
+    @FragmentById
+    protected OrderItemListFragment orderItemListFragment;
+
+    @FragmentById
+    protected SearchItemsListFragment searchResultFragment;
+
     private Timer timer;
+
+    @Override
+    public Fragment getSearchResultFragment() {
+        return searchResultFragment;
+    }
+
+    @Override
+    public ListFragment getOrderItemListFragment() {
+        return orderItemListFragment;
+    }
+
+    protected void hideTotalCostFragment() {
+        if (totalCostFragment != null) {
+            getSupportFragmentManager().beginTransaction().hide(totalCostFragment).commit();
+        }
+    }
+
+    protected void showTotalCostFragment() {
+        if (totalCostFragment != null) {
+            getSupportFragmentManager().beginTransaction().show(totalCostFragment).commit();
+        }
+    }
+
+    protected String totalCostGetOrderSubTotal() {
+        return totalCostFragment.getOrderSubTotal();
+    }
+
+    protected String totalCostGetOrderDiscountTotal() {
+        return totalCostFragment.getOrderDiscountTotal();
+    }
+    protected String totalCostGetOrderTaxTotal() {
+        return totalCostFragment.getOrderTaxTotal();
+    }
+
+    protected String totalCostGetOrderAmountTotal() {
+        return totalCostFragment.getOrderAmountTotal();
+    }
+    protected void totalCostSetOrderGuid(String guid) {
+        totalCostFragment.setOrderGuid(guid);
+    }
+
+    protected void totalCostSetSuspendedItemsCount(int count) {
+        totalCostFragment.setSuspendedItemsCount(count);
+    }
+    protected void totalCostSetCustomer(CustomerModel customerModel) {
+        totalCostFragment.setCustomer(customerModel);
+    }
+    protected void totalCostSetCreateReturnOrder(boolean isCreateReturnOrder) {
+        totalCostFragment.setCreateReturnOrder(isCreateReturnOrder);
+    }
+    protected BigDecimal totalCostGetOrderTotal() {
+        return totalCostFragment.getOrderTotal();
+    }
+
+    protected void totalCostSetCustomerButtonEnabled(boolean enabled) {
+        totalCostFragment.setCustomerButtonEnabled(enabled);
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

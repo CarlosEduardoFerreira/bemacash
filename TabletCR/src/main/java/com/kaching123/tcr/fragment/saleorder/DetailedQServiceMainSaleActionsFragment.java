@@ -39,20 +39,16 @@ public class DetailedQServiceMainSaleActionsFragment  extends Fragment {
     @ViewById
     protected View btnPay;
     @ViewById
-    protected TextView btnPayText;
-    @ViewById
     protected View btnCustomer;
-
+    @ViewById
+    protected TextView btnPayText;
     @ViewById
     protected TextView customerLabel;
 
-    private String orderGuid;
-
-    private BigDecimal orderTotalVal;
-
     private boolean isCreateReturnOrder;
-
-    OrderItemListFragment orderItemListFragment;
+    private String orderGuid;
+    private BigDecimal orderTotalVal;
+    private OrderItemListFragment orderItemListFragment;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

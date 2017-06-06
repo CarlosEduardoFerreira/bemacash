@@ -118,7 +118,7 @@ public abstract class BaseQuickServiceActiviry extends BaseCashierActivity imple
         });
         super.init();
 
-        getSupportFragmentManager().beginTransaction().hide(searchResultFragment).commit();
+        getSupportFragmentManager().beginTransaction().hide(getSearchResultFragment()).commit();
 
         ((ICategoryFragmentBaseActions)getCategoriesFragment()).setListener(new QuickCategoriesFragment.ICategoryListener() {
 

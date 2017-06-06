@@ -5,9 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.component.CustomEditBox;
-import com.kaching123.tcr.component.KeyboardView;
-import com.kaching123.tcr.fragment.quickservice.QuickModifyFragment;
 import com.kaching123.tcr.fragment.saleorder.DetailedQServiceMainSaleActionsFragment;
 import com.kaching123.tcr.fragment.saleorder.DetailedQServiceReservedActionsFragment;
 import com.kaching123.tcr.fragment.saleorder.DetailedQServiceTotalCostFragment;
@@ -21,7 +18,6 @@ import com.kaching123.tcr.model.CustomerModel;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
 
 import java.math.BigDecimal;
 
@@ -43,11 +39,11 @@ public class DetailedQuickServiceActivity extends BaseQuickServiceActiviry imple
     @FragmentById
     protected DetailedQServiceReservedActionsFragment detailedReservedActionsFragment;
 
-//    @FragmentById
-//    protected OrderItemListFragment orderItemListFragment;  //todo already in parent, should check when change on new
-//
-//    @FragmentById
-//    protected SearchItemsListFragment searchResultFragment;
+    @FragmentById
+    protected OrderItemListFragment orderItemListFragment;
+
+    @FragmentById
+    protected SearchItemsListFragment searchResultFragment;
 
     @FragmentById
     protected DetailedQuickCategoriesFragment categoriesFragment;

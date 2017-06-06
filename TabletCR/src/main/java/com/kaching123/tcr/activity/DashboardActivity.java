@@ -33,6 +33,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.activity.DetailedQuickServiceActivity;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand.BaseOpenDrawerCallback;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;

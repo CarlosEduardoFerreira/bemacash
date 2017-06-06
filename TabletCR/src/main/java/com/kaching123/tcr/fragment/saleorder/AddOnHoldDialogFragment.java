@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
-import com.kaching123.tcr.activity.SuperBaseCashierActivity.IHoldListener;
+import com.kaching123.tcr.activity.BaseCashierActivity.IHoldListener;
 import com.kaching123.tcr.commands.print.digital.PrintOrderToKdsCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;

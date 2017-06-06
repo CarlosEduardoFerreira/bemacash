@@ -21,10 +21,9 @@ import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
-import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity;
 import com.kaching123.tcr.activity.SuperBaseActivity.BaseTempLoginListener;
-import com.kaching123.tcr.activity.SuperBaseCashierActivity;
+import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.commands.device.PrinterCommand;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
@@ -85,7 +84,7 @@ import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCo
 import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.EXTRA_PRINTER;
 
 @EFragment
-public class OrderItemListFragment extends ListFragment implements LoaderCallbacks<List<SaleOrderItemViewModel>>, BarcodeListenerHolder.BarcodeListener, SuperBaseCashierActivity.IOrderItemListFragmentActions {
+public class OrderItemListFragment extends ListFragment implements LoaderCallbacks<List<SaleOrderItemViewModel>>, BarcodeListenerHolder.BarcodeListener, BaseCashierActivity.IOrderItemListFragmentActions {
 
     protected String orderGuid;
 

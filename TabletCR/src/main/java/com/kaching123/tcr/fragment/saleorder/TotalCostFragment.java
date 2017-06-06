@@ -240,9 +240,15 @@ public class TotalCostFragment extends Fragment {
         if (this.tax != null) this.tax.setTextColor(taxColorNormal);
     }
 
-    public IOrderActionListener getActionListener() {
-        if (getActivity() instanceof IOrderActionListener || (getActivity() instanceof IOrderRegisterActionListener && getActivity() instanceof IOrderPricingListener))
-            return (IOrderActionListener) getActivity();
+    public IOrderRegisterActionListener getActionListener() {
+        if (getActivity() instanceof IOrderRegisterActionListener)
+            return (IOrderRegisterActionListener) getActivity();
+        return null;
+    }
+
+    public IOrderPricingListener getPricingListener() {
+        if (getActivity() instanceof IOrderPricingListener)
+            return (IOrderPricingListener) getActivity();
         return null;
     }
 
@@ -275,12 +281,12 @@ public class TotalCostFragment extends Fragment {
         if (subTotal == null) {
             subTotal = BigDecimal.ZERO;
         }
-        getActionListener().onDiscount(subTotal);
+        getPricingListener().onDiscount(subTotal);
     }
 
     @Click
     protected void taxBlockClicked() {
-        getActionListener().onTax();
+        getPricingListener().onTax();
     }
 
     public void setSuspendedItemsCount(int count) {
@@ -290,7 +296,5 @@ public class TotalCostFragment extends Fragment {
     public void setCreateReturnOrder(boolean isCreateReturnOrder) {
         this.isCreateReturnOrder = isCreateReturnOrder;
     }
-
-    public interface IOrderActionListener extends IOrderRegisterActionListener, IOrderPricingListener {}
 
 }

@@ -16,8 +16,7 @@ import com.google.common.base.Function;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.BaseCashierActivity;
-import com.kaching123.tcr.activity.SuperBaseCashierActivity;
-import com.kaching123.tcr.activity.SuperBaseCashierActivity.IPriceLevelListener;
+import com.kaching123.tcr.activity.BaseCashierActivity.IPriceLevelListener;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemRefType;
 import com.kaching123.tcr.model.ModifierType;
@@ -49,7 +48,7 @@ import static com.kaching123.tcr.model.ContentValuesUtil._decimalQty;
 import static com.kaching123.tcr.model.ContentValuesUtil._discountType;
 
 @EFragment(R.layout.search_items_list_fragment)
-public class SearchItemsListFragment extends Fragment implements IPriceLevelListener, LoaderCallbacks<List<CategoryItemViewModel>>, SuperBaseCashierActivity.ISearchFragmentActions {
+public class SearchItemsListFragment extends Fragment implements IPriceLevelListener, LoaderCallbacks<List<CategoryItemViewModel>>, BaseCashierActivity.ISearchFragmentActions {
 
     private static final Uri URI_ITEMS = ShopProvider.getContentUriGroupBy(ItemExtView.URI_CONTENT, ItemTable.GUID);
 
@@ -129,7 +128,7 @@ public class SearchItemsListFragment extends Fragment implements IPriceLevelList
     @Override
     public void onLoadFinished(Loader<List<CategoryItemViewModel>> loader, List<CategoryItemViewModel> list) {
         adapter.changeCursor(list);
-        setPriceLevels(((SuperBaseCashierActivity) getActivity()).getPriceLevels());
+        setPriceLevels(((BaseCashierActivity) getActivity()).getPriceLevels());
     }
 
     @Override
