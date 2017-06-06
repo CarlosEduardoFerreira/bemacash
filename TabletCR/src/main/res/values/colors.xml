@@ -154,6 +154,8 @@
     <color name="detailed_qservice_ui_customer_btn_disabled">#6428444c</color>
     <color name="detailed_qservice_ui_customer_btn_pressed">#28444c</color>
     <color name="detailed_qservice_ui_customer_btn">#65a3b4</color>
+    <color name="detailed_qservice_ui_customer_picked_btn_pressed">#243d45</color>
+    <color name="detailed_qservice_ui_customer_picked_btn">#5b93a3</color>
 
     <color name="detailed_qservice_ui_reserved_btn_open">#648d8956</color>
     <color name="detailed_qservice_ui_reserved_btn_pressed">#9b965f</color>

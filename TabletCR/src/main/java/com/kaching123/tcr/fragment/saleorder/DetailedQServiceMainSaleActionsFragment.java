@@ -43,7 +43,15 @@ public class DetailedQServiceMainSaleActionsFragment  extends Fragment {
     @ViewById
     protected TextView btnPayText;
     @ViewById
-    protected TextView customerLabel;
+    protected TextView customerFirstName;
+    @ViewById
+    protected TextView customerSecondName;
+    @ViewById
+    protected TextView customerPoints;
+    @ViewById
+    protected LinearLayout pickedCustomer;
+    @ViewById
+    protected LinearLayout emptyCustomer;
 
     private boolean isCreateReturnOrder;
     private String orderGuid;
@@ -81,7 +89,9 @@ public class DetailedQServiceMainSaleActionsFragment  extends Fragment {
         if (TextUtils.isEmpty(orderGuid)) {
             updateClickable(false);
             setZero();
-            customerLabel.setText(null);
+            customerFirstName.setText(null);
+            customerSecondName.setText(null);
+            customerPoints.setText(null);
             getLoaderManager().destroyLoader(LOADER_ITEMS);
             return;
         }
@@ -121,9 +131,15 @@ public class DetailedQServiceMainSaleActionsFragment  extends Fragment {
 
     public void setCustomer(CustomerModel customer){
         if (customer == null){
-            customerLabel.setText(null);
+            customerFirstName.setText(null);
+            customerSecondName.setText(null);
+            customerPoints.setText(null);
+            pickedCustomerBtnView(false);
         }else{
-            customerLabel.setText(String.format("%s\n%s pts", customer.getFullName(), integralIntegerFormat(customer.loyaltyPoints)));
+            pickedCustomerBtnView(true);
+            customerFirstName.setText(customer.firstName);
+            customerSecondName.setText(customer.lastName);
+            customerPoints.setText(integralIntegerFormat(customer.loyaltyPoints));
         }
     }
 
@@ -208,6 +224,11 @@ public class DetailedQServiceMainSaleActionsFragment  extends Fragment {
 
     public void setCreateReturnOrder(boolean isCreateReturnOrder) {
         this.isCreateReturnOrder = isCreateReturnOrder;
+    }
+
+    private void pickedCustomerBtnView(boolean picked) {
+        pickedCustomer.setVisibility(picked ? View.VISIBLE : View.GONE);
+        emptyCustomer.setVisibility(!picked ? View.VISIBLE : View.GONE);
     }
 
     public static interface IOrderRegisterActionListener {

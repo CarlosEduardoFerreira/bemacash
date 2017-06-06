@@ -3493,15 +3493,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
         }
     }
 
-    protected abstract BigDecimal totalCostGetOrderTotal();
-    protected abstract String totalCostGetOrderSubTotal();
-    protected abstract String totalCostGetOrderDiscountTotal();
-    protected abstract String totalCostGetOrderTaxTotal();
-    protected abstract String totalCostGetOrderAmountTotal();
     protected abstract void totalCostSetOrderGuid(String guid);
     protected abstract void totalCostSetSuspendedItemsCount(int count);
     protected abstract void totalCostSetCustomer(CustomerModel customerModel);
     protected abstract void totalCostSetCreateReturnOrder(boolean isCreateReturnOrder);
     protected abstract void totalCostSetCustomerButtonEnabled(boolean isCreateReturnOrder);
+    protected abstract BigDecimal totalCostGetOrderTotal();
+    protected abstract String totalCostGetOrderSubTotal();
+    protected abstract String totalCostGetOrderDiscountTotal();
+    protected abstract String totalCostGetOrderTaxTotal();
+    protected abstract String totalCostGetOrderAmountTotal();
 
 }
