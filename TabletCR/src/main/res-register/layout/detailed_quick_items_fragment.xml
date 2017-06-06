@@ -4,6 +4,42 @@
     android:layout_height="match_parent"
     android:background="@color/detailed_qservice_ui_items_bg">
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_marginTop="21dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:paddingBottom="16dp"
+        android:paddingRight="12dp"
+        android:paddingLeft="12dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/left_arrow"
+            android:background="@drawable/detailed_qservice_item_view_pager_left_arrow"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginRight="4dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/right_arrow"
+            android:background="@drawable/detailed_qservice_item_view_pager_right_arrow"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="4dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
     <View
         android:layout_width="match_parent"
         android:background="@drawable/shadow_for_list_horizontal"

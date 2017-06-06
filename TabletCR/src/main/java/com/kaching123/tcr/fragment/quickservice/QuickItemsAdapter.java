@@ -19,14 +19,22 @@ import static com.kaching123.tcr.fragment.UiHelper.showPrice;
  */
 public class QuickItemsAdapter extends ObjectsCursorAdapter<ItemExModel> {
 
+    private boolean detailedView;
+
     public QuickItemsAdapter(Context context, List<ItemExModel> objects) {
         super(context);
         changeCursor(objects);
     }
 
+    public QuickItemsAdapter(Context context, List<ItemExModel> objects, boolean detailedView) {
+        super(context);
+        changeCursor(objects);
+        this.detailedView = detailedView;
+    }
+
     @Override
     protected View newView(int position, ViewGroup parent) {
-        View convertView = LayoutInflater.from(getContext()).inflate(R.layout.quickservice_item_view, parent, false);
+        View convertView = LayoutInflater.from(getContext()).inflate(detailedView ? R.layout.detailed_quickservice_item_view : R.layout.quickservice_item_view, parent, false);
         assert convertView != null;
 
         ViewHolder holder = new ViewHolder();

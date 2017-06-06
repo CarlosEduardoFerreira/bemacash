@@ -1,0 +1,42 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false">
+            <layer-list>
+                <item>
+                    <shape android:shape="rectangle">
+                        <stroke android:width="1dp" android:color="@color/detailed_qservice_ui_reserved_btn" />
+                        <solid android:color="@color/detailed_qservice_ui_reserved_btn_open" />
+                        <corners android:bottomLeftRadius="@dimen/register_action_buttons_radius" android:bottomRightRadius="@dimen/register_action_buttons_radius" android:topLeftRadius="@dimen/register_action_buttons_radius" android:topRightRadius="@dimen/register_action_buttons_radius" />
+                    </shape>
+                </item>
+                <item android:gravity="center" android:left="100dp" android:right="100dp" android:top="28dp" android:bottom="28dp" android:drawable="@drawable/inactive_arrow_item_view_pager" />
+            </layer-list>
+    </item>
+
+    <item android:state_pressed="true">
+        <rotate android:fromDegrees="180" android:toDegrees="0">
+            <layer-list>
+                <item>
+                    <shape android:shape="rectangle">
+                        <solid android:color="@color/detailed_qservice_ui_reserved_btn_pressed" />
+                        <corners android:bottomLeftRadius="@dimen/register_action_buttons_radius" android:bottomRightRadius="@dimen/register_action_buttons_radius" android:topLeftRadius="@dimen/register_action_buttons_radius" android:topRightRadius="@dimen/register_action_buttons_radius" />
+                    </shape>
+                </item>
+                <item android:gravity="center" android:left="100dp" android:right="100dp" android:top="28dp" android:bottom="28dp"  android:drawable="@drawable/arrow_active_item_view_pager"/>
+            </layer-list>
+        </rotate>
+    </item>
+
+    <item>
+        <rotate android:fromDegrees="180" android:toDegrees="0">
+            <layer-list>
+                <item>
+                    <shape android:shape="rectangle">
+                        <solid android:color="@color/detailed_qservice_ui_reserved_btn" />
+                        <corners android:bottomLeftRadius="@dimen/register_action_buttons_radius" android:bottomRightRadius="@dimen/register_action_buttons_radius" android:topLeftRadius="@dimen/register_action_buttons_radius" android:topRightRadius="@dimen/register_action_buttons_radius" />
+                    </shape>
+                </item>
+                <item android:gravity="center" android:left="100dp" android:right="100dp" android:top="28dp" android:bottom="28dp"  android:drawable="@drawable/arrow_active_item_view_pager"/>
+            </layer-list>
+        </rotate>
+    </item>
+</selector>

@@ -167,5 +167,10 @@
     <color name="detailed_qservice_ui_bottom_fragment">#4b4b4b</color>
     <color name="detailed_qservice_ui_total_bg">@color/detailed_qservice_ui_categories_bg_normal</color>
 
+    <color name="detailed_qitem_bg">#f7f7f7</color>
+    <color name="detailed_qitem_bg_pressed">#d1d1d1</color>
+    <color name="detailed_qitem_bottom_bg">#bbd80a</color>
+    <color name="detailed_qitem_bottom_bg_pressed">#92a909</color>
+
 
 </resources>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/detailed_qitem_bg_pressed" />
+                    <corners android:bottomLeftRadius="@dimen/register_action_buttons_radius" android:bottomRightRadius="@dimen/register_action_buttons_radius" android:topLeftRadius="@dimen/register_action_buttons_radius" android:topRightRadius="@dimen/register_action_buttons_radius" />
+                </shape>
+            </item>
+            <item android:top="76dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/detailed_qitem_bottom_bg_pressed" />
+                    <corners android:bottomLeftRadius="@dimen/register_action_buttons_radius" android:bottomRightRadius="@dimen/register_action_buttons_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/detailed_qitem_bg_pressed" />
+                    <corners android:bottomLeftRadius="@dimen/register_action_buttons_radius" android:bottomRightRadius="@dimen/register_action_buttons_radius" android:topLeftRadius="@dimen/register_action_buttons_radius" android:topRightRadius="@dimen/register_action_buttons_radius" />
+                </shape>
+            </item>
+            <item android:top="76dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/detailed_qitem_bottom_bg_pressed" />
+                    <corners android:bottomLeftRadius="@dimen/register_action_buttons_radius" android:bottomRightRadius="@dimen/register_action_buttons_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/detailed_qitem_bg" />
+                    <corners android:bottomLeftRadius="@dimen/register_action_buttons_radius" android:bottomRightRadius="@dimen/register_action_buttons_radius" android:topLeftRadius="@dimen/register_action_buttons_radius" android:topRightRadius="@dimen/register_action_buttons_radius" />
+                </shape>
+            </item>
+            <item android:top="76dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/detailed_qitem_bottom_bg" />
+                    <corners android:bottomLeftRadius="@dimen/register_action_buttons_radius" android:bottomRightRadius="@dimen/register_action_buttons_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

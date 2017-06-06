@@ -139,7 +139,7 @@ public class DetailedQServiceMainSaleActionsFragment  extends Fragment {
             pickedCustomerBtnView(true);
             customerFirstName.setText(customer.firstName);
             customerSecondName.setText(customer.lastName);
-            customerPoints.setText(integralIntegerFormat(customer.loyaltyPoints));
+            customerPoints.setText(String.format("%s pts", integralIntegerFormat(customer.loyaltyPoints)));
         }
     }
 
