@@ -2137,7 +2137,11 @@
     <string name="grand_write_settings_permission_text_view_content">Bemacash needs write permission. \nPlease grant this permission and press back.</string>
     <string name="on_hold_in_process_msg">You can\'t get this order. Order in process</string>
 
-    <!-- local sync starts -->
+
+
+
+    <!-- Start Local Sync ###################################################################### -->
+
     <string name="shop_host_is_diff">Tablet\' shop %s is different.</string>
     <string name="host_status_outdated_msg">Tablet %s is outdated</string>
     <string name="host_status_more_updated_msg">Tablet %s be with incompatible version</string>
@@ -2254,14 +2258,11 @@
     <string name="wrong_month_format">Month format is wrong should be from 1 to 12</string>
     <string name="wrong_day_format">Day format is wrong should be from 1 to 31</string>
     <string name="age_verification_customer_must_be_older" formatted = "false">Must be %d years old to purchase this item</string>
-
     <string name="gc_confirmation_dlg_title">Lost data determinator</string>
     <string name="gc_confirmation_dlg_title_seq">Force FM number increase</string>
-
     <string name="gc_confirmation_dlg_msg">Warning! You are about to perform the local data loss check. This won\'t impact anything! Upon the start of procedure, make sure you have synchronized successfully. Should you receive positive result, you might attempt step 2 - data recovery. Would you like to proceed?</string>
     <string name="gc_confirmation_dlg_msg_push">We have found some lost data. Would you like to proceed pushing it to the server?</string>
     <string name="gc_confirmation_dlg_msg_seq">Warning! You are about to perform the order number increase</string>
-
     <string name="wait_processing">Processing...</string>
     <string name="cashier_action_gc">Force upload</string>
     <string name="action_force_sync">Force sync</string>
@@ -2269,18 +2270,28 @@
     <string name="show_bemacashs">Show local Bemacashs</string>
     <string name="local_bemacashs">Status Local Sync</string>
     <string name="cashier_action_seqc">SEQ - action</string>
-
     <string name="clear_local_sync_data">Clear Missing</string>
-        <string name="clear_local_sync_data_confirm">Are you sure you want clear all missing data of the local sync?\n\nOnly do this if you are sure all Bemacashs are synchronized.</string>
+    <string name="clear_local_sync_data_confirm">Are you sure you want clear all missing data of the local sync?\n\nOnly do this if you are sure all Bemacashs are synchronized.</string>
     <string name="kitchen_printable_modifier_cant_be_changed">Kitchen printable items cannot be changed, you can remove and re-collect new item</string>
-
     <string name="choose_item_save_action">Your item has been saved. Would you like to add another item?</string>
     <string name="item_save_action">Save options</string>
     <string name="sequence_alphabetical">Sequence of items in register will be changed to alphabetical order</string>
     <string name="sequence_order">Sequence of items in register will be changed to sequence order</string>
 
+    <!-- ##################################################################### Finish Local Sync -->
 
-    <!-- local sync ends -->
+
+
+
+
+    <!-- Start Shift  ########################################################################## -->
+
+    <string name="dlg_title_shift_open_title">Open Shift Alert</string>
+    <string name="dlg_title_shift_open_text">Do you want to open your shift?</string>
+
+    <!-- ########################################################################## Finish Shift -->
+
+
 
 
 </resources>

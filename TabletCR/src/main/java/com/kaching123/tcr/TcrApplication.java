@@ -58,6 +58,7 @@ import com.squareup.okhttp.OkHttpClient;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EApplication;
+import org.androidannotations.api.sharedpreferences.IntPrefField;
 import org.apache.commons.codec.Charsets;
 
 import java.io.IOException;
@@ -236,8 +237,6 @@ public class TcrApplication extends MultiDexApplication {
 
     @Background
     public void initPref() {
-        Logger.d("[ShopPref] PrintReceiptTwice = " + shopPref.printReceiptTwice().get());
-        Logger.d("[ShopPref] signatureReceipt = "  + shopPref.signatureReceipt().get());
         synchronized (this) {
             shopInfo = new ShopInfo(
                     shopPref.shopId().get(),
@@ -275,29 +274,23 @@ public class TcrApplication extends MultiDexApplication {
                     _decimal(shopPref.tipsWarnThreshold().getOr(null), BigDecimal.ZERO),
                     shopPref.zipMandatory().getOr(false),
                     shopPref.cvnMandatory().getOr(true),
-
                     shopPref.acceptCreditCards().getOr(true),
                     shopPref.acceptDebitCards().getOr(true),
                     shopPref.acceptEbtCards().getOr(true),
                     shopPref.acceptSerializableItems().getOr(true),
-
                     shopPref.blackstonePaymentUrl().getOr(null),
                     shopPref.blackstonePaymentAccount().getOr(null),
                     shopPref.blackstonePaymentPassword().getOr(null),
                     shopPref.blackstonePaymentApptype().getOr(0),
                     shopPref.blackstonePaymentAppkey().getOr(null),
                     shopPref.blackstonePaymentMid().getOr(0),
-
                     shopPref.shopSupportEmail().getOr(null),
-
                     shopPref.autoSettlementTime().getOr(null),
                     shopPref.commissionControl().getOr(false),
                     _decimal(shopPref.defaultStoreCommission().getOr(null), BigDecimal.ZERO),
                     shopPref.offlinePeriodHours().getOr(0),
-
                     shopPref.unitLabelDefaultShortcut().getOr(null),
                     shopPref.unitLabelDefaultDescription().getOr(null),
-
                     shopPref.printerTwoCopiesReceipt().getOr(false),
                     shopPref.printReceiptTwice().getOr(1),
                     shopPref.printDetailReceipt().getOr(false),
@@ -332,8 +325,11 @@ public class TcrApplication extends MultiDexApplication {
                     shopPref.signatureReceipt().get(),
                     shopPref.definedOnHold().getOr(false),
                     shopPref.onHoldStatusMandatory().getOr(false),
-                    shopPref.isAgeFormateLatin().getOr(false)
-                    );
+                    shopPref.isAgeFormateLatin().getOr(false),
+                    shopPref.shiftType().get()
+            );
+
+            Log.d("BemaCarl26", "TcrApplication.initPref.shiftType: " + shopInfo.shiftType);
         }
         barcodePrefixes = new BarcodePrefixes(
                 shopPref.code10DItem().get(),
@@ -746,6 +742,7 @@ public class TcrApplication extends MultiDexApplication {
                 .definedOnHold().put(info.definedOnHold)
                 .onHoldStatusMandatory().put(info.onHoldStatusMandatory)
                 .isAgeFormateLatin().put(info.ageVerificationFormatLatin)
+                .shiftType().put(info.shiftType)
                 .apply();
 
         setUsers();
@@ -1460,5 +1457,9 @@ public class TcrApplication extends MultiDexApplication {
         return mLanDevices;
     }
 
+    public int getShiftType() {
+        return shopInfo.shiftType;
+    }
 
 }
+

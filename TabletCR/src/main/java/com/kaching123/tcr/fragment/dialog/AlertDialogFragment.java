@@ -25,7 +25,9 @@ public class AlertDialogFragment extends StyledDialogFragment {
     protected static final String DIALOG_NAME = "errorDialogFragment";
 
     public enum DialogType {
-        CONFIRM(3, true), INFO(2, false), ALERT(4, false), COMPLETE(1, false), ALERT2(4, true), INFO2(2, true), CONFIRM_NONE(3, true), ALERT3(4, true), ALERT4(4, false);
+        CONFIRM(3, true), INFO(2, false), ALERT(4, false), COMPLETE(1, false), ALERT2(4, true),
+        INFO2(2, true), CONFIRM_NONE(3, true), ALERT3(4, true), ALERT4(4, false),
+        ASK1(1, true), ASK2(2, true), ASK3(3, true), ASK4(4, true);
 
         public final int level;
         final boolean hasNegativeBtn;
@@ -247,4 +249,11 @@ public class AlertDialogFragment extends StyledDialogFragment {
     public static void showAlertWithSkip(FragmentActivity activity, int titleId, String msg, int okTitleId, OnDialogClickListener okListener, OnDialogClickListener skipListener) {
         show(activity, DialogType.ALERT4, titleId, msg, okTitleId, okListener, null, skipListener);
     }
+
+    public static void showAlertWithSkip3(FragmentActivity activity, int titleId, String msg, int okTitleId, OnDialogClickListener okListener, OnDialogClickListener skipListener) {
+        show(activity, DialogType.ASK3, titleId, msg, okTitleId, okListener, null, skipListener);
+    }
+
 }
+
+
