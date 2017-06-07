@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
@@ -81,6 +82,8 @@ public class MoneybackProcessor {
     private ArrayList<PaymentTransactionModel> fakeTransactions;
 
     protected static ArrayList<PaymentTransactionModel> completedTransactions = new ArrayList<PaymentTransactionModel>();
+
+    private BigDecimal pendingAmount = BigDecimal.ZERO;
 
     private MoneybackProcessor(String orderGuid, OrderType orderType) {
         this.orderGuid = orderGuid;
@@ -253,6 +256,7 @@ public class MoneybackProcessor {
         this.refund = refund;
         isFakeRefund = true;
         this.fakeTransactions = transactions;
+        Log.d("BemaCarl21", "MoneybackProcessor.initRefundForFake.refund.pickedValue:   " + refund.pickedValue);
         proceedToRefund(context, refund.pickedValue, refund.pickedValue, transactions, user);
 
         return this;
@@ -273,6 +277,7 @@ public class MoneybackProcessor {
             if (TcrApplication.get().getShopInfo().useCreditReceipt) {
                 method = PaymentMethod.CREDIT_RECEIPT;
             }
+            Log.d("BemaCarl21", "MoneybackProcessor.initRefund.refund.pickedValue:   " + refund.pickedValue);
             proceedToRefund(context, method, transactions, refund.pickedValue, user);
         }
 
@@ -284,7 +289,14 @@ public class MoneybackProcessor {
      */
     private MoneybackProcessor startCycle(final FragmentActivity context, final BigDecimal amountLeft, final User user) {
         Logger.d("SHELL payment : %s left", UiHelper.valueOf(amountLeft));
-        proceedToRefund(context, refund.pickedValue, amountLeft, user);
+        Log.d("BemaCarl21", "MoneybackProcessor.startCycle.refund.pickedValue:      " + refund.pickedValue);
+        Log.d("BemaCarl21", "MoneybackProcessor.startCycle.amountLeft:              " + amountLeft);
+        Log.d("BemaCarl21", "MoneybackProcessor.startCycle.pendingAmount:           " + pendingAmount);
+        if (pendingAmount.compareTo(amountLeft) == 1 || pendingAmount.equals(BigDecimal.ZERO)){
+            proceedToRefund(context, refund.pickedValue, amountLeft, user);
+        }else{
+            proceedToRefund(context, refund.pickedValue, pendingAmount, user);
+        }
 
         return this;
     }
@@ -301,6 +313,11 @@ public class MoneybackProcessor {
                                  final BigDecimal pendingAmountToReturn,
                                  final ArrayList<PaymentTransactionModel> transactions,
                                  final User user) {
+
+        Log.d("BemaCarl21", "MoneybackProcessor.proceedToRefund.totalAmountToReturn:   " + totalAmountToReturn);
+        Log.d("BemaCarl21", "MoneybackProcessor.proceedToRefund.pendingAmountToReturn: " + pendingAmountToReturn);
+        Log.d("BemaCarl21", "MoneybackProcessor.proceedToRefund.pendingAmount:         " + pendingAmount);
+
         RefundTenderFragmentDialog.show(context,
                 orderGuid,
                 orderType,
@@ -326,7 +343,9 @@ public class MoneybackProcessor {
                     @Override
                     public void onRefundMethodSelected(PaymentMethod method, List<PaymentTransactionModel> transactions) {
                         hide();
-                        MoneybackProcessor.this.proceedToRefund(context, method, transactions, pendingAmountToReturn, user);
+                        Log.d("BemaCarl21", "MoneybackProcessor.onRefundMethodSelected.pendingAmountToReturn: " + pendingAmountToReturn);
+                        Log.d("BemaCarl21", "MoneybackProcessor.onRefundMethodSelected.pendingAmount:         " + pendingAmount);
+                        proceedToRefund(context, method, transactions, pendingAmountToReturn, user);
                     }
 
                     @Override
@@ -347,7 +366,12 @@ public class MoneybackProcessor {
     }
 
     private void proceedToRefund(FragmentActivity context, PaymentMethod method, List<PaymentTransactionModel> transactions, BigDecimal pendingAmountToReturn, User user) {
+        Log.d("BemaCarl21", "MoneybackProcessor.proceedToRefund2.pendingAmountToReturn 1: " + pendingAmountToReturn);
         pendingAmountToReturn = pendingAmountToReturn.setScale(2, RoundingMode.HALF_UP);
+        Log.d("BemaCarl21", "MoneybackProcessor.proceedToRefund2.pendingAmountToReturn 2: " + pendingAmountToReturn);
+        Log.d("BemaCarl21", "MoneybackProcessor.proceedToRefund2.method: " + method);
+        Log.d("BemaCarl21", "MoneybackProcessor.proceedToRefund2.pendingAmount:         " + pendingAmount);
+        pendingAmount = pendingAmountToReturn;
         switch (method) {
             case CASH:
                 ArrayList<PaymentTransactionModel> blackstoneTransactions = new ArrayList<PaymentTransactionModel>();

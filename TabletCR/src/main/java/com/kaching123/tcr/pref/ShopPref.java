@@ -451,4 +451,7 @@ public interface ShopPref {
     @DefaultBoolean(false)
     boolean enableXReportTaxGroups();
 
+
+    int shiftType();
+
 }

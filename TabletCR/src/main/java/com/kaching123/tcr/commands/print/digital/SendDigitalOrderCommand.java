@@ -40,10 +40,13 @@ public class SendDigitalOrderCommand extends BaseSendEmailCommand {
         String html = orderBuilder.build();
         String subject = getSubject(printProcessor.getPrintOrderNumber());
 
+        //Log.d("BemaCarl24", "SendDigitalOrderCommand.execute.html: " + html);
+
         return sendEmail(restApi, apiKey, new String[]{email}, subject, html);
     }
 
     protected PrintOrderProcessor getPrintDigitalOrderProcessor(String orderGuid, IAppCommandContext appCommandContext) {
+        //Log.d("BemaCarl24", "SendDigitalOrderCommand.getPrintDigitalOrderProcessor.orderGuid: " + orderGuid);
         return TcrApplication.getCountryFunctionality().getOrderOrderProcessor(orderGuid, appCommandContext);
         //new PrintDigitalOrderProcessor(orderGuid, appCommandContext);
     }

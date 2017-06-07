@@ -73,6 +73,8 @@ public class AddLoyaltyPointsMovementCommand extends AsyncCommand {
             BigDecimal newPoints = customerModel.loyaltyPoints.add(points);
             customerModel.loyaltyPoints = newPoints;
 
+            Log.d("BemaCarl23","AddLoyaltyPointsMovementCommand.doCommand.birthdayRewardApplyDate: " + customerModel.birthdayRewardApplyDate);
+
             CustomerJdbcConverter customerJdbcConverter = (CustomerJdbcConverter) JdbcFactory.getConverter(ShopStore.CustomerTable.TABLE_NAME);
             sql.add(customerJdbcConverter.updateSQL(customerModel, getAppCommandContext()));
         }

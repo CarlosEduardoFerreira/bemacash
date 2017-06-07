@@ -1,18 +1,25 @@
 package com.kaching123.tcr.fragment.tendering;
 
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.widget.CheckBox;
 
 import com.getbase.android.db.loaders.CursorLoaderBuilder;
+import com.getbase.android.db.provider.ProviderAction;
 import com.google.common.base.Function;
 import com.kaching123.tcr.R;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.activity.BaseCashierActivity.SaleOrderViewResult;
+import com.kaching123.tcr.commands.loyalty.AddSaleIncentiveCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorHelloCommand;
+import com.kaching123.tcr.commands.store.user.UpdateCustomerBirthdayRewardDateCommand;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.model.CustomerModel;
 import com.kaching123.tcr.model.PaxModel;
@@ -21,6 +28,7 @@ import com.kaching123.tcr.model.SaleOrderModel;
 import com.kaching123.tcr.model.converter.SaleOrderItemViewModelWrapFunction;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
+import com.kaching123.tcr.store.ShopStore;
 import com.kaching123.tcr.store.ShopStore.SaleOrderView;
 
 import org.androidannotations.annotations.EFragment;
@@ -32,11 +40,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+
 /**
  * Created by pkabakov on 26.12.13.
  */
 @EFragment
 public abstract class PrintAndFinishFragmentDialogBase extends StyledDialogFragment {
+
+    private static final Uri CUSTOMER_URI = ShopProvider.contentUri(ShopStore.CustomerTable.URI_CONTENT);
 
     protected IFinishConfirmListener listener;
 
@@ -49,7 +60,7 @@ public abstract class PrintAndFinishFragmentDialogBase extends StyledDialogFragm
     protected SaleOrderModel order;
     protected ArrayList<SaleOrderItemViewModel> items;
     protected ArrayList<String> itemsPrinterAlias = new ArrayList<>();
-    protected CustomerModel customer;
+    public CustomerModel customer;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -102,13 +113,27 @@ public abstract class PrintAndFinishFragmentDialogBase extends StyledDialogFragm
                     .transform(new Function<Cursor, SaleOrderViewResult>() {
                         @Override
                         public SaleOrderViewResult apply(Cursor cursor) {
+        Log.d("BemaCarl23","PrintAndFinishFragmentDialogBase.customer: " + customer);
                             if (!cursor.moveToFirst()){
                                 return new SaleOrderViewResult(null, null);
                             }else{
                                 SaleOrderModel order = SaleOrderModel.fromView(cursor);
-                                CustomerModel customer = null;
-                                if (!cursor.isNull(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID))){
-                                    customer = CustomerModel.fromOrderView(cursor);
+                                //if(customer == null) {
+                                    if (!cursor.isNull(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID))) {
+                                        Cursor c1 = ProviderAction.query(CUSTOMER_URI)
+                                                .where(ShopStore.CustomerTable.GUID + " = ?", cursor.getString(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID)))
+                                                .perform(TcrApplication.get().getApplicationContext());
+                                        if(c1.moveToNext()) {
+                                            customer = new CustomerModel(c1);
+        Log.d("BemaCarl23", "PrintAndFinishFragmentDialogBase.onCreateLoader 1: " + cursor.getString(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID)));
+                                        }else {
+                                            customer = CustomerModel.fromOrderView(cursor);
+        Log.d("BemaCarl23", "PrintAndFinishFragmentDialogBase.onCreateLoader 2: " + cursor.getString(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID)));
+                                        }
+                                    }
+                                //}
+                                if (customer != null) {
+        Log.d("BemaCarl23","PrintAndFinishFragmentDialogBase.onCreateLoader.customer.birthdayRewardReceivedDate: " + customer.birthdayRewardApplyDate);
                                 }
                                 return new SaleOrderViewResult(order, customer);
                             }
@@ -120,6 +145,9 @@ public abstract class PrintAndFinishFragmentDialogBase extends StyledDialogFragm
         public void onLoadFinished(Loader<SaleOrderViewResult> loader, SaleOrderViewResult data) {
             order = data.order;
             customer = data.customer;
+            if(customer != null) {
+                Log.d("BemaCarl23", "PrintAndFinishFragmentDialogBase.onLoadFinished.customer.birthdayRewardReceivedDate: " + customer.birthdayRewardApplyDate);
+            }
             getLoaderManager().initLoader(1, null, new SaleOrderItemsModelLoader());
         }
 
@@ -195,6 +223,11 @@ public abstract class PrintAndFinishFragmentDialogBase extends StyledDialogFragm
     protected void completeProcess() {
         if (listener != null) {
             listener.onConfirmed();
+        }
+        Log.d("BemaCarl23","PrintAndFinishFragmentDialog.completeProcess.runLoyaltyBirthday: " + BaseCashierActivity.runLoyaltyBirthday);
+        if(BaseCashierActivity.runLoyaltyBirthday){
+            Log.d("BemaCarl23","PrintAndFinishFragmentDialog.completeProcess.order.customerGuid: " + order.customerGuid);
+            //UpdateCustomerBirthdayRewardDateCommand.start(getContext(),order.customerGuid);
         }
         dismiss();
     }

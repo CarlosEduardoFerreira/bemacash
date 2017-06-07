@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,12 +112,15 @@ public class PayChargeFragmentDialog extends KeyboardDialogFragment {
                 Logger.e("Number format mis parsing", e);
             }
 
-            if (getDisplayBinder() != null) {
-                getDisplayBinder().startCommand(new DisplayTenderCommand(entered, null));
-            }
-
             enablePositiveButtons(entered.compareTo(PaymentGateway.getCreditCardPaymentMethod().minimalAmount()) >= 0);
             BigDecimal pending = pendingValue.subtract(entered);
+            Log.d("BemaCarl25", "PayChargeFragmentDialog.afterTextChanged.pending: " + pending);
+            if (getDisplayBinder() != null) {
+                Log.d("BemaCarl25", "PayChargeFragmentDialog.afterTextChanged.entered: " + entered);
+                //getDisplayBinder().startCommand(new DisplayTenderCommand(entered, null));
+            }
+
+
             PayChargeFragmentDialog.this.pending.setText(UiHelper.valueOf(pending));
             PayChargeFragmentDialog.this.pending.setTextColor(pending.compareTo(BigDecimal.ZERO) > 0 ? colorPaymentPending : colorPaymentOk);
         }

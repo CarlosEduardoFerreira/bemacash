@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.getbase.android.db.provider.ProviderAction;
@@ -14,6 +15,7 @@ import com.kaching123.pos.util.IHeaderFooterPrinter;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.activity.BaseCashierActivity;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorBaseCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxProcessorSaleCommand;
 import com.kaching123.tcr.commands.payment.pax.processor.PaxSignature;
@@ -34,6 +36,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.kaching123.tcr.activity.BaseCashierActivity.customerWasChosen;
 import static com.kaching123.tcr.fragment.UiHelper.concatFullname;
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.model.ContentValuesUtil._orderType;
@@ -76,8 +79,16 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         prePrintHeader(context, app, printerWrapper);
         printHeader(context, app, printerWrapper);
         printBody(context, app, printerWrapper);
-        printLoyalty(context, app, printerWrapper);
+        Log.d("BemaCarl24", "BasePrintProcessor.print.orderInfo.customerIdentification: " + orderInfo.customerIdentification);
+        Log.d("BemaCarl24", "BasePrintProcessor.print.orderInfo.customerName:           " + orderInfo.customerName);
+        Log.d("BemaCarl24", "BasePrintProcessor.print.orderInfo.customerLoyaltyPoints:  " + orderInfo.customerLoyaltyPoints);
+        Log.d("BemaCarl24", "BasePrintProcessor.print.customerWasChosen:              1:" + customerWasChosen);
+        if (orderInfo.customerName != null && customerWasChosen) {
+            printLoyalty(context, app, printerWrapper);
+        }
+        Log.d("BemaCarl24", "BasePrintProcessor.print.customerWasChosen:              2:" + customerWasChosen);
         printFooter(context, app, printerWrapper);
+        customerWasChosen = true;
     }
 
     protected boolean isGiftCard() {
@@ -165,9 +176,15 @@ public abstract class BasePrintProcessor<T extends IHeaderFooterPrinter> {
         printerWrapper.header(context.getString(R.string.printer_order_num), orderInfo.registerTitle, orderInfo.seqNum,
                 new Date(orderInfo.createTime), context.getString(R.string.printer_cashier), orderInfo.operatorName != null ? orderInfo.operatorName : "",
                 context.getString(R.string.printer_customer_identification), orderInfo.customerIdentification);
-        if (orderInfo.customerName != null) {
+
+        Log.d("BemaCarl24", "BasePrintProcessor.printHeader.orderInfo.customerIdentification:   " + orderInfo.customerIdentification);
+        Log.d("BemaCarl24", "BasePrintProcessor.printHeader.orderInfo.customerName:             " + orderInfo.customerName);
+        Log.d("BemaCarl24", "BasePrintProcessor.printHeader.orderInfo.customerLoyaltyPoints:    " + orderInfo.customerLoyaltyPoints);
+        Log.d("BemaCarl24", "BasePrintProcessor.printHeader.orderInfo.customerWasChosen:        " + customerWasChosen);
+        if (orderInfo.customerName != null && customerWasChosen) {
             printerWrapper.header(context.getString(R.string.printer_ec_customer_name), orderInfo.customerName);
         }
+
         printMidTid(context, app, printerWrapper, orderInfo.orderType);
         if (title != null && !title.equalsIgnoreCase("ARG_ORDER_TITLE"))
             printerWrapper.header(context.getString(R.string.printer_guest), title);

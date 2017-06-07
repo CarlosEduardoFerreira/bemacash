@@ -16,6 +16,7 @@ import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.google.common.base.Optional;
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.activity.DetailedQuickServiceActivity;
+import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand;
 import com.kaching123.tcr.commands.device.OpenDrawerCommand.BaseOpenDrawerCallback;
 import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
@@ -60,6 +62,7 @@ import com.kaching123.tcr.fragment.PrintCallbackHelper2;
 import com.kaching123.tcr.fragment.PrintCallbackHelper2.IPrintCallback;
 import com.kaching123.tcr.fragment.UiHelper;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
+import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
@@ -245,6 +248,8 @@ public class DashboardActivity extends SuperBaseActivity {
     private boolean isSqlCommandLoaderFinished = true;
     private boolean isShiftLoaderFinished = true;
     private boolean isEmployeeTimeshiftLoaderFinished = true;
+
+    int shiftType = 1;
 
     public static void startClearTop(Context context) {
         DashboardActivity_.intent(context).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).start();
@@ -439,6 +444,19 @@ public class DashboardActivity extends SuperBaseActivity {
         }
         need2CollectData();
         invalidateOptionsMenu();
+
+        shiftType = getApp().getShopInfo().shiftType;
+        Log.d("BemaCarl26", "DashboardActivity.shiftActionButtonContainerClicked.shiftType: " + shiftType);
+
+        if(shiftType == 2){
+            confirmOpenShift();
+            //confirmOpenShift();
+        }else{
+            //startShiftAction();
+        }
+
+
+
     }
 
     private void setTitle() {
@@ -798,6 +816,36 @@ public class DashboardActivity extends SuperBaseActivity {
 
         startShiftAction();
     }
+
+
+    private void confirmOpenShift(){
+
+        AlertDialogFragment.showAlertWithSkip3(
+            DashboardActivity.this,
+            R.string.dlg_title_shift_open_title,
+            getString(R.string.dlg_title_shift_open_text),
+            R.string.btn_yes,
+            new StyledDialogFragment.OnDialogClickListener() {
+                @Override
+                public boolean onClick() {
+                    AlertDialogFragment.hide(DashboardActivity.this);
+                    shiftActionButtonContainerClicked();
+                    return false;
+                }
+            },
+            new StyledDialogFragment.OnDialogClickListener() {
+                @Override
+                public boolean onClick() {
+                    AlertDialogFragment.hide(DashboardActivity.this);
+                    return false;
+                }
+            }
+        );
+
+
+
+    }
+
 
     private void startShiftAction() {
         if (!isShiftOpened) {

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.getbase.android.db.provider.ProviderAction;
@@ -34,6 +35,7 @@ import com.kaching123.tcr.commands.store.saleorder.CoverEBTitemsCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand.KitchenPrintStatus;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
 import com.kaching123.tcr.commands.store.settings.EditPaxCommand;
+import com.kaching123.tcr.commands.store.user.UpdateCustomerBirthdayRewardDateCommand;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment.OnDialogClickListener;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
@@ -70,6 +72,7 @@ import com.kaching123.tcr.fragment.tendering.payment.SettlementTransPendingFragm
 import com.kaching123.tcr.fragment.tendering.payment.SettlementTransPendingFragmentDialog.ISettlementProgressListener;
 import com.kaching123.tcr.function.OrderTotalPriceCalculator;
 import com.kaching123.tcr.model.CustomerModel;
+import com.kaching123.tcr.model.LoyaltyType;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
@@ -105,6 +108,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.kaching123.tcr.util.CursorUtil._wrap;
+import static java.security.AccessController.getContext;
 
 /**
  * @author Ivan v. Rikhmayer
@@ -801,7 +805,7 @@ public class PaymentProcessor implements PrepaidBillingCallback {
                     proceedToCardSwipe(context, transaction);
 
                     if (getDisplayBinder(context) != null) {
-                        getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
+                        //getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
                     }
                 }
                 break;
@@ -851,7 +855,7 @@ public class PaymentProcessor implements PrepaidBillingCallback {
                 proceedToOfflineCreditPayment(context, amount, transaction);
 
                 if (getDisplayBinder(context) != null) {
-                    getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
+                    //getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
                 }
                 break;
             }
@@ -862,7 +866,7 @@ public class PaymentProcessor implements PrepaidBillingCallback {
                 proceedToCheckPayment(context, amount, transaction);
 
                 if (getDisplayBinder(context) != null) {
-                    getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
+                    //getDisplayBinder(context).startCommand(new DisplayTenderCommand(amount, null));
                 }
                 break;
             }
@@ -1445,7 +1449,7 @@ public class PaymentProcessor implements PrepaidBillingCallback {
 
     private void proceedToFinish(final FragmentActivity context, final ArrayList<PaymentTransactionModel> transactions) {
         if (getDisplayBinder(context) != null) {
-            getDisplayBinder(context).startCommand(new DisplayWelcomeMessageCommand());
+            //getDisplayBinder(context).startCommand(new DisplayWelcomeMessageCommand());
         }
 
         assert transactions != null && !transactions.isEmpty();

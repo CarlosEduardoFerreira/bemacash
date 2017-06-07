@@ -3,6 +3,7 @@ package com.kaching123.tcr.fragment.tendering.payment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.kaching123.tcr.Logger;
@@ -86,7 +87,7 @@ public class PaySilentCashFragmentDialog  extends StyledDialogFragment implement
         BigDecimal tenderAmount = transaction.amount;
         BigDecimal changeAmount = transaction.changeValue;
         if (getDisplayBinder() != null) {
-            getDisplayBinder().startCommand(new DisplayTenderCommand(tenderAmount, changeAmount));
+            //getDisplayBinder().startCommand(new DisplayTenderCommand(tenderAmount, changeAmount));
         }
     }
 

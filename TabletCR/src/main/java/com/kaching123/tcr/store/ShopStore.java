@@ -1898,6 +1898,7 @@ public abstract class ShopStore {
 
         @Column(type = Type.INTEGER)
         String UPDATE_TIME_LOCAL = DEFAULT_UPDATE_TIME_LOCAL;
+
     }
 
     static {

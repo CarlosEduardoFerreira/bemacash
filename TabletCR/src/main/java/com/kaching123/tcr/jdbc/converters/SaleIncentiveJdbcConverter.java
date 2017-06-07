@@ -89,4 +89,9 @@ public class SaleIncentiveJdbcConverter extends JdbcConverter<SaleIncentiveModel
     public SingleSqlCommand updateSQL(SaleIncentiveModel model, IAppCommandContext appCommandContext) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean supportUpdateTimeLocalFlag() {
+        return true;
+    }
 }

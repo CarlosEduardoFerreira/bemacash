@@ -150,7 +150,7 @@ public class GiftCardAmountFragmentDialog extends StyledDialogFragment implement
             turnPositiveButton(false);
         }
         if (getDisplayBinder() != null) {
-            getDisplayBinder().startCommand(new DisplayTenderCommand(tenderAmount, changeAmount));
+            //getDisplayBinder().startCommand(new DisplayTenderCommand(tenderAmount, changeAmount));
         }
     }
 

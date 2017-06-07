@@ -3,8 +3,11 @@ package com.kaching123.tcr.commands.loyalty;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
+import com.kaching123.tcr.TcrApplication;
+import com.kaching123.tcr.commands.AtomicUpload;
 import com.kaching123.tcr.commands.store.AsyncCommand;
 import com.kaching123.tcr.commands.store.user.UpdateCustomerBirthdayRewardDateCommand;
 import com.kaching123.tcr.jdbc.JdbcFactory;
@@ -39,6 +42,7 @@ public class AddSaleIncentiveCommand extends AsyncCommand {
     private static final String EXTRA_SALE_INCENTIVE_ID = "EXTRA_SALE_INCENTIVE_ID";
 
     private SaleIncentiveModel saleIncentive;
+    private SyncResult addBirthdayRewardResult;
     private SyncResult addPointsMovementResult;
 
     @Override
@@ -75,21 +79,16 @@ public class AddSaleIncentiveCommand extends AsyncCommand {
                 incentive.pointThreshold
         );
 
-        if (!addPointsMovement(customerId, incentive.pointThreshold))
-            return failed();
+        if (saleIncentive.type == LoyaltyType.BIRTHDAY) {
+            Log.d("BemaCarl23","AddSaleIncentiveCommand.createSqlCommand.customerId: " + saleIncentive.customerId);
+            //addBirthdayRewardResult = new UpdateCustomerBirthdayRewardDateCommand().sync(getContext(), saleIncentive.customerId, getAppCommandContext());
+        }
 
-        if (saleIncentive.type == LoyaltyType.BIRTHDAY)
-            new UpdateCustomerBirthdayRewardDateCommand().sync(getContext(), customerId, new Date(), getAppCommandContext());
+        if (incentive.pointThreshold != null){
+            addPointsMovementResult = new AddLoyaltyPointsMovementCommand().sync(getContext(), customerId, incentive.pointThreshold.negate(), getAppCommandContext());
+        }
 
         return succeeded().add(EXTRA_SALE_INCENTIVE_ID, saleIncentive.guid);
-    }
-
-    private boolean addPointsMovement(String customerId, BigDecimal points){
-        if (points == null)
-            return true;
-
-        addPointsMovementResult = new AddLoyaltyPointsMovementCommand().sync(getContext(), customerId, points.negate(), getAppCommandContext());
-        return addPointsMovementResult != null;
     }
 
     private String getLastAddedItem(String orderId){
@@ -110,9 +109,19 @@ public class AddSaleIncentiveCommand extends AsyncCommand {
     @Override
     protected ISqlCommand createSqlCommand() {
         BatchSqlCommand batch = batchInsert(saleIncentive);
+        Log.d("BemaCarl23","AddSaleIncentiveCommand.createSqlCommand.saleIncentive: " + saleIncentive);
+        if(saleIncentive != null){
+            Log.d("BemaCarl23","AddSaleIncentiveCommand.createSqlCommand.saleIncentive.rewardValue: " + saleIncentive.rewardValue);
+        }
         batch.add(JdbcFactory.insert(saleIncentive, getAppCommandContext()));
+
+        //if (addBirthdayRewardResult != null)
+            //batch.add(addBirthdayRewardResult.getSqlCmd());
+
         if (addPointsMovementResult != null)
             batch.add(addPointsMovementResult.getSqlCmd());
+
+        new AtomicUpload().upload(batch, AtomicUpload.UploadType.WEB);
 
         return batch;
     }
@@ -122,6 +131,10 @@ public class AddSaleIncentiveCommand extends AsyncCommand {
         ArrayList<ContentProviderOperation> cv = new ArrayList<>();
         cv.add(ContentProviderOperation.newInsert(ShopProvider.contentUri(SaleIncentiveTable.URI_CONTENT))
                 .withValues(saleIncentive.toValues()).build());
+
+        //if (addBirthdayRewardResult != null)
+            //cv.addAll(addBirthdayRewardResult.getLocalDbOperations());
+
         if (addPointsMovementResult != null)
             cv.addAll(addPointsMovementResult.getLocalDbOperations());
 

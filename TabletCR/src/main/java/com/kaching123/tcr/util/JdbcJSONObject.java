@@ -1,6 +1,7 @@
 package com.kaching123.tcr.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.kaching123.tcr.commands.rest.sync.Sync2Util;
 
@@ -64,6 +65,7 @@ public class JdbcJSONObject extends JSONObject{
 
     public Date getDate(String column) throws JSONException {
         String datetime = getString(column);
+        Log.d("BemaCarl23","JdbcJSONObject.getDate.datetime: " + datetime);
         if (TextUtils.isEmpty(datetime))
             return null;
         try {

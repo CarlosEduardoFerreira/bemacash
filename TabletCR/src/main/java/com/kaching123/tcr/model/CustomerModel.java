@@ -3,6 +3,7 @@ package com.kaching123.tcr.model;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.getbase.android.db.provider.ProviderAction;
 import com.kaching123.tcr.TcrApplication;
@@ -26,33 +27,65 @@ import static com.kaching123.tcr.model.ContentValuesUtil._nullableDate;
  */
 public class CustomerModel implements IValueModel, Serializable {
 
-    public String guid;
-    public String firstName;
-    public String lastName;
-    public String street;
-    public String complementary;
-    public String city;
-    public String state;
-    public String country;
-    public String zip;
-    public String email;
-    public String phone;
-    public boolean sex;
-    public Date birthday;
-    public Date birthdayRewardApplyDate;
-    public Date createTime;
-    public boolean consentPromotions;
-    public String notes;
-    public String customerIdentification;
-    public String loyaltyPlanId;
-    public BigDecimal loyaltyPoints;
-    public String loyaltyBarcode;
+    public String       guid;
+    public String       firstName;
+    public String       lastName;
+    public String       street;
+    public String       complementary;
+    public String       city;
+    public String       state;
+    public String       country;
+    public String       zip;
+    public String       email;
+    public String       phone;
+    public boolean      sex;
+    public Date         birthday;
+    public Date         birthdayRewardApplyDate;
+    public Date         createTime;
+    public boolean      consentPromotions;
+    public String       notes;
+    public String       customerIdentification;
+    public String       loyaltyPlanId;
+    public BigDecimal   loyaltyPoints;
+    public String       loyaltyBarcode;
 
     private List<String> mIgnoreFields;
 
     public CustomerModel(String guid, Date createTime) {
         this.guid = guid;
         this.createTime = createTime;
+    }
+
+    public CustomerModel(String guid, String firstName, String lastName, String street,
+                         String complementary, String city, String state, String country,
+                         String zip, String email, String phone, boolean sex, Date birthday,
+                         Date birthdayRewardApplyDate, Date createTime,
+                         boolean consentPromotions, String notes, String customerIdentification,
+                         String loyaltyPlanId, BigDecimal loyaltyPoints, String loyaltyBarcode,
+                         List<String> ignoreFields) {
+        Log.d("BemaCarl23","CustomerModel.CustomerModel.birthdayRewardApplyDate: " + birthdayRewardApplyDate);
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.guid = guid;
+        this.street = street;
+        this.complementary = complementary;
+        this.city = city;
+        this.state = state;
+        this.country = country;
+        this.zip = zip;
+        this.email = email;
+        this.phone = phone;
+        this.sex = sex;
+        this.birthday = birthday;
+        this.birthdayRewardApplyDate = birthdayRewardApplyDate;
+        this.createTime = createTime;
+        this.consentPromotions = consentPromotions;
+        this.notes = notes;
+        this.customerIdentification = customerIdentification;
+        this.loyaltyPlanId = loyaltyPlanId;
+        this.loyaltyPoints = loyaltyPoints;
+        this.loyaltyBarcode = loyaltyBarcode;
+        this.mIgnoreFields = ignoreFields;
     }
 
     public CustomerModel(Cursor cursor) {
@@ -78,39 +111,9 @@ public class CustomerModel implements IValueModel, Serializable {
                 _decimal(cursor, cursor.getColumnIndex(CustomerTable.TMP_LOYALTY_POINTS), BigDecimal.ZERO),
                 cursor.getString(cursor.getColumnIndex(CustomerTable.LOYALTY_BARCODE)),
                 null);
+        Log.d("BemaCarl23","CustomerModel.CustomerModel.birthdayRewardApplyDate: " + birthdayRewardApplyDate);
     }
 
-    public CustomerModel(String guid, String firstName, String lastName, String street,
-                         String complementary, String city, String state, String country,
-                         String zip, String email, String phone, boolean sex, Date birthday,
-                         Date birthdayRewardApplyDate, Date createTime,
-                         boolean consentPromotions, String notes, String customerIdentification,
-                         String loyaltyPlanId, BigDecimal loyaltyPoints, String loyaltyBarcode,
-                         List<String> ignoreFields) {
-
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.guid = guid;
-        this.street = street;
-        this.complementary = complementary;
-        this.city = city;
-        this.state = state;
-        this.country = country;
-        this.zip = zip;
-        this.email = email;
-        this.phone = phone;
-        this.sex = sex;
-        this.birthday = birthday;
-        this.birthdayRewardApplyDate = birthdayRewardApplyDate;
-        this.createTime = createTime;
-        this.consentPromotions = consentPromotions;
-        this.notes = notes;
-        this.customerIdentification = customerIdentification;
-        this.loyaltyPlanId = loyaltyPlanId;
-        this.loyaltyPoints = loyaltyPoints;
-        this.loyaltyBarcode = loyaltyBarcode;
-        this.mIgnoreFields = ignoreFields;
-    }
 
     public static CustomerModel fromOrderView(Cursor cursor){
         return new CustomerModel(
@@ -164,6 +167,7 @@ public class CustomerModel implements IValueModel, Serializable {
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.PHONE)) v.put(CustomerTable.PHONE, phone);
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.SEX)) v.put(CustomerTable.SEX, sex);
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.BIRTHDAY)) _nullableDate(v, CustomerTable.BIRTHDAY, birthday);
+        if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.BIRTHDAY_REWARD_APPLY_DATE)) _nullableDate(v, CustomerTable.BIRTHDAY_REWARD_APPLY_DATE, birthdayRewardApplyDate);
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.CREATE_TIME)) _nullableDate(v, CustomerTable.CREATE_TIME, createTime);
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.CONSENT_PROMOTIONS)) v.put(CustomerTable.CONSENT_PROMOTIONS, consentPromotions);
         if (mIgnoreFields == null || !mIgnoreFields.contains(CustomerTable.NOTES)) v.put(CustomerTable.NOTES, notes);
@@ -205,6 +209,8 @@ public class CustomerModel implements IValueModel, Serializable {
     }
 
     public static CustomerModel loadSync(Context context, String guid){
+        Log.d("BemaCarl23","CustomerModel.loadSync.context:                     " + context);
+        Log.d("BemaCarl23","CustomerModel.loadSync.guid:                        " + guid);
         Cursor c = ProviderAction.query(ShopProvider.contentUri(CustomerTable.URI_CONTENT))
                 .where(CustomerTable.GUID + " = ?", guid)
                 .perform(context);

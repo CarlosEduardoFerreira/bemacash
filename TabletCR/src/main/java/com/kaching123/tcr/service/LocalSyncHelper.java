@@ -60,6 +60,7 @@ import com.kaching123.tcr.jdbc.converters.MunicipalityJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PaymentTransactionJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.PrinterAliasJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.RegisterJdbcConverter;
+import com.kaching123.tcr.jdbc.converters.SaleIncentiveJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.SaleOrderItemAddonJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.SaleOrderItemJdbcConverter;
 import com.kaching123.tcr.jdbc.converters.SaleOrdersJdbcConverter;
@@ -611,6 +612,10 @@ public class LocalSyncHelper {
             if (JdbcConverter.compareTable(table, ShopStore.RegisterTable.TABLE_NAME, RegisterJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.RegisterTable.TABLE_NAME;
                 model = new RegisterJdbcConverter().toValues(json);
+            }
+            if (JdbcConverter.compareTable(table, ShopStore.SaleIncentiveTable.TABLE_NAME, SaleIncentiveJdbcConverter.TABLE_NAME)) {
+                operation.table = ShopStore.SaleIncentiveTable.TABLE_NAME;
+                model = new SaleIncentiveJdbcConverter().toValues(json);
             }
             if (JdbcConverter.compareTable(table, ShopStore.SaleAddonTable.TABLE_NAME, SaleOrderItemAddonJdbcConverter.TABLE_NAME)) {
                 operation.table = ShopStore.SaleAddonTable.TABLE_NAME;

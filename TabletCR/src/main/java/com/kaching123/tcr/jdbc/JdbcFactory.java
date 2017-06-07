@@ -423,6 +423,7 @@ public class JdbcFactory {
         API_METHOD2.put(LoyaltyPointsMovementModel.class, "loyalty_points_movement");
 
         CONVERTERS.put(ShopStore.SaleIncentiveTable.TABLE_NAME, c = new SaleIncentiveJdbcConverter());
+        CONVERTERS.put(c.getTableName(), c);
         CONVERTERS2.put(SaleIncentiveModel.class, c);
 
         API_METHOD.put(SaleIncentiveTable.TABLE_NAME, "sale_incentive");

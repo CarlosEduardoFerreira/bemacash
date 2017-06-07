@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.SpannableString;
@@ -52,7 +53,9 @@ import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.R;
 import com.kaching123.tcr.TcrApplication;
 import com.kaching123.tcr.commands.device.GetPrinterStatusCommand;
+import com.kaching123.tcr.commands.device.GetPrinterStatusCommand.BasePrinterStatusCallback;
 import com.kaching123.tcr.commands.device.PrinterCommand;
+import com.kaching123.tcr.commands.device.PrinterCommand.PrinterError;
 import com.kaching123.tcr.commands.display.DisplaySaleItemCommand;
 import com.kaching123.tcr.commands.display.DisplayWelcomeMessageCommand;
 import com.kaching123.tcr.commands.local.EndTransactionCommand;
@@ -69,20 +72,27 @@ import com.kaching123.tcr.commands.print.pos.BasePrintCommand;
 import com.kaching123.tcr.commands.print.pos.PrintOrderCommand;
 import com.kaching123.tcr.commands.store.inventory.CollectModifiersCommand;
 import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand;
+import com.kaching123.tcr.commands.store.saleorder.AddItem2SaleOrderCommand.BaseAddItem2SaleOrderCallback;
 import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand;
+import com.kaching123.tcr.commands.store.saleorder.AddSaleOrderCommand.BaseAddSaleOrderCommandCallback;
 import com.kaching123.tcr.commands.store.saleorder.ApplyMultipleDiscountCommand;
 import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand;
+import com.kaching123.tcr.commands.store.saleorder.GetItemsForFakeVoidCommand.BaseGetItemsForFaickVoidCallback;
 import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand;
+import com.kaching123.tcr.commands.store.saleorder.HoldOrderCommand.BaseHoldOrderCallback;
 import com.kaching123.tcr.commands.store.saleorder.ItemsNegativeStockTrackingCommand;
 import com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCommand;
 import com.kaching123.tcr.commands.store.saleorder.RemoveSaleOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.RevertSuccessOrderCommand;
 import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand;
+import com.kaching123.tcr.commands.store.saleorder.SuccessOrderCommand.BaseSuccessOrderCommandCallback;
 import com.kaching123.tcr.commands.store.saleorder.UpdateQtySaleOrderItemCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderItemMovementsCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderOnRegisterCommand;
 import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand;
+import com.kaching123.tcr.commands.store.saleorder.UpdateSaleOrderTaxStatusCommand.TaxCallback;
 import com.kaching123.tcr.commands.store.user.ClockInCommand;
+import com.kaching123.tcr.commands.store.user.ClockInCommand.BaseClockInCallback;
 import com.kaching123.tcr.commands.wireless.UnitOrderDoubleCheckCommand;
 import com.kaching123.tcr.fragment.KitchenPrintCallbackHelper;
 import com.kaching123.tcr.fragment.PrintCallbackHelper;
@@ -90,14 +100,17 @@ import com.kaching123.tcr.fragment.PrintCallbackHelper2;
 import com.kaching123.tcr.fragment.barcode.SearchBarcodeFragment;
 import com.kaching123.tcr.fragment.barcode.SearchBarcodeLoader;
 import com.kaching123.tcr.fragment.commission.CommissionDialog;
+import com.kaching123.tcr.fragment.commission.CommissionDialog.ICommissionDialogListener;
 import com.kaching123.tcr.fragment.data.MsrDataFragment;
 import com.kaching123.tcr.fragment.dialog.AlertDialogFragment;
+import com.kaching123.tcr.fragment.dialog.AlertDialogFragment.DialogType;
 import com.kaching123.tcr.fragment.dialog.AlertDialogListFragment_;
 import com.kaching123.tcr.fragment.dialog.AlertDialogWithCancelFragment;
 import com.kaching123.tcr.fragment.dialog.DialogUtil;
 import com.kaching123.tcr.fragment.dialog.StyledDialogFragment;
 import com.kaching123.tcr.fragment.dialog.WaitDialogFragment;
 import com.kaching123.tcr.fragment.edit.PriceEditFragment;
+import com.kaching123.tcr.fragment.edit.PriceEditFragment.OnEditPriceListener;
 import com.kaching123.tcr.fragment.edit.QtyEditFragment;
 import com.kaching123.tcr.fragment.edit.SaleOrderDiscountEditFragment;
 import com.kaching123.tcr.fragment.edit.TaxEditFragment;
@@ -110,6 +123,9 @@ import com.kaching123.tcr.fragment.saleorder.GiftCardFragmentDialog;
 import com.kaching123.tcr.fragment.saleorder.IOrderDelivery;
 import com.kaching123.tcr.fragment.saleorder.OnHoldListDialogFragment;
 import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment;
+import com.kaching123.tcr.fragment.saleorder.OrderItemListFragment.IItemsListHandlerHandler;
+import com.kaching123.tcr.fragment.saleorder.TotalCostFragment;
+import com.kaching123.tcr.fragment.saleorder.TotalCostFragment.IOrderActionListener;
 import com.kaching123.tcr.fragment.search.SearchItemsListFragment;
 import com.kaching123.tcr.fragment.tendering.ChooseCustomerDialog;
 import com.kaching123.tcr.fragment.tendering.history.HistoryDetailedOrderItemListFragment;
@@ -127,12 +143,15 @@ import com.kaching123.tcr.model.DiscountBundle;
 import com.kaching123.tcr.model.ItemExModel;
 import com.kaching123.tcr.model.ItemMovementModel;
 import com.kaching123.tcr.model.ItemRefType;
+import com.kaching123.tcr.model.LoyaltyViewModel;
 import com.kaching123.tcr.model.ModifierGroupModel;
 import com.kaching123.tcr.model.OnHoldStatus;
 import com.kaching123.tcr.model.OrderStatus;
 import com.kaching123.tcr.model.OrderType;
 import com.kaching123.tcr.model.PaxModel;
 import com.kaching123.tcr.model.PaymentTransactionModel;
+import com.kaching123.tcr.model.PaymentTransactionModel.PaymentStatus;
+import com.kaching123.tcr.model.PaymentTransactionModel.PaymentType;
 import com.kaching123.tcr.model.Permission;
 import com.kaching123.tcr.model.PlanOptions;
 import com.kaching123.tcr.model.PrepaidReleaseResult;
@@ -150,14 +169,31 @@ import com.kaching123.tcr.model.payment.blackstone.payment.response.RefundRespon
 import com.kaching123.tcr.model.payment.blackstone.payment.response.SaleResponse;
 import com.kaching123.tcr.print.processor.GiftCardBillingResult;
 import com.kaching123.tcr.processor.LoyaltyProcessor;
+import com.kaching123.tcr.processor.LoyaltyProcessor.LoyaltyProcessorCallback;
 import com.kaching123.tcr.processor.MoneybackProcessor;
+import com.kaching123.tcr.processor.MoneybackProcessor.RefundSaleItemInfo;
 import com.kaching123.tcr.processor.PaymentProcessor;
+import com.kaching123.tcr.processor.PaymentProcessor.IPaymentProcessor;
 import com.kaching123.tcr.service.DisplayService;
+import com.kaching123.tcr.service.DisplayService.Command;
+import com.kaching123.tcr.service.DisplayService.DisplayBinder;
+import com.kaching123.tcr.service.DisplayService.DisplayListener;
+import com.kaching123.tcr.service.DisplayService.IDisplayBinder;
 import com.kaching123.tcr.service.ScaleService;
+import com.kaching123.tcr.service.ScaleService.ScaleBinder;
 import com.kaching123.tcr.service.SyncCommand;
 import com.kaching123.tcr.store.ShopProvider;
 import com.kaching123.tcr.store.ShopSchema2;
+import com.kaching123.tcr.store.ShopSchema2.SaleOrderView2;
+import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpTable;
+import com.kaching123.tcr.store.ShopSchema2.TBPRegisterView2.TbpXRegisterTable;
 import com.kaching123.tcr.store.ShopStore;
+import com.kaching123.tcr.store.ShopStore.MultipleDiscountTable;
+import com.kaching123.tcr.store.ShopStore.PaymentTransactionTable;
+import com.kaching123.tcr.store.ShopStore.SaleIncentiveTable;
+import com.kaching123.tcr.store.ShopStore.SaleOrderTable;
+import com.kaching123.tcr.store.ShopStore.SaleOrderView;
+import com.kaching123.tcr.store.ShopStore.TBPRegisterView;
 import com.kaching123.tcr.util.DateUtils;
 import com.kaching123.tcr.util.KeyboardUtils;
 import com.kaching123.tcr.util.UnitUtil;
@@ -169,6 +205,7 @@ import com.telly.groundy.annotations.Param;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
@@ -192,9 +229,6 @@ import static com.kaching123.tcr.commands.store.saleorder.PrintItemsForKitchenCo
 import static com.kaching123.tcr.model.ContentValuesUtil._decimal;
 import static com.kaching123.tcr.util.CursorUtil._wrap;
 
-/**
- * Created by mboychenko on 5/29/2017.
- */
 @EActivity
 public abstract class BaseCashierActivity extends ScannerBaseActivity implements DisplayService.IDisplayBinder, BarcodeListenerHolder, IOrderDelivery,
         DetailedQServiceMainSaleActionsFragment.IOrderRegisterActionListener, DetailedQServiceTotalCostFragment.IOrderPricingListener {
@@ -204,6 +238,8 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private static final Uri URI_ITEMS = ShopProvider.getContentUri(ShopStore.ItemTable.URI_CONTENT);
     private static final Uri ITEM_MOVEMENT_URI = ShopProvider.getContentUri(ShopStore.ItemMovementTable.URI_CONTENT);
     private static final int NUMBER_OF_LETTERS_TO_START_SEARCH = 2;
+
+    private static final Uri CUSTOMER_URI = ShopProvider.contentUri(ShopStore.CustomerTable.URI_CONTENT);
 
     static {
         permissions.add(Permission.SALES_TRANSACTION);
@@ -228,6 +264,15 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
     private static final long BACK_TIMEOUT = 2000L;
     private long lastBackPressedTime;
+
+    @FragmentById
+    protected TotalCostFragment totalCostFragment;
+
+    @FragmentById
+    protected OrderItemListFragment orderItemListFragment;
+
+    @FragmentById
+    protected SearchItemsListFragment searchResultFragment;
 
     @ViewById
     protected View scannerWaitBlock;
@@ -317,6 +362,10 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
     private List<Integer> priceLevels = Collections.EMPTY_LIST;
     private List<DiscountBundle> discountBundles = Collections.EMPTY_LIST;
     private boolean hasPrefixes;
+
+    static public boolean customerWasChosen = true;
+
+    static public boolean runLoyaltyBirthday = false;
 
 
     public interface ISearchFragmentActions {
@@ -2654,10 +2703,24 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
                                 return new SaleOrderViewResult(null, null);
                             } else {
                                 SaleOrderModel order = SaleOrderModel.fromView(cursor);
-                                CustomerModel customer = null;
-                                if (!cursor.isNull(cursor.getColumnIndex(ShopSchema2.SaleOrderView2.SaleOrderTable.CUSTOMER_GUID))) {
-                                    customer = CustomerModel.fromOrderView(cursor);
+                                //if(customer == null) {
+                                    if (!cursor.isNull(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID))) {
+                                        Cursor c1 = ProviderAction.query(CUSTOMER_URI)
+                                            .where(ShopStore.CustomerTable.GUID + " = ?", cursor.getString(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID)))
+                                            .perform(TcrApplication.get().getApplicationContext());
+                                        if(c1.moveToNext()) {
+                                            customer = new CustomerModel(c1);
+            Log.d("BemaCarl23", "BaseCashierActivity.onCreateLoader 1: " + cursor.getString(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID)));
+                                        }else {
+                                            customer = CustomerModel.fromOrderView(cursor);
+            Log.d("BemaCarl23", "BaseCashierActivity.onCreateLoader 2: " + cursor.getString(cursor.getColumnIndex(SaleOrderView2.SaleOrderTable.CUSTOMER_GUID)));
+                                        }
+                                    }
+                                //}
+                                if (customer != null) {
+            Log.d("BemaCarl23","BaseCashierActivity.onCreateLoader.customer.birthdayRewardReceivedDate: " + customer.birthdayRewardApplyDate);
                                 }
+
                                 return new SaleOrderViewResult(order, customer);
                             }
                         }
@@ -2666,6 +2729,9 @@ public abstract class BaseCashierActivity extends ScannerBaseActivity implements
 
         @Override
         public void onLoadFinished(Loader<SaleOrderViewResult> saleOrderModelLoader, SaleOrderViewResult result) {
+            if(result.customer != null) {
+                Log.d("BemaCarl23", "BaseCashierActivity.onLoadFinished.result.customer.birthdayRewardReceivedDate: " + result.customer.birthdayRewardApplyDate);
+            }
             updateOrderInfo(result.order, result.customer);
         }
 

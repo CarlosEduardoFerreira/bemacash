@@ -177,7 +177,13 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                     Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil._alive 1: " + deviceUtil._alive);
                     if(deviceUtil._alive) {
                         Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.deviceUtil._alive 2: " + deviceUtil._alive);
-                        ptr[0] = posLink.ProcessTrans();
+                        try {
+                            ptr[0] = posLink.ProcessTrans();
+                        } catch (Exception e) {
+                            Log.d("BemaCarl9", "PaxProcessorSaleCommand.doCommand.e.getMessage: " + e.getMessage());
+                            errorReason = "Payment cancelled or connection problem.";
+                            //e.printStackTrace();
+                        }
                     }
                 }
             });
@@ -255,7 +261,7 @@ public class PaxProcessorSaleCommand extends PaxProcessorBaseCommand {
                     new PaxProcessorHelloCommand().sync(getContext(), getPaxModel());
 
                 }
-
+                
             }
             if(!deviceUtil._alive){
                 transaction.allowReload = true;

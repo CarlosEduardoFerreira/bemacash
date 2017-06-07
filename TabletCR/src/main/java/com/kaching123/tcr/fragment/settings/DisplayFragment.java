@@ -3,6 +3,7 @@ package com.kaching123.tcr.fragment.settings;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 

@@ -1,5 +1,7 @@
 package com.kaching123.tcr.jdbc.converters;
 
+import android.util.Log;
+
 import com.kaching123.tcr.Logger;
 import com.kaching123.tcr.jdbc.JdbcFactory;
 import com.kaching123.tcr.model.CustomerModel;
@@ -14,6 +16,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kaching123.tcr.jdbc.JdbcBuilder.FIELD_UPDATE_TIME;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._insert;
 import static com.kaching123.tcr.jdbc.JdbcBuilder._update;
 
@@ -70,7 +73,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
         if (!rs.has(LOYALTY_PLAN_ID)) ignoreFields.add(ShopStore.CustomerTable.LOYALTY_PLAN_ID);
         if (!rs.has(TMP_LOYALTY_POINTS)) ignoreFields.add(ShopStore.CustomerTable.TMP_LOYALTY_POINTS);
         if (!rs.has(LOYALTY_BARCODE)) ignoreFields.add(ShopStore.CustomerTable.LOYALTY_BARCODE);
-
+        Log.d("BemaCarl23","CustomerJdbcConverter.toValues.rs.getDate(BIRTHDAY_REWARD_APPLY_DATE): " + rs.getDate(BIRTHDAY_REWARD_APPLY_DATE));
         return new CustomerModel(
                 rs.getString(GUID),
                 rs.getString(FIRST_NAME),
@@ -85,7 +88,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
                 rs.getString(PHONE),
                 rs.getBoolean(SEX),
                 rs.getSimpleDate(BIRTHDAY),
-                rs.getSimpleDate(BIRTHDAY_REWARD_APPLY_DATE),
+                rs.getDate(BIRTHDAY_REWARD_APPLY_DATE),
                 rs.getDate(CREATE_DATE),
                 rs.getBoolean(CONSENT_EMAIL),
                 rs.getString(NOTES),
@@ -114,7 +117,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
     @Override
     public JSONObject getJSONObject(CustomerModel model){
         JSONObject json = null;
-
+        Log.d("BemaCarl23","CustomerJdbcConverter.getJSONObject.model.birthdayRewardApplyDate: " + model.birthdayRewardApplyDate);
         try {
             json = new JSONObject()
                     .put(GUID, model.guid)
@@ -174,6 +177,7 @@ public class CustomerJdbcConverter extends JdbcConverter<CustomerModel> {
 
     @Override
     public SingleSqlCommand updateSQL(CustomerModel model, IAppCommandContext appCommandContext) {
+        Log.d("BemaCarl23","CustomerJdbcConverter.updateSQL.model.birthdayRewardApplyDate: " + model.birthdayRewardApplyDate);
         return _update(TABLE_NAME, appCommandContext)
                 .add(FIRST_NAME, model.firstName)
                 .add(LAST_NAME, model.lastName)
