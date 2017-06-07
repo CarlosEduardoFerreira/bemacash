@@ -3,6 +3,7 @@ package com.kaching123.tcr.fragment.saleorder;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,10 +44,58 @@ public class DetailedQuickItemsFragment extends BaseItemsPickFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         viewPager.setAdapter(adapter = new ItemsPageAdapter());
+
         leftArrow.setEnabled(false);
         if(adapter.getCount() <= 1) {
             rightArrow.setEnabled(false);
         }
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                int currPage = position + 1;
+                int pages = viewPager.getAdapter().getCount();
+
+                if (pages > 1 && currPage > 1) {
+                    leftArrow.setEnabled(true);
+                } else if (currPage == 1) {
+                    leftArrow.setEnabled(false);
+                }
+
+                if (currPage == pages) {
+                    rightArrow.setEnabled(false);
+                } else if (currPage < pages) {
+                    rightArrow.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {}
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
+
+        leftArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int curr = viewPager.getCurrentItem() - 1;
+                if (curr >= 0 ) {
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+                }
+            }
+        });
+
+        rightArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int pages = viewPager.getAdapter().getCount() - 1;
+                int curr = viewPager.getCurrentItem() + 1;
+                if(curr <= pages) {
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                }
+            }
+        });
     }
 
     @Override
